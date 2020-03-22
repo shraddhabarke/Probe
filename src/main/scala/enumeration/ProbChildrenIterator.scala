@@ -13,7 +13,8 @@ class ProbChildrenIterator(val childrenCandidates: List[ASTNode], val childTypes
   var candidates = Array[Iterator[ASTNode]]()
   def resetIterators(cost: List[Int]): Unit = {
     childrenLists = childTypes.zip(cost).map { case (t, c) => bank(c).filter(c => c.nodeType == t) }
-    candidates = childrenLists.map(l => l.iterator).toArray
+    candidates = if (childrenLists.exists(l => l.isEmpty)) childrenLists.map(l => Iterator.empty).toArray
+                 else childrenLists.map(l => l.iterator).toArray
   }
 
   var next_child: Option[List[ASTNode]] = None
