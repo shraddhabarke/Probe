@@ -20,7 +20,7 @@ object Main extends App {
   val filename = //"C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track\\univ_3_short.sl"
   //"src/test/benchmarks/too-hard/split-numbers-from-units-of-measure_2.sl"
   //"src/test/benchmarks/modified_benchmarks/returns_garbage/compare-two-strings_1.sl"
-   "src/test/benchmarks/syguscomp/change-negative-numbers-to-positive.sl"
+   "src/test/benchmarks/syguscomp/name-combine-3_short.sl"
   //"C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track\\univ_2_short.sl"
    //"C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\euphony\\stackoverflow4.sl"//args(0)
   //"C:\\Users\\hila\\prime\\papers\\postdoc_papers\\partial_correctness\\figures\\count-line-breaks-in-cell.sl"
@@ -37,7 +37,7 @@ object Main extends App {
 
   def synthesizeFromTask(task: SygusFileTask, timeout: Int = 40) = {
     val oeManager = new InputsValuesManager()
-    val enumerator = new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input))
+    val enumerator = new enumeration.ProbEnumerator(task.vocab, oeManager, task.examples.map(_.input))
     //val foundPrograms: mutable.Map[List[Boolean], mutable.ListBuffer[ASTNode]] = mutable.HashMap()
     val deadline = timeout.seconds.fromNow
     val ranks = mutable.ListBuffer[RankedProgram]()

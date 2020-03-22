@@ -23,18 +23,24 @@ class StringReplace(val arg0: StringNode, val arg1: StringNode, val arg2: String
     StringUtils.replaceOnce(a0.asInstanceOf[String],a1.asInstanceOf[String],a2.asInstanceOf[String])
 
   override lazy val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(str.replace "," ",")")
+  override val cost: Int = 3
+
 }
 
 class StringITE(val arg0: BoolNode, val arg1: StringNode, val arg2: StringNode) extends TernaryOpNode[String] with StringNode {
   override def doOp(a0: Any, a1: Any, a2: Any): String = if (a0.asInstanceOf[Boolean]) a1.asInstanceOf[String] else a2.asInstanceOf[String]
 
   override lazy val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(ite "," ",")")
+  override val cost: Int = 3
+
 }
 
 class IntITE(val arg0: BoolNode, val arg1: IntNode, val arg2: IntNode) extends TernaryOpNode[Int] with IntNode {
   override def doOp(a0: Any, a1: Any, a2: Any): Int = if (a0.asInstanceOf[Boolean]) a1.asInstanceOf[Int] else a2.asInstanceOf[Int]
 
   override lazy val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(ite "," ",")")
+  override val cost: Int = 3
+
 }
 
 class Substring(val arg0: StringNode, val arg1: IntNode, val arg2: IntNode) extends TernaryOpNode[String] with StringNode {
@@ -53,10 +59,12 @@ class Substring(val arg0: StringNode, val arg1: IntNode, val arg2: IntNode) exte
   }
 
   override lazy val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(str.substr "," ",")")
+  override val cost: Int = 3
 }
 
 class IndexOf(val arg0: StringNode, val arg1: StringNode, val arg2: IntNode) extends TernaryOpNode[Int] with IntNode {
   override def doOp(a0: Any, a1: Any, a2: Any): Int = a0.asInstanceOf[String].indexOf(a1.asInstanceOf[String],a2.asInstanceOf[Int])
 
   override lazy val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(str.indexof "," ",")")
+  override val cost: Int = 3
 }

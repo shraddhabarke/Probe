@@ -7,6 +7,7 @@ trait VocabMaker {
   val childTypes: List[Types]
   val returnType: Types
   val head: String
+  val prob: Int
   def canMake(children: List[ASTNode]): Boolean = children.length == arity && children.zip(childTypes).forall(pair => pair._1.nodeType == pair._2)
   def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode
 }
@@ -14,6 +15,7 @@ trait VocabMaker {
 class VocabFactory(val leavesMakers: List[VocabMaker], val nodeMakers: List[VocabMaker]) {
   def leaves(): Iterator[VocabMaker] = leavesMakers.iterator
   def nonLeaves(): Iterator[VocabMaker] = nodeMakers.iterator
+  //def nonLeaves(): Iterator[VocabMaker] = nodeMakers.iterator.toSeq.sortWith(_.prob > _.prob).iterator
 }
 
 object VocabFactory{

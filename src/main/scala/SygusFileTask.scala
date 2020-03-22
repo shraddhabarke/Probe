@@ -80,7 +80,7 @@ object SygusFileTask{
             override val childTypes: List[Types] = Nil
             override val returnType: Types = retType
             override val head: String = lit.toString
-
+            override val prob: Int = 3;
             override def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = new IntLiteral(lit, contexts.length)
           }
         }
@@ -91,6 +91,7 @@ object SygusFileTask{
             override val childTypes: List[Types] = Nil
             override val returnType: Types = retType
             override val head: String = '"' + lit + '"'
+            override val prob: Int = 3;
 
             override def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = new StringLiteral(lit, contexts.length)
           }
@@ -102,6 +103,7 @@ object SygusFileTask{
             override val childTypes: List[Types] = Nil
             override val returnType: Types = retType
             override val head: String = lit.toString
+            override val prob: Int = 3;
 
             override def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = new BoolLiteral(lit, contexts.length)
           }
@@ -115,6 +117,7 @@ object SygusFileTask{
           override val childTypes: List[Types] = Nil
           override val returnType: Types = retType
           override val head: String = lit.toString
+          override val prob: Int = 3;
 
           override def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = new IntLiteral(lit, contexts.length)
         }
@@ -127,6 +130,7 @@ object SygusFileTask{
           override val childTypes: List[Types] = Nil
           override val returnType: Types = retType
           override val head: String = varname
+          override val prob: Int = 3;
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode = new IntVariable(varname,contexts)
         }
@@ -135,6 +139,7 @@ object SygusFileTask{
           override val childTypes: List[Types] = Nil
           override val returnType: Types = retType
           override val head: String = varname
+          override val prob: Int = 3;
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode = new StringVariable(varname,contexts)
         }
@@ -143,6 +148,7 @@ object SygusFileTask{
           override val childTypes: List[Types] = Nil
           override val returnType: Types = retType
           override val head: String = varname
+          override val prob: Int = 3;
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode = new BoolVariable(varname,contexts)
         }
@@ -159,6 +165,7 @@ object SygusFileTask{
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
+          override val prob: Int = 3;
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new StringConcat(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[StringNode])
@@ -168,6 +175,7 @@ object SygusFileTask{
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
+          override val prob: Int = 3;
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new StringReplace(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[StringNode],children(2).asInstanceOf[StringNode])
@@ -177,6 +185,7 @@ object SygusFileTask{
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
+          override val prob: Int = 3;
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new StringAt(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[IntNode])
@@ -186,6 +195,7 @@ object SygusFileTask{
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
+          override val prob: Int = 3;
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new IntToString(children(0).asInstanceOf[IntNode])
@@ -195,6 +205,7 @@ object SygusFileTask{
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
+          override val prob: Int = 3;
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new StringITE(children(0).asInstanceOf[BoolNode],children(1).asInstanceOf[StringNode],children(2).asInstanceOf[StringNode])
@@ -204,6 +215,7 @@ object SygusFileTask{
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
+          override val prob: Int = 3;
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new Substring(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[IntNode],children(2).asInstanceOf[IntNode])
@@ -213,6 +225,7 @@ object SygusFileTask{
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
+          override val prob: Int = 3;
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new IntAddition(children(0).asInstanceOf[IntNode],children(1).asInstanceOf[IntNode])
@@ -222,6 +235,7 @@ object SygusFileTask{
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
+          override val prob: Int = 3;
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new IntSubtraction(children(0).asInstanceOf[IntNode],children(1).asInstanceOf[IntNode])
@@ -231,6 +245,7 @@ object SygusFileTask{
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
+          override val prob: Int = 3;
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new StringLength(children(0).asInstanceOf[StringNode])
@@ -240,6 +255,7 @@ object SygusFileTask{
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
+          override val prob: Int = 3;
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new StringToInt(children(0).asInstanceOf[StringNode])
@@ -249,6 +265,7 @@ object SygusFileTask{
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
+          override val prob: Int = 3;
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new IntITE(children(0).asInstanceOf[BoolNode],children(1).asInstanceOf[IntNode],children(2).asInstanceOf[IntNode])
@@ -258,6 +275,7 @@ object SygusFileTask{
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
+          override val prob: Int = 3;
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new IndexOf(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[StringNode],children(2).asInstanceOf[IntNode])
@@ -267,6 +285,7 @@ object SygusFileTask{
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
+          override val prob: Int = 3;
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new IntLessThanEq(children(0).asInstanceOf[IntNode], children(1).asInstanceOf[IntNode])
@@ -276,6 +295,7 @@ object SygusFileTask{
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
+          override val prob: Int = 3;
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new IntEquals(children(0).asInstanceOf[IntNode], children(1).asInstanceOf[IntNode])
@@ -285,6 +305,7 @@ object SygusFileTask{
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
+          override val prob: Int = 3;
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new PrefixOf(children(0).asInstanceOf[StringNode], children(1).asInstanceOf[StringNode])
@@ -294,6 +315,7 @@ object SygusFileTask{
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
+          override val prob: Int = 3;
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new SuffixOf(children(0).asInstanceOf[StringNode], children(1).asInstanceOf[StringNode])
@@ -303,6 +325,7 @@ object SygusFileTask{
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
+          override val prob: Int = 3;
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new Contains(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[StringNode])
