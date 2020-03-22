@@ -7,26 +7,25 @@ import scala.collection.parallel.CollectionConverters._
 import trace.DebugPrints.dprintln
 
 class ProbChildrenIterator(val childrenCandidates: List[ASTNode], val childTypes: List[Types], val childrenCost: Int, val bank: scala.collection.mutable.Map[Int, List[ASTNode]]) extends Iterator[List[ASTNode]] {
-  val costs = new ProbCostIterator(childrenCost, childrenCandidates, childTypes.size)
-  var childrenLists =
-    childTypes.zip(costs.next()).map { case (t, c) => bank(c).filter(c => c.nodeType == t) }
+  val costs = ProbCosts.getCosts(childrenCost, childrenCandidates, childTypes.size)
+  var childrenLists : List[List[ASTNode]] = Nil
+
   var candidates = Array[Iterator[ASTNode]]()
+  var allExceptLast : Array[ASTNode] = Array.empty
   def resetIterators(cost: List[Int]): Unit = {
     childrenLists = childTypes.zip(cost).map { case (t, c) => bank(c).filter(c => c.nodeType == t) }
     candidates = if (childrenLists.exists(l => l.isEmpty)) childrenLists.map(l => Iterator.empty).toArray
                  else childrenLists.map(l => l.iterator).toArray
+    if (!candidates.isEmpty && candidates(0).hasNext)
+      allExceptLast = candidates.dropRight(1).map(_.next()).toArray
   }
 
   var next_child: Option[List[ASTNode]] = None
   val costsIterator = costs.iterator
 
-  candidates = childrenLists.map(l => l.iterator).toArray
-  val allExceptLast = candidates.dropRight(1).map(_.next()).toArray
-
   def getNextChild(): Option[List[ASTNode]] = {
-    next_child = None
     if (!candidates.isEmpty) {
-      while (next_child.isEmpty) {
+      while (true) {
         if (candidates.last.hasNext) {
           val children = allExceptLast.toList :+ candidates.last.next()
           return Some(children)
