@@ -20,7 +20,8 @@ object Main extends App {
   val filename = //"C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track\\univ_3_short.sl"
   //"src/test/benchmarks/too-hard/split-numbers-from-units-of-measure_2.sl"
   //"src/test/benchmarks/modified_benchmarks/returns_garbage/compare-two-strings_1.sl"
-   "src/test/benchmarks/syguscomp/name-combine-3_short.sl"
+   //"src/test/benchmarks/too-hard/strip-html-from-text-or-numbers.sl"
+    "src/test/benchmarks/too-hard/38871714.sl"
   //"C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track\\univ_2_short.sl"
    //"C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\euphony\\stackoverflow4.sl"//args(0)
   //"C:\\Users\\hila\\prime\\papers\\postdoc_papers\\partial_correctness\\figures\\count-line-breaks-in-cell.sl"
@@ -35,13 +36,13 @@ object Main extends App {
     synthesizeFromTask(task)
    }
 
-  def synthesizeFromTask(task: SygusFileTask, timeout: Int = 40) = {
+  def synthesizeFromTask(task: SygusFileTask, timeout: Int = 60) = {
     val oeManager = new InputsValuesManager()
     val enumerator = new enumeration.ProbEnumerator(task.vocab, oeManager, task.examples.map(_.input))
     //val foundPrograms: mutable.Map[List[Boolean], mutable.ListBuffer[ASTNode]] = mutable.HashMap()
     val deadline = timeout.seconds.fromNow
     val ranks = mutable.ListBuffer[RankedProgram]()
-    val t0 = System.nanoTime()
+    val t0 = System.currentTimeMillis / 1000
 
     breakable {
       for ((program, i) <- enumerator.zipWithIndex) {
@@ -74,10 +75,10 @@ object Main extends App {
         }
       }
     }
-    val t1 = System.nanoTime()
-    iprintln(s"${t1 - t0}ns")
-    iprintln(ranks.length)
-    iprintln(ranks)
+    val t1 = System.currentTimeMillis / 1000
+    iprintln(s"${t1 - t0}s")
+    //iprintln(ranks.length)
+    //iprintln(ranks)
     //val rankedProgs: List[(ASTNode, Double)] = foundPrograms.toList.flatMap { case (sat, progs) => progs.map(p => (p, ProgramRanking.ranking(p, task.examples.map(_.output), task.functionParameters.map(_._1)))) }
     ranks.reverse
     //rankedProgs.sortBy(-_._2).take(50).map(p => RankedProgram(p._1,p._2))
