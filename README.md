@@ -82,14 +82,7 @@
 |  Program                                                                                            | # Passed |
 |-----------------------------------------------------------------------------------------------------|----------|
 | Height - (str.substr _arg_0 0 (str.indexof _arg_0 " " 1))                                           | [1/2]    |                         
-| Size  -  (str.substr _arg_0 0 (str.indexof _arg_0 " " (str.indexof _arg_0 "in" 1)))                 | **[2/2]**| 
-
-* stackoverflow3.sl
-
-|  Program                                                                                            | # Passed |
-|-----------------------------------------------------------------------------------------------------|----------|
-| Height - (ite (str.suffixof " " _arg_0) "" _arg_0)                                                  | [1/3]    |                         
-| Size  -  (str.substr _arg_0 (- (str.to.int (str.++ "1" "9")) 2) (str.len _arg_0))                   | **[3/3]**| 
+| Size  -  (str.substr _arg_0 0 (str.indexof _arg_0 " " (str.indexof _arg_0 "in" 1)))                 | **[2/2]**|
 
 * stackoverflow3.sl
 
