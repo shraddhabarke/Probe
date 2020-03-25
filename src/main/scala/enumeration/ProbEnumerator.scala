@@ -25,7 +25,7 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
     res
   }
 
-  var currIter = vocab.leaves() //production rules without parameters
+  var currIter = vocab.leaves()
   var childrenIterator: Iterator[List[ASTNode]] = Iterator.single(Nil)
   var rootMaker: VocabMaker = currIter.next()
   var prevLevelProgs: mutable.ListBuffer[ASTNode] = mutable.ListBuffer()
@@ -36,33 +36,25 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
   def advanceRoot(): Boolean = {
     if (!currIter.hasNext) return false
     rootMaker = currIter.next()
-    if (computeCost(rootMaker) > costLevel) return false
-    else if (rootMaker.arity == 0 && computeCost(rootMaker) == costLevel)
+    if (rootMaker.prob > costLevel) return false
+    else if (rootMaker.arity == 0 && rootMaker.prob == costLevel)
       childrenIterator = Iterator.single(Nil)
-    else if (computeCost(rootMaker) < costLevel ) {
-      val childrenCost = costLevel - computeCost(rootMaker)
+    else if (rootMaker.prob < costLevel ) {
+      val childrenCost = costLevel - rootMaker.prob
       childrenIterator = new ProbChildrenIterator(prevLevelProgs.toList, rootMaker.childTypes, childrenCost, bank)
     }
     true
   }
+
   var costLevel = 3
   def changeLevel(): Boolean = {
     currIter = vocab.nonLeaves
     costLevel += 3
     prevLevelProgs ++= currLevelProgs
+    bank += ((currLevelProgs.head.cost) -> currLevelProgs.toList)
     currLevelProgs.clear()
     advanceRoot()
   }
-
-  def computeProgramCost(ast: ASTNode): Int = {
-    var cost = ast.cost
-    if (ast.children.size > 0) {
-      for (c <- ast.children)
-        cost += computeProgramCost(c)
-    }
-    cost
-  }
-  def computeCost(vocab: VocabMaker): Int = vocab.prob
 
   def getNextProgram(): Option[ASTNode] = {
     var res : Option[ASTNode] = None
@@ -85,10 +77,6 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
         }
       }
     currLevelProgs += res.get
-    if (!bank.contains(computeProgramCost(res.get)))
-      bank(computeProgramCost(res.get)) = List(res.get)
-    else
-      bank(computeProgramCost(res.get)) = bank(computeProgramCost(res.get)) :+ res.get
     Console.withOut(fos) { dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(",")) }
     dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(","))
     res

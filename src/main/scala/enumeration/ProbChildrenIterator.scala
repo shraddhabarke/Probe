@@ -65,15 +65,6 @@ class ProbChildrenIterator(val childrenCandidates: List[ASTNode], val childTypes
     !next_child.isEmpty
   }
 
-  def computeCost(ast: ASTNode): Int = {
-    var cost = ast.cost
-    if (ast.children.size > 0) {
-      for (c <- ast.children)
-        cost += computeCost(c)
-    }
-    cost
-  }
-
   override def next(): List[ASTNode] = {
     if (next_child.isEmpty) getChild()
     val res = next_child.get

@@ -9,7 +9,7 @@ abstract class VariableNode[T](contexts: List[Map[String,Any]]) extends ASTNode 
   }
   override lazy val code: String = name
   override val children: Iterable[ASTNode] = Iterable.empty
-  override val cost: Int = 3
+  override val cost: Int = 3 + children.toList.map(c => c.cost).sum
   def includes(varName: String): Boolean = name == varName
 }
 

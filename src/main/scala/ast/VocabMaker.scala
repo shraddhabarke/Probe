@@ -15,7 +15,6 @@ trait VocabMaker {
 class VocabFactory(val leavesMakers: List[VocabMaker], val nodeMakers: List[VocabMaker]) {
   def leaves(): Iterator[VocabMaker] = leavesMakers.iterator
   def nonLeaves(): Iterator[VocabMaker] = nodeMakers.iterator
-  //def nonLeaves(): Iterator[VocabMaker] = nodeMakers.iterator.toSeq.sortWith(_.prob > _.prob).iterator
 }
 
 object VocabFactory{
