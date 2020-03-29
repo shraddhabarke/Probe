@@ -8,7 +8,8 @@ trait ASTNode {
   val terms: Int
   val children: Iterable[ASTNode]
   def includes(varName: String): Boolean
-  val cost: Int
+  var prior: Int
+  def cost: Int
 }
 
 trait StringNode extends ASTNode {

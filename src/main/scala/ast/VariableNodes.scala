@@ -9,12 +9,12 @@ abstract class VariableNode[T](contexts: List[Map[String,Any]]) extends ASTNode 
   }
   override lazy val code: String = name
   override val children: Iterable[ASTNode] = Iterable.empty
-  override val cost: Int = 3 + children.toList.map(c => c.cost).sum
+  override def cost: Int = prior + children.toList.map(c => c.cost).sum
   def includes(varName: String): Boolean = name == varName
 }
 
-class StringVariable(val name: String, contexts: List[Map[String,Any]]) extends VariableNode[String](contexts) with StringNode
+class StringVariable(val name: String, contexts: List[Map[String,Any]], var prior: Int = 0) extends VariableNode[String](contexts) with StringNode
 
-class IntVariable(val name: String, contexts: List[Map[String,Any]]) extends VariableNode[Int](contexts) with IntNode
+class IntVariable(val name: String, contexts: List[Map[String,Any]], var prior: Int = 0) extends VariableNode[Int](contexts) with IntNode
 
-class BoolVariable(val name: String, contexts: List[Map[String,Any]]) extends VariableNode[Boolean](contexts) with BoolNode
+class BoolVariable(val name: String, contexts: List[Map[String,Any]], var prior: Int = 0) extends VariableNode[Boolean](contexts) with BoolNode

@@ -80,8 +80,7 @@ object SygusFileTask{
             override val childTypes: List[Types] = Nil
             override val returnType: Types = retType
             override val head: String = lit.toString
-            override val prob: Int = 3;
-            override def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = new IntLiteral(lit, contexts.length)
+            override def apply(children: List[ASTNode], contexts: List[Map[String,Any]], prior: Int): ASTNode = new IntLiteral(lit, contexts.length, prior)
           }
         }
         case Types.String => {
@@ -91,9 +90,8 @@ object SygusFileTask{
             override val childTypes: List[Types] = Nil
             override val returnType: Types = retType
             override val head: String = '"' + lit + '"'
-            override val prob: Int = 3;
 
-            override def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = new StringLiteral(lit, contexts.length)
+            override def apply(children: List[ASTNode], contexts: List[Map[String,Any]], prior: Int): ASTNode = new StringLiteral(lit, contexts.length, prior)
           }
         }
         case Types.Bool => {
@@ -103,9 +101,8 @@ object SygusFileTask{
             override val childTypes: List[Types] = Nil
             override val returnType: Types = retType
             override val head: String = lit.toString
-            override val prob: Int = 3;
 
-            override def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = new BoolLiteral(lit, contexts.length)
+            override def apply(children: List[ASTNode], contexts: List[Map[String,Any]], prior: Int): ASTNode = new BoolLiteral(lit, contexts.length, prior)
           }
         }
       }
@@ -117,9 +114,8 @@ object SygusFileTask{
           override val childTypes: List[Types] = Nil
           override val returnType: Types = retType
           override val head: String = lit.toString
-          override val prob: Int = 3;
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = new IntLiteral(lit, contexts.length)
+          override def apply(children: List[ASTNode], contexts: List[Map[String,Any]], prior: Int): ASTNode = new IntLiteral(lit, contexts.length, prior)
         }
       }
       else {
@@ -130,27 +126,24 @@ object SygusFileTask{
           override val childTypes: List[Types] = Nil
           override val returnType: Types = retType
           override val head: String = varname
-          override val prob: Int = 3;
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode = new IntVariable(varname,contexts)
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]], prior: Int): ASTNode = new IntVariable(varname,contexts, prior)
         }
         case Types.String => new VocabMaker {
           override val arity: Int = 0
           override val childTypes: List[Types] = Nil
           override val returnType: Types = retType
           override val head: String = varname
-          override val prob: Int = 3;
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode = new StringVariable(varname,contexts)
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]], prior: Int): ASTNode = new StringVariable(varname,contexts, prior)
         }
         case Types.Bool => new VocabMaker {
           override val arity: Int = 0
           override val childTypes: List[Types] = Nil
           override val returnType: Types = retType
           override val head: String = varname
-          override val prob: Int = 3;
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode = new BoolVariable(varname,contexts)
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]], prior: Int): ASTNode = new BoolVariable(varname,contexts, prior)
         }
       }
     }
@@ -165,170 +158,154 @@ object SygusFileTask{
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
-          override val prob: Int = 3;
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-            new StringConcat(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[StringNode])
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]], prior: Int): ASTNode =
+            new StringConcat(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[StringNode],prior)
         }
         case ("str.replace",Types.String,3) => new VocabMaker {
           override val arity: Int = 3
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
-          override val prob: Int = 3;
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-            new StringReplace(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[StringNode],children(2).asInstanceOf[StringNode])
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]], prior: Int): ASTNode =
+            new StringReplace(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[StringNode],children(2).asInstanceOf[StringNode],prior)
         }
         case ("str.at",Types.String,2) => new VocabMaker {
           override val arity: Int = 2
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
-          override val prob: Int = 3;
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-            new StringAt(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[IntNode])
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]], prior: Int): ASTNode =
+            new StringAt(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[IntNode], prior)
         }
         case ("int.to.str",Types.String,1) => new VocabMaker {
           override val arity: Int = 1
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
-          override val prob: Int = 3;
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-            new IntToString(children(0).asInstanceOf[IntNode])
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]], prior: Int): ASTNode =
+            new IntToString(children(0).asInstanceOf[IntNode], prior)
         }
         case ("ite",Types.String,3) => new VocabMaker {
           override val arity: Int = 3
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
-          override val prob: Int = 3;
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-            new StringITE(children(0).asInstanceOf[BoolNode],children(1).asInstanceOf[StringNode],children(2).asInstanceOf[StringNode])
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]], prior: Int): ASTNode =
+            new StringITE(children(0).asInstanceOf[BoolNode],children(1).asInstanceOf[StringNode],children(2).asInstanceOf[StringNode],prior)
         }
         case ("str.substr",Types.String,3) => new VocabMaker {
           override val arity: Int = 3
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
-          override val prob: Int = 3;
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-            new Substring(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[IntNode],children(2).asInstanceOf[IntNode])
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]], prior: Int): ASTNode =
+            new Substring(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[IntNode],children(2).asInstanceOf[IntNode],prior)
         }
         case ("+",Types.Int,2) => new VocabMaker {
           override val arity: Int = 2
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
-          override val prob: Int = 3;
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-            new IntAddition(children(0).asInstanceOf[IntNode],children(1).asInstanceOf[IntNode])
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]],prior: Int): ASTNode =
+            new IntAddition(children(0).asInstanceOf[IntNode],children(1).asInstanceOf[IntNode],prior)
         }
         case ("-", Types.Int,2) => new VocabMaker {
           override val arity: Int = 2
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
-          override val prob: Int = 3;
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-            new IntSubtraction(children(0).asInstanceOf[IntNode],children(1).asInstanceOf[IntNode])
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]],prior: Int): ASTNode =
+            new IntSubtraction(children(0).asInstanceOf[IntNode],children(1).asInstanceOf[IntNode],prior)
         }
         case ("str.len",Types.Int,1) => new VocabMaker {
           override val arity: Int = 1
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
-          override val prob: Int = 3;
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-            new StringLength(children(0).asInstanceOf[StringNode])
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]], prior: Int): ASTNode =
+            new StringLength(children(0).asInstanceOf[StringNode],prior)
+
         }
         case ("str.to.int",Types.Int,1) => new VocabMaker {
           override val arity: Int = 1
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
-          override val prob: Int = 3;
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-            new StringToInt(children(0).asInstanceOf[StringNode])
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]],prior: Int): ASTNode =
+            new StringToInt(children(0).asInstanceOf[StringNode],prior)
         }
         case ("ite",Types.Int,3) => new VocabMaker {
           override val arity: Int = 3
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
-          override val prob: Int = 3;
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-            new IntITE(children(0).asInstanceOf[BoolNode],children(1).asInstanceOf[IntNode],children(2).asInstanceOf[IntNode])
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]],prior: Int): ASTNode =
+            new IntITE(children(0).asInstanceOf[BoolNode],children(1).asInstanceOf[IntNode],children(2).asInstanceOf[IntNode],prior)
         }
         case ("str.indexof",Types.Int,3) => new VocabMaker {
           override val arity: Int = 3
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
-          override val prob: Int = 3;
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-            new IndexOf(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[StringNode],children(2).asInstanceOf[IntNode])
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]],prior: Int): ASTNode =
+            new IndexOf(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[StringNode],children(2).asInstanceOf[IntNode],prior)
         }
         case ("<=", Types.Bool,2) => new VocabMaker {
           override val arity: Int = 2
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
-          override val prob: Int = 3;
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-            new IntLessThanEq(children(0).asInstanceOf[IntNode], children(1).asInstanceOf[IntNode])
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]],prior: Int): ASTNode =
+            new IntLessThanEq(children(0).asInstanceOf[IntNode], children(1).asInstanceOf[IntNode],prior)
         }
         case ("=",Types.Bool,2) => new VocabMaker {
           override val arity: Int = 2
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
-          override val prob: Int = 3;
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-            new IntEquals(children(0).asInstanceOf[IntNode], children(1).asInstanceOf[IntNode])
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]],prior: Int): ASTNode =
+            new IntEquals(children(0).asInstanceOf[IntNode], children(1).asInstanceOf[IntNode],prior)
         }
         case ("str.prefixof", Types.Bool,2) => new VocabMaker {
           override val arity: Int = 2
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
-          override val prob: Int = 3;
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-            new PrefixOf(children(0).asInstanceOf[StringNode], children(1).asInstanceOf[StringNode])
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]],prior: Int): ASTNode =
+            new PrefixOf(children(0).asInstanceOf[StringNode], children(1).asInstanceOf[StringNode],prior)
         }
         case ("str.suffixof", Types.Bool,2) => new VocabMaker {
           override val arity: Int = 2
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
-          override val prob: Int = 3;
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-            new SuffixOf(children(0).asInstanceOf[StringNode], children(1).asInstanceOf[StringNode])
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]],prior: Int): ASTNode =
+            new SuffixOf(children(0).asInstanceOf[StringNode], children(1).asInstanceOf[StringNode],prior)
         }
         case ("str.contains", Types.Bool,2) => new VocabMaker {
           override val arity: Int = 2
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
           override val head: String = funcName
-          override val prob: Int = 3;
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-            new Contains(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[StringNode])
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]],prior: Int): ASTNode =
+            new Contains(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[StringNode],prior)
         }
       }
     }

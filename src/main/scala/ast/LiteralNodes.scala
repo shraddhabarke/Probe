@@ -9,17 +9,14 @@ abstract class LiteralNode[T](numContexts: Int) extends ASTNode{
   override val children: Iterable[ASTNode] = Iterable.empty
   def includes(varName: String): Boolean = false
 }
-class StringLiteral(val value: String, numContexts: Int) extends LiteralNode[String](numContexts) with StringNode{
+class StringLiteral(val value: String, numContexts: Int, var prior: Int = 0) extends LiteralNode[String](numContexts) with StringNode{
   override lazy val code: String = '"' + value + '"' //escape?
-  override val cost: Int = 3 + children.toList.map(c => c.cost).sum
-}
+  override def cost: Int = prior + children.toList.map(c => c.cost).sum}
 
-class IntLiteral(val value: Int, numContexts: Int) extends LiteralNode[Int](numContexts) with IntNode{
+class IntLiteral(val value: Int, numContexts: Int, var prior: Int = 0) extends LiteralNode[Int](numContexts) with IntNode{
   override lazy val code: String = value.toString
-  override val cost: Int = 3 + children.toList.map(c => c.cost).sum
-}
+  override def cost: Int = prior + children.toList.map(c => c.cost).sum}
 
-class BoolLiteral(val value: Boolean, numContexts: Int) extends LiteralNode[Boolean](numContexts) with BoolNode {
+class BoolLiteral(val value: Boolean, numContexts: Int, var prior: Int = 0) extends LiteralNode[Boolean](numContexts) with BoolNode {
   override lazy val code: String = value.toString
-  override val cost: Int = 3 + children.toList.map(c => c.cost).sum
-}
+  override def cost: Int = prior + children.toList.map(c => c.cost).sum}
