@@ -3,16 +3,13 @@ package enumeration
 import ast.ASTNode
 import ast.Types.Types
 
-import scala.collection.parallel.CollectionConverters._
-import trace.DebugPrints.dprintln
-
-class ProbChildrenIterator(val childrenCandidates: List[ASTNode], val childTypes: List[Types], val childrenCost: Int, val bank: scala.collection.mutable.Map[Int, List[ASTNode]]) extends Iterator[List[ASTNode]] {
+class ProbChildrenIterator(val childrenCandidates: List[ASTNode], val childTypes: List[Types], val childrenCost: Double, val bank: scala.collection.mutable.Map[Double, List[ASTNode]]) extends Iterator[List[ASTNode]] {
   val costs = ProbCosts.getCosts(childrenCost, childrenCandidates, childTypes.size)
   var childrenLists : List[List[ASTNode]] = Nil
 
   var candidates = Array[Iterator[ASTNode]]()
   var allExceptLast : Array[ASTNode] = Array.empty
-  def resetIterators(cost: List[Int]): Unit = {
+  def resetIterators(cost: List[Double]): Unit = {
     childrenLists = childTypes.zip(cost).map { case (t, c) => bank(c).filter(c => c.nodeType == t) }
     candidates = if (childrenLists.exists(l => l.isEmpty)) childrenLists.map(l => Iterator.empty).toArray
                  else childrenLists.map(l => l.iterator).toArray

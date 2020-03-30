@@ -35,7 +35,7 @@ object Main extends App {
     synthesizeFromTask(task)
    }
 
-  def synthesizeFromTask(task: SygusFileTask, timeout: Int = 60) = {
+  def synthesizeFromTask(task: SygusFileTask, timeout: Int = 100000) = {
     val oeManager = new InputsValuesManager()
     //val enumerator = new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input))
     val enumerator = new enumeration.ProbEnumerator(task.vocab, oeManager, task)

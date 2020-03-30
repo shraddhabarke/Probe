@@ -18,29 +18,32 @@ trait TernaryOpNode[T] extends ASTNode{
   def includes(varName: String): Boolean = arg0.includes(varName) || arg1.includes(varName) || arg2.includes(varName)
 }
 
-class StringReplace(val arg0: StringNode, val arg1: StringNode, val arg2: StringNode, var prior: Int = 0) extends TernaryOpNode[String] with StringNode {
+class StringReplace(val arg0: StringNode, val arg1: StringNode, val arg2: StringNode) extends TernaryOpNode[String] with StringNode {
   override def doOp(a0: Any, a1: Any, a2: Any): String =
     StringUtils.replaceOnce(a0.asInstanceOf[String],a1.asInstanceOf[String],a2.asInstanceOf[String])
 
   override lazy val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(str.replace "," ",")")
-  override def cost: Int = prior + children.toList.map(c => c.cost).sum
+  override var prior: Double = 1
+  override def cost: Double = prior + children.toList.map(c => c.cost).sum
 }
 
-class StringITE(val arg0: BoolNode, val arg1: StringNode, val arg2: StringNode, var prior: Int = 0) extends TernaryOpNode[String] with StringNode {
+class StringITE(val arg0: BoolNode, val arg1: StringNode, val arg2: StringNode) extends TernaryOpNode[String] with StringNode {
   override def doOp(a0: Any, a1: Any, a2: Any): String = if (a0.asInstanceOf[Boolean]) a1.asInstanceOf[String] else a2.asInstanceOf[String]
 
   override lazy val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(ite "," ",")")
-  override def cost: Int = prior + children.toList.map(c => c.cost).sum
+  override var prior: Double = 1
+  override def cost: Double = prior + children.toList.map(c => c.cost).sum
 }
 
-class IntITE(val arg0: BoolNode, val arg1: IntNode, val arg2: IntNode, var prior: Int = 0) extends TernaryOpNode[Int] with IntNode {
+class IntITE(val arg0: BoolNode, val arg1: IntNode, val arg2: IntNode) extends TernaryOpNode[Int] with IntNode {
   override def doOp(a0: Any, a1: Any, a2: Any): Int = if (a0.asInstanceOf[Boolean]) a1.asInstanceOf[Int] else a2.asInstanceOf[Int]
 
   override lazy val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(ite "," ",")")
-  override def cost: Int = prior + children.toList.map(c => c.cost).sum
+  override var prior: Double = 1
+  override def cost: Double = prior + children.toList.map(c => c.cost).sum
 }
 
-class Substring(val arg0: StringNode, val arg1: IntNode, val arg2: IntNode, var prior: Int = 0) extends TernaryOpNode[String] with StringNode {
+class Substring(val arg0: StringNode, val arg1: IntNode, val arg2: IntNode) extends TernaryOpNode[String] with StringNode {
   override def doOp(a0: Any, a1: Any, a2: Any): String = {
     //replacing eusolver def with the cvc4/z3 def:
     //if (i.strictlyNegative() || j.strictlyNegative() || i >= s_len)
@@ -56,10 +59,12 @@ class Substring(val arg0: StringNode, val arg1: IntNode, val arg2: IntNode, var 
   }
 
   override lazy val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(str.substr "," ",")")
-  override def cost: Int = prior + children.toList.map(c => c.cost).sum}
+  override var prior: Double = 1
+  override def cost: Double = prior + children.toList.map(c => c.cost).sum}
 
-class IndexOf(val arg0: StringNode, val arg1: StringNode, val arg2: IntNode, var prior: Int = 0) extends TernaryOpNode[Int] with IntNode {
+class IndexOf(val arg0: StringNode, val arg1: StringNode, val arg2: IntNode) extends TernaryOpNode[Int] with IntNode {
   override def doOp(a0: Any, a1: Any, a2: Any): Int = a0.asInstanceOf[String].indexOf(a1.asInstanceOf[String],a2.asInstanceOf[Int])
 
   override lazy val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(str.indexof "," ",")")
-  override def cost: Int = prior + children.toList.map(c => c.cost).sum}
+  override var prior: Double = 1
+  override def cost: Double = prior + children.toList.map(c => c.cost).sum}
