@@ -1,5 +1,5 @@
-import ast.{IntAddition, IntLiteral, IntVariable, Types}
-import enumeration.ChildrenIterator
+import ast.{ASTNode, IntAddition, IntLiteral, IntNode, IntVariable, Types}
+import enumeration.{ChildrenIterator, ProbChildrenIterator}
 import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
 import org.junit.Assert._
@@ -43,6 +43,50 @@ class ChildrenIteratorsTests extends JUnitSuite {
     assertEquals(List("(+ x 1)","2"), chit.next().map(_.code))
     assertEquals(List("(+ x 1)","3"), chit.next().map(_.code))
     assertEquals(List("(+ x 1)","(+ x 1)"), chit.next().map(_.code))
+    assertFalse(chit.hasNext)
+  }
+
+  @Test def costRollingThreeChildren: Unit = {
+    val nodes = List(
+      new IntNode {
+        override val values: List[Int] = List(0)
+        override val code: String = "0"
+        override val height: Int = 0
+        override val terms: Int = 1
+        override val children: Iterable[ASTNode] = Nil
+        override def includes(varName: String): Boolean = false
+        override var prior: Double = 1.0
+        override def cost: Double = 1.0
+      }, new IntNode {
+        override val values: List[Int] = List(1)
+        override val code: String = "1"
+        override val height: Int = 0
+        override val terms: Int = 1
+        override val children: Iterable[ASTNode] = Nil
+        override def includes(varName: String): Boolean = false
+        override var prior: Double = 1.0
+        override def cost: Double = 1.0
+      }, new IntNode {
+        override val values: List[Int] = List(2)
+        override val code: String = "x"
+        override val height: Int = 0
+        override val terms: Int = 1
+        override val children: Iterable[ASTNode] = Nil
+        override def includes(varName: String): Boolean = false
+        override var prior: Double = 1.1
+        override def cost: Double = 1.1
+      }
+    )
+    val chit = new ProbChildrenIterator(nodes,List(Types.Int,Types.Int,Types.Int),3)
+    assertTrue(chit.hasNext)
+    assertEquals(List("0","0","0"), chit.next.map(_.code))
+    assertEquals(List("0","0","1"), chit.next.map(_.code))
+    assertEquals(List("0","1","0"), chit.next.map(_.code))
+    assertEquals(List("0","1","1"), chit.next.map(_.code))
+    assertEquals(List("1","0","0"), chit.next.map(_.code))
+    assertEquals(List("1","0","1"), chit.next.map(_.code))
+    assertEquals(List("1","1","0"), chit.next.map(_.code))
+    assertEquals(List("1","1","1"), chit.next.map(_.code))
     assertFalse(chit.hasNext)
   }
 
