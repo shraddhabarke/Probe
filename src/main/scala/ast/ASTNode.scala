@@ -1,5 +1,7 @@
 package ast
 
+import enumeration.ProbUpdate
+
 trait ASTNode {
   val nodeType: Types.Types
   val values: List[Any]
@@ -8,8 +10,16 @@ trait ASTNode {
   val terms: Int
   val children: Iterable[ASTNode]
   def includes(varName: String): Boolean
-  var prior: Double
-  def cost: Double
+  //var prior: Double
+  private var _cost : Option[Double] = None
+  def cost: Double = {
+    if (_cost.isEmpty) renewCost()
+    _cost.get
+  }
+  def renewCost(): Unit = {
+    children.foreach(_.renewCost)
+    _cost = Some(ProbUpdate.getRootPrior(this) + children.map(c => c.cost).sum)
+  }
 }
 
 trait StringNode extends ASTNode {

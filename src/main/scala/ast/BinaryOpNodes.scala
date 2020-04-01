@@ -20,8 +20,7 @@ class StringConcat(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNod
     strLhs + strRhs
   }
   override lazy val code: String = "(str.++ " + lhs.code + " " + rhs.code + ")"
-  override var prior: Double = 1
-  override def cost: Double = prior + children.toList.map(c => c.cost).sum}
+  }
 
 class StringAt(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNode[String] with StringNode {
   override def doOp(l: Any, r: Any): String = {
@@ -32,55 +31,48 @@ class StringAt(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNode[Strin
   }
 
   override lazy val code: String = "(str.at " + lhs.code + " " + rhs.code + ")"
-  override var prior: Double = 1
-  override def cost: Double = prior + children.toList.map(c => c.cost).sum}
+  }
 
 class IntAddition(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Int] with IntNode {
   override def doOp(l: Any, r: Any): Int = l.asInstanceOf[Int] + r.asInstanceOf[Int]
 
   override lazy val code: String = "(+ " + lhs.code + " " + rhs.code + ")"
-  override var prior: Double = 1
-  override def cost: Double = prior + children.toList.map(c => c.cost).sum
+
 }
 
 class IntSubtraction(val lhs: IntNode, val rhs: IntNode)extends BinaryOpNode[Int] with IntNode {
   override def doOp(l: Any, r: Any): Int = l.asInstanceOf[Int] - r.asInstanceOf[Int]
 
   override lazy val code: String = "(- " + lhs.code + " " + rhs.code + ")"
-  override var prior: Double = 1
-  override def cost: Double = prior + children.toList.map(c => c.cost).sum
+
 }
 
 class IntLessThanEq(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boolean] with BoolNode {
   override def doOp(l: Any, r: Any): Boolean = l.asInstanceOf[Int] <= r.asInstanceOf[Int]
 
   override lazy val code: String = "(<= " + lhs.code + " " + rhs.code + ")"
-  override var prior: Double = 1
-  override def cost: Double = prior + children.toList.map(c => c.cost).sum
+
 }
 
 class IntEquals(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boolean] with BoolNode {
   override def doOp(l: Any, r: Any): Boolean = l.asInstanceOf[Int] == r.asInstanceOf[Int]
 
   override lazy val code: String = "(= " + lhs.code + " " + rhs.code + ")"
-  override var prior: Double = 1
-  override def cost: Double = prior + children.toList.map(c => c.cost).sum
+
 }
 
 class PrefixOf(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Boolean] with BoolNode {
   override def doOp(l: Any, r: Any): Boolean = r.asInstanceOf[String].startsWith(l.asInstanceOf[String])
 
   override lazy val code: String = "(str.prefixof " + lhs.code + " " + rhs.code + ")"
-  override var prior: Double = 1
-  override def cost: Double = prior + children.toList.map(c => c.cost).sum
+
 }
 
 class SuffixOf(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Boolean] with BoolNode {
   override def doOp(l: Any, r: Any): Boolean = r.asInstanceOf[String].endsWith(l.asInstanceOf[String])
 
   override lazy val code: String = "(str.suffixof " + lhs.code + " " + rhs.code + ")"
-  override var prior: Double = 1
-  override def cost: Double = prior + children.toList.map(c => c.cost).sum
+
 
 }
 
@@ -88,6 +80,5 @@ class Contains(val lhs: StringNode, val rhs: StringNode) extends  BinaryOpNode[B
   override def doOp(l: Any, r: Any): Boolean = l.asInstanceOf[String].contains(r.asInstanceOf[String])
 
   override lazy val code: String = "(str.contains " + lhs.code + " " + rhs.code + ")"
-  override var prior: Double = 1
-  override def cost: Double = prior + children.toList.map(c => c.cost).sum
+
 }

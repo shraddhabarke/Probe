@@ -55,7 +55,6 @@ class ChildrenIteratorsTests extends JUnitSuite {
         override val terms: Int = 1
         override val children: Iterable[ASTNode] = Nil
         override def includes(varName: String): Boolean = false
-        override var prior: Double = 1.0
         override def cost: Double = 1.0
       }, new IntNode {
         override val values: List[Int] = List(1)
@@ -64,7 +63,6 @@ class ChildrenIteratorsTests extends JUnitSuite {
         override val terms: Int = 1
         override val children: Iterable[ASTNode] = Nil
         override def includes(varName: String): Boolean = false
-        override var prior: Double = 1.0
         override def cost: Double = 1.0
       }, new IntNode {
         override val values: List[Int] = List(2)
@@ -73,7 +71,6 @@ class ChildrenIteratorsTests extends JUnitSuite {
         override val terms: Int = 1
         override val children: Iterable[ASTNode] = Nil
         override def includes(varName: String): Boolean = false
-        override var prior: Double = 1.1
         override def cost: Double = 1.1
       }
     )
