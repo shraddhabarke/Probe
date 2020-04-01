@@ -129,7 +129,7 @@ object ShellMain extends App {
         case "quit" | "q" => sys.exit(0)
         case "synt" | "s" => {
           cprintln("Synthesizing... (Press any key to interrupt)", infoColor)
-          val results = Main.synthesizeFromTask(task, 40).take(5)
+          val results = Main.synthesizeFromTask(task, 40).take(50)
           if (results.isEmpty) {
             cprintln("No results, try waiting a bit longer", infoColor)
           } else {

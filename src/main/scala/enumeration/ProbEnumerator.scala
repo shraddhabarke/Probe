@@ -35,22 +35,17 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
   var rootMaker: VocabMaker = currIter.next()
   var prevLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
-  //var bank = scala.collection.mutable.Map[Double,List[ASTNode]]()
-  var prevMap = scala.collection.mutable.Map[VocabMaker, Double]()
-  var costMap = scala.collection.mutable.Map[VocabMaker, Double]()
-  val vocabList = vocab.nonLeaves().toList ++ vocab.leaves().toList
-  vocabList.map(c => costMap(c) = 1)
-
   val fos = new FileOutputStream(new File("out_prog.txt"))
 
   def advanceRoot(): Boolean = {
+    val rootCost = rootMaker.rootCost
     if (!currIter.hasNext) return false
     rootMaker = currIter.next()
-    //if (costMap(rootMaker) > costLevel) return false
-    if (rootMaker.arity == 0 && costMap(rootMaker) == costLevel) //TODO: account for quantization here
+    if (rootCost > costLevel) return false
+    if (rootMaker.arity == 0 && rootCost == costLevel)
       childrenIterator = Iterator.single(Nil)
-    else if (costMap(rootMaker) < costLevel ) {
-      val childrenCost = costLevel - costMap(rootMaker)
+    else if (rootCost < costLevel) {
+      val childrenCost = costLevel - rootCost
       childrenIterator = new ProbChildrenIterator(prevLevelProgs.toList, rootMaker.childTypes, childrenCost)
     }
     true
@@ -74,8 +69,7 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
   }
   def changeLevel(): Boolean = {
     currIter = vocab.nonLeaves
-    val changed = ProbUpdate.updatePriors(currLevelProgs, costMap, task)
-    //prevLevelProgs ++= currLevelProgs
+    val changed = ProbUpdate.updatePriors(currLevelProgs, task)
     //this should probably happen all at once in the sorted insertion
     val oldPrev = prevLevelProgs
     prevLevelProgs = new ArrayBuffer()
@@ -88,69 +82,22 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
         case InsertionPoint(insertionPoint) => prevLevelProgs.insert(insertionPoint,p)
       }
     }
-    //for (p <- currLevelProgs) renewCosts, sortedinsert
+
     for (p <- currLevelProgs) {
       if (changed) p.renewCost()
       sortedInsert(p)
     }
-    //for (p <- prevLevelProgs) renewCosts, sortedinsert
+
     for (p <- oldPrev) {
       if (changed) p.renewCost()
       sortedInsert(p)
     }
 
-    costLevel += 0.5
-
-
-//    if (diff.isEmpty) {}
-//    else {
-//      //TODO: start enumeration from scratch? set costLevel to 0?
-//      prevLevelProgs = renewCosts(diff, prevLevelProgs)
-//      renewBank(bank)
-//    }
-    //prevLevelProgs.map(p => updateBank(p))
+    costLevel += 1
     currLevelProgs.clear()
+    Console.withOut(fos) { dprintln(ProbUpdate.priors) }
     advanceRoot()
   }
-
-//  def renewCosts(diff: scala.collection.mutable.Map[VocabMaker, Double], oldProgs: ArrayBuffer[ASTNode]): ArrayBuffer[ASTNode] = {
-//    val diffString = diff.keys.toList.map(d => d.head)
-//    val changedProgs = oldProgs.toList.filter(p => p.code.replaceAll("\\)", "").replaceAll("\\(", "").split(" ").toList.intersect(diffString).nonEmpty)
-//    val diffMap = diffString.zip(diff).toMap
-//    changedProgs.map(p => updateCost(p, diffMap))
-//
-//    def updateCost(ast: ASTNode, diffMap: Map[String,(VocabMaker, Double)]): Unit = {
-//      val change = ast.code.replaceAll("\\)", "").replaceAll("\\(", "").split(" ").toList.head
-//      if(diffString.contains(change))
-//        //ast.prior = diffMap(change)._2
-//      if (ast.children.size > 0) {
-//        ast.children.map(c => updateCost(c, diffMap))
-//      }
-//    }
-//    changedProgs.to(collection.mutable.ArrayBuffer)
-//    //TODO: Optimize this (the updated ASTNode value propagates)
-//  }
-
-//  def updateBank(program: ASTNode): Unit = {
-//    if (!bank.contains(program.cost))
-//      bank(program.cost) = List(program)
-//    else {
-//      val prevKey = bank.find(_._2 == program).map(_._1)
-//      if (prevKey == None && !bank(program.cost).contains(program)) {
-//        bank(program.cost) = bank(program.cost) :+ program
-//      }
-//      else if (!bank(program.cost).contains(program) && program.cost != prevKey.get) {
-//          bank(prevKey.get) = bank(prevKey.get).filter(_ != program)
-//          bank(program.cost) = bank(program.cost) :+ program
-//      }
-//    }
-//  }
-
-//  def renewBank(bank: mutable.Map[Double,List[ASTNode]]): mutable.Map[Double,List[ASTNode]] = {
-//    val programs = bank.values
-//    programs.map(p => p.distinct.map(c => updateBank(c)))
-//    bank
-//  }
 
   def getNextProgram(): Option[ASTNode] = {
     var res : Option[ASTNode] = None

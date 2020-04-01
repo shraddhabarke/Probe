@@ -10,16 +10,16 @@ object ProbUpdate {
 
   def getAllNodeTypes(program: ASTNode): Set[Class[_]] = program.children.flatMap(c => getAllNodeTypes(c)).toSet + program.getClass
 
-  def updatePriors(currLevelProgs: mutable.ArrayBuffer[ASTNode], prevMap: mutable.Map[ast.VocabMaker, Double], task: SygusFileTask): Boolean = {
+  def updatePriors(currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask): Boolean = {
     var diff = mutable.Map[Class[_], Double]()
     for (program <- currLevelProgs) {
       val exampleFit = task.fit(program)
-      if (exampleFit._1 > 2) {
+      if (exampleFit._1 > 0) {
         val fit: Double = (exampleFit._1.toFloat) / exampleFit._2
         val changed: Set[Class[_]] = getAllNodeTypes(program)
 
         for(changedNode <- changed) {
-          val newPrior = fit * priors(changedNode)
+          val newPrior = (1 - fit) * priors(changedNode)
           if (!diff.contains(changedNode) || diff(changedNode) > newPrior) //TODO: is this the right direction? Always get smaller?
             diff += (changedNode -> newPrior)
         }
@@ -30,6 +30,7 @@ object ProbUpdate {
   }
 
   def getRootPrior(node: ASTNode): Double = priors(node.getClass)
+
   val priors = mutable.Map[Class[_],Double](
     classOf[StringConcat] -> 1,
     classOf[StringAt] -> 1,
