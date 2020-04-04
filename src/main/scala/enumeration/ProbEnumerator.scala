@@ -53,28 +53,15 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
 
   var costLevel = 1.0
 
-  def searchBy[A,B](list: ArrayBuffer[A], elem: A, f: A => B)(implicit ord: Ordering[B]): SearchResult =
-    binarySearch(list, elem, 0, list.length,f)(ord)
-  @tailrec
-  private def binarySearch[A,B](list: ArrayBuffer[A], elem: A, from: Int, to: Int, f: A => B)
-                                  (implicit ord: Ordering[B]): SearchResult = {
-    if (to == from) InsertionPoint(from) else {
-      val idx = from+(to-from-1)/2
-      math.signum(ord.compare(f(elem), f(list(idx)))) match {
-        case -1 => binarySearch(list, elem, from, idx, f)(ord)
-        case  1 => binarySearch(list, elem, idx + 1, to, f)(ord)
-        case  _ => Found(idx)
-      }
-    }
-  }
   def changeLevel(): Boolean = {
+    val searchObj = new SearchUtils()
     currIter = vocab.nonLeaves
     val changed = ProbUpdate.updatePriors(currLevelProgs, task)
     //this should probably happen all at once in the sorted insertion
     val oldPrev = prevLevelProgs
     prevLevelProgs = new ArrayBuffer()
     def sortedInsert(p: ASTNode) = {
-      searchBy[ASTNode,Double](prevLevelProgs,p,prog => prog.cost) match {
+      searchObj.searchBy[ASTNode,Double](prevLevelProgs,p,prog => prog.cost) match {
         case Found(foundIndex) => {
           //val numEqual = prevLevelProgs.drop(foundIndex).zipWithIndex.takeWhile(p2 => p2._1.cost <= p.cost).last._2 + 1
           prevLevelProgs.insert(foundIndex /*+ numEqual*/,p)
