@@ -35,7 +35,8 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
   var rootMaker: VocabMaker = currIter.next()
   var prevLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
-  val fos = new FileOutputStream(new File("out_prog.txt"))
+  //val fos = new FileOutputStream(new File("out_prog.txt"))
+  var maxFit: Double = 0
 
   def advanceRoot(): Boolean = {
     val rootCost = rootMaker.rootCost
@@ -56,7 +57,8 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
   def changeLevel(): Boolean = {
     val searchObj = new SearchUtils()
     currIter = vocab.nonLeaves
-    val changed = ProbUpdate.updatePriors(currLevelProgs, task)
+    val changed = ProbUpdate.updatePriors(maxFit, currLevelProgs, task)
+    maxFit = ProbUpdate.maximumFit
     //this should probably happen all at once in the sorted insertion
     val oldPrev = prevLevelProgs
     prevLevelProgs = new ArrayBuffer()
@@ -72,7 +74,7 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
 
     for (p <- currLevelProgs) {
       if (changed) p.renewCost()
-      sortedInsert(p)
+      sortedInsert(p) //this won't be needed.
     }
 
     for (p <- oldPrev) {
@@ -82,7 +84,7 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
 
     costLevel += 1
     currLevelProgs.clear()
-    Console.withOut(fos) { dprintln(ProbUpdate.priors) }
+    //Console.withOut(fos) { dprintln(ProbUpdate.priors) }
     advanceRoot()
   }
 
@@ -107,7 +109,7 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
         }
       }
     currLevelProgs += res.get
-    Console.withOut(fos) { dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(",")) }
+    //Console.withOut(fos) { dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(",")) }
     dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(","))
     res
   }
