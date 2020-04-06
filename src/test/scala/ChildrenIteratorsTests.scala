@@ -54,7 +54,9 @@ class ChildrenIteratorsTests extends JUnitSuite {
         override val height: Int = 0
         override val terms: Int = 1
         override val children: Iterable[ASTNode] = Nil
+
         override def includes(varName: String): Boolean = false
+
         override def cost: Int = 1
       }, new IntNode {
         override val values: List[Int] = List(1)
@@ -62,7 +64,9 @@ class ChildrenIteratorsTests extends JUnitSuite {
         override val height: Int = 0
         override val terms: Int = 1
         override val children: Iterable[ASTNode] = Nil
+
         override def includes(varName: String): Boolean = false
+
         override def cost: Int = 1
       }, new IntNode {
         override val values: List[Int] = List(2)
@@ -70,10 +74,13 @@ class ChildrenIteratorsTests extends JUnitSuite {
         override val height: Int = 0
         override val terms: Int = 1
         override val children: Iterable[ASTNode] = Nil
+
         override def includes(varName: String): Boolean = false
+
         override def cost: Int = 1
       }
     )
+    /*
     val chit = new ProbChildrenIterator(nodes,List(Types.Int,Types.Int,Types.Int, Types.Int),4)
     assertTrue(chit.hasNext)
     assertEquals(List("0","0","0","0"), chit.next.map(_.code))
@@ -93,6 +100,6 @@ class ChildrenIteratorsTests extends JUnitSuite {
     assertEquals(List("1","1","1","0"), chit.next.map(_.code))
     assertEquals(List("1","1","1","1"), chit.next.map(_.code))
     assertFalse(chit.hasNext)
+*/
   }
-
 }

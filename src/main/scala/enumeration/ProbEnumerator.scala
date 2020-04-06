@@ -15,6 +15,7 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
   override def toString(): String = "enumeration.Enumerator"
 
   var nextProgram: Option[ASTNode] = None
+
   override def hasNext: Boolean = if (!nextProgram.isEmpty) true
   else {
     nextProgram = getNextProgram()
@@ -35,6 +36,7 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
   var rootMaker: VocabMaker = currIter.next()
   var prevLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
+  var bank = scala.collection.mutable.Map[Int, List[ASTNode]]()
   //val fos = new FileOutputStream(new File("out_prog.txt"))
   var maxFit: Double = 0
 
@@ -47,7 +49,7 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
       childrenIterator = Iterator.single(Nil)
     else if (rootCost < costLevel) {
       val childrenCost = costLevel - rootCost
-      childrenIterator = new ProbChildrenIterator(prevLevelProgs.toList, rootMaker.childTypes, childrenCost)
+      childrenIterator = new ProbChildrenIterator(prevLevelProgs.toList, rootMaker.childTypes, childrenCost, bank)
     }
     true
   }
@@ -55,60 +57,56 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
   var costLevel = 10
 
   def changeLevel(): Boolean = {
-    val searchObj = new SearchUtils()
     currIter = vocab.nonLeaves
     val changed = ProbUpdate.updatePriors(maxFit, currLevelProgs, task)
     maxFit = ProbUpdate.maximumFit
-    //this should probably happen all at once in the sorted insertion
-    val oldPrev = prevLevelProgs
-    prevLevelProgs = new ArrayBuffer()
-    def sortedInsert(p: ASTNode) = {
-      searchObj.searchBy[ASTNode,Double](prevLevelProgs,p,prog => prog.cost) match {
-        case Found(foundIndex) => {
-          //val numEqual = prevLevelProgs.drop(foundIndex).zipWithIndex.takeWhile(p2 => p2._1.cost <= p.cost).last._2 + 1
-          prevLevelProgs.insert(foundIndex /*+ numEqual*/,p)
-        }
-        case InsertionPoint(insertionPoint) => prevLevelProgs.insert(insertionPoint,p)
-      }
-    }
-
-    for (p <- currLevelProgs) {
-      if (changed) p.renewCost()
-      sortedInsert(p) //this won't be needed.
-    }
-
-    for (p <- oldPrev) {
-      if (changed) p.renewCost()
-      sortedInsert(p)
-    }
-
+    prevLevelProgs ++= currLevelProgs
+    if (changed) prevLevelProgs.map(p => renewBank(p))
     costLevel += 1
     currLevelProgs.clear()
-    //Console.withOut(fos) { dprintln(ProbUpdate.priors) }
     advanceRoot()
   }
 
+  def renewBank(p: ASTNode): Unit = {
+      p.renewCost()
+      if (!bank.contains(p.cost))
+        bank(p.cost) = List(p) //if it's a new cost.
+      else {
+        val prevKey = bank.find(_._2 == p).map(_._1) //remove it from previous cost bucket.
+        if (prevKey != None && !bank(p.cost).contains(p) && p.cost != prevKey.get) {
+          //if it's not a new program and if it's not in the correct cost bucket,
+          //remove it from the previous bucket and later add to the new bucket.
+          bank(prevKey.get) = bank(prevKey.get).filter(_ != p)
+        }
+        bank(p.cost) = bank(p.cost) :+ p
+      }
+    }
+
   def getNextProgram(): Option[ASTNode] = {
-    var res : Option[ASTNode] = None
-    while(res.isEmpty) {
-        if (childrenIterator.hasNext) {
-          val children = childrenIterator.next()
-            if (rootMaker.canMake(children)) {
-              val prog = rootMaker(children, task.examples.map(_.input))
-              if (oeManager.isRepresentative(prog))
-                res = Some(prog)
-          }
-        }
-        else if (currIter.hasNext) {
-          if (!advanceRoot())
-            return None
-        }
-        else {
-          if (!changeLevel())
-            return None
+    var res: Option[ASTNode] = None
+    while (res.isEmpty) {
+      if (childrenIterator.hasNext) {
+        val children = childrenIterator.next()
+        if (rootMaker.canMake(children)) {
+          val prog = rootMaker(children, task.examples.map(_.input))
+          if (oeManager.isRepresentative(prog))
+            res = Some(prog)
         }
       }
+      else if (currIter.hasNext) {
+        if (!advanceRoot())
+          return None
+      }
+      else {
+        if (!changeLevel())
+          return None
+      }
+    }
     currLevelProgs += res.get
+    if (!bank.contains(res.get.cost))
+      bank(res.get.cost) = List(res.get)
+    else
+      bank(res.get.cost) = bank(res.get.cost) :+ res.get
     //Console.withOut(fos) { dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(",")) }
     dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(","))
     res
