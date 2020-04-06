@@ -36,7 +36,7 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
   var rootMaker: VocabMaker = null
   var prevLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
-  var bank = scala.collection.mutable.Map[Int, List[ASTNode]]()//mutable.ArrayBuffer[ASTNode]]()
+  var bank = scala.collection.mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
   //val fos = new FileOutputStream(new File("out_prog.txt"))
   var maxFit: Double = 0
   var costLevel = 10
@@ -82,15 +82,15 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
   def renewBank(p: ASTNode): Unit = {
       p.renewCost()
       if (!bank.contains(p.cost))
-        bank(p.cost) = List(p) //if it's a new cost.
+        bank(p.cost) = ArrayBuffer(p) //if it's a new cost.
       else {
         val prevKey = bank.find(_._2 == p).map(_._1) //remove it from previous cost bucket.
         if (prevKey != None && !bank(p.cost).contains(p) && p.cost != prevKey.get) {
           //if it's not a new program and if it's not in the correct cost bucket,
           //remove it from the previous bucket and later add to the new bucket.
-          bank(prevKey.get) = bank(prevKey.get).filter(_ != p)
+          bank(prevKey.get).filterInPlace(_ != p)
         }
-        bank(p.cost) = bank(p.cost) :+ p
+        bank(p.cost) +=  p
       }
     }
 
@@ -116,9 +116,9 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
     }
     currLevelProgs += res.get
     if (!bank.contains(res.get.cost))
-      bank(res.get.cost) = List(res.get)
+      bank(res.get.cost) = ArrayBuffer(res.get)
     else
-      bank(res.get.cost) = bank(res.get.cost) :+ res.get
+      bank(res.get.cost) += res.get
     //Console.withOut(fos) { dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(",")) }
     dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(","))
     res
