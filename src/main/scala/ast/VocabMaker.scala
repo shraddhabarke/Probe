@@ -9,7 +9,7 @@ trait VocabMaker {
   val returnType: Types
   val head: String
   protected val nodeType: Class[_ <: ASTNode]
-  def rootCost: Double = ProbUpdate.priors(nodeType)
+  def rootCost: Int = ProbUpdate.priors(nodeType)
   def canMake(children: List[ASTNode]): Boolean = children.length == arity && children.zip(childTypes).forall(pair => pair._1.nodeType == pair._2)
   def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode
 }

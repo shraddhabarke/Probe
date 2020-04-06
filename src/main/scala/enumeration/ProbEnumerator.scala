@@ -52,7 +52,7 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
     true
   }
 
-  var costLevel = 1.0
+  var costLevel = 10
 
   def changeLevel(): Boolean = {
     val searchObj = new SearchUtils()

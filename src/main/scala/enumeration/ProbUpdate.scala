@@ -17,11 +17,13 @@ object ProbUpdate {
 
   def updatePriors(maxFit: Double, currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask): Boolean = {
     maximumFit = maxFit
-    var diff = mutable.Map[Class[_], Double]()
+    var diff = mutable.Map[Class[_], Int]()
+
     for (program <- currLevelProgs) {
       val exampleFit = task.fit(program)
       if (exampleFit._1 > 0) {
         val fit: Double = (exampleFit._1.toFloat) / exampleFit._2
+        //TODO: do we only want to consider when fit is greater than 20%?
         if (maximumFit < fit) {
           Console.withOut(fos) {dprintln(fit, program.code)}
           val changed: Set[Class[_]] = getAllNodeTypes(program)
@@ -29,7 +31,7 @@ object ProbUpdate {
           for (changedNode <- changed) {
             val newPrior = (1 - fit) * priors(changedNode)
             if (!diff.contains(changedNode) || diff(changedNode) > newPrior) //TODO: is this the right direction? Always get smaller?
-              diff += (changedNode -> newPrior)
+              diff += (changedNode -> roundValue(newPrior))
           }
           maximumFit = fit
         }
@@ -41,32 +43,34 @@ object ProbUpdate {
     !diff.isEmpty
   }
 
-  def getRootPrior(node: ASTNode): Double = priors(node.getClass)
+  def getRootPrior(node: ASTNode): Int = priors(node.getClass)
 
-  val priors = mutable.Map[Class[_], Double](
-    classOf[StringConcat] -> 1,
-    classOf[StringAt] -> 1,
-    classOf[IntAddition] -> 1,
-    classOf[IntSubtraction] -> 1,
-    classOf[IntLessThanEq] -> 1,
-    classOf[IntEquals] -> 1,
-    classOf[PrefixOf] -> 1,
-    classOf[SuffixOf] -> 1,
-    classOf[Contains] -> 1,
-    classOf[StringLiteral] -> 0.0625,
-    classOf[IntLiteral] -> 1,
-    classOf[BoolLiteral] -> 1,
-    classOf[StringReplace] -> 0.25,
-    classOf[StringITE] -> 1,
-    classOf[IntITE] -> 1,
-    classOf[Substring] -> 1,
-    classOf[IndexOf] -> 1,
-    classOf[IntToString] -> 1,
-    classOf[StringToInt] -> 1,
-    classOf[StringLength] -> 1,
-    classOf[StringVariable] -> 0.5,
-    classOf[IntVariable] -> 1,
-    classOf[BoolVariable] -> 1,
+  def roundValue(num: Double): Int = if (num - num.toInt > 0.5) math.ceil(num).toInt else math.floor(num).toInt
+
+  val priors = mutable.Map[Class[_], Int](
+    classOf[StringConcat] -> 10,
+    classOf[StringAt] -> 10,
+    classOf[IntAddition] -> 10,
+    classOf[IntSubtraction] -> 10,
+    classOf[IntLessThanEq] -> 10,
+    classOf[IntEquals] -> 10,
+    classOf[PrefixOf] -> 10,
+    classOf[SuffixOf] -> 10,
+    classOf[Contains] -> 10,
+    classOf[StringLiteral] -> 10,
+    classOf[IntLiteral] -> 10,
+    classOf[BoolLiteral] -> 10,
+    classOf[StringReplace] -> 10,
+    classOf[StringITE] -> 10,
+    classOf[IntITE] -> 10,
+    classOf[Substring] -> 10,
+    classOf[IndexOf] -> 10,
+    classOf[IntToString] -> 10,
+    classOf[StringToInt] -> 10,
+    classOf[StringLength] -> 10,
+    classOf[StringVariable] -> 10,
+    classOf[IntVariable] -> 10,
+    classOf[BoolVariable] -> 10,
   )
 
 }

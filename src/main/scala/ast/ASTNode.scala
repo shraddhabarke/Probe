@@ -10,8 +10,8 @@ trait ASTNode {
   val terms: Int
   val children: Iterable[ASTNode]
   def includes(varName: String): Boolean
-  private var _cost : Option[Double] = None
-  def cost: Double = {
+  private var _cost : Option[Int] = None
+  def cost: Int = {
     if (_cost.isEmpty) renewCost()
     _cost.get
   }
