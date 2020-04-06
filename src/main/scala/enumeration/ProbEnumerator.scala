@@ -31,14 +31,27 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
     res
   }
 
-  var currIter: Iterator[VocabMaker] = vocab.leaves()
-  var childrenIterator: Iterator[List[ASTNode]] = Iterator.single(Nil)
-  var rootMaker: VocabMaker = currIter.next()
+  var currIter: Iterator[VocabMaker] = null
+  var childrenIterator: Iterator[List[ASTNode]] = null
+  var rootMaker: VocabMaker = null
   var prevLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
-  var bank = scala.collection.mutable.Map[Int, List[ASTNode]]()
+  var bank = scala.collection.mutable.Map[Int, List[ASTNode]]()//mutable.ArrayBuffer[ASTNode]]()
   //val fos = new FileOutputStream(new File("out_prog.txt"))
   var maxFit: Double = 0
+  var costLevel = 10
+  resetEnumeration()
+
+  def resetEnumeration():  Unit = {
+    currIter = vocab.leaves()
+    childrenIterator = Iterator.single(Nil)
+    rootMaker = currIter.next()
+    prevLevelProgs.clear()
+    currLevelProgs.clear()
+    bank.clear()
+    maxFit = 0
+    costLevel = 10
+  }
 
   def advanceRoot(): Boolean = {
     val rootCost = rootMaker.rootCost
@@ -54,7 +67,6 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
     true
   }
 
-  var costLevel = 10
 
   def changeLevel(): Boolean = {
     currIter = vocab.nonLeaves
