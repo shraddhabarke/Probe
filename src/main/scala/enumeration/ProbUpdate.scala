@@ -21,9 +21,8 @@ object ProbUpdate {
 
     for (program <- currLevelProgs) {
       val exampleFit = task.fit(program)
-      if (exampleFit._1 > 0) {
         val fit: Double = (exampleFit._1.toFloat) / exampleFit._2
-        //TODO: do we only want to consider when fit is greater than 20%?
+        if (fit > 0.2) {
         if (maximumFit < fit) {
           Console.withOut(fos) {dprintln(fit, program.code)}
           val changed: Set[Class[_]] = getAllNodeTypes(program)

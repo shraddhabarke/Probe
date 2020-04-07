@@ -6,8 +6,6 @@ import java.io.{File, FileOutputStream}
 
 import sygus.SygusFileTask
 
-import scala.annotation.tailrec
-import scala.collection.Searching.{Found, InsertionPoint, SearchResult}
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
@@ -31,35 +29,39 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
     res
   }
 
-  var currIter: Iterator[VocabMaker] = null
+  var currIter: Iterator[VocabMaker] = vocab.leaves()
   var childrenIterator: Iterator[List[ASTNode]] = null
-  var rootMaker: VocabMaker = null
+  var rootMaker: VocabMaker = currIter.next()
   var prevLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var bank = scala.collection.mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
-  //val fos = new FileOutputStream(new File("out_prog.txt"))
+  val fos = new FileOutputStream(new File("out.txt"))
   var maxFit: Double = 0
   var costLevel = 10
   resetEnumeration()
 
   def resetEnumeration():  Unit = {
-    currIter = vocab.leaves()
     childrenIterator = Iterator.single(Nil)
-    rootMaker = currIter.next()
     prevLevelProgs.clear()
     currLevelProgs.clear()
+    oeManager.clear()
     bank.clear()
     maxFit = 0
-    costLevel = 10
   }
 
   def advanceRoot(): Boolean = {
-    val rootCost = rootMaker.rootCost
     if (!currIter.hasNext) return false
     rootMaker = currIter.next()
-    if (rootCost > costLevel) return false
+    val rootCost = rootMaker.rootCost
     if (rootMaker.arity == 0 && rootCost == costLevel)
       childrenIterator = Iterator.single(Nil)
+    else if (rootMaker.arity == 0 && rootCost > costLevel) {
+      if (!currIter.hasNext) {
+        currIter = vocab.leaves()
+        costLevel += 1
+        advanceRoot() }
+      else advanceRoot()
+    }
     else if (rootCost < costLevel) {
       val childrenCost = costLevel - rootCost
       childrenIterator = new ProbChildrenIterator(prevLevelProgs.toList, rootMaker.childTypes, childrenCost, bank)
@@ -67,32 +69,20 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
     true
   }
 
-
   def changeLevel(): Boolean = {
     currIter = vocab.nonLeaves
     val changed = ProbUpdate.updatePriors(maxFit, currLevelProgs, task)
-    maxFit = ProbUpdate.maximumFit
     prevLevelProgs ++= currLevelProgs
-    if (changed) prevLevelProgs.map(p => renewBank(p))
+    if (changed) {
+      resetEnumeration()
+      currIter = vocab.leaves()
+      costLevel = 0
+    }
+    maxFit = ProbUpdate.maximumFit
     costLevel += 1
     currLevelProgs.clear()
     advanceRoot()
   }
-
-  def renewBank(p: ASTNode): Unit = {
-      p.renewCost()
-      if (!bank.contains(p.cost))
-        bank(p.cost) = ArrayBuffer(p) //if it's a new cost.
-      else {
-        val prevKey = bank.find(_._2 == p).map(_._1) //remove it from previous cost bucket.
-        if (prevKey != None && !bank(p.cost).contains(p) && p.cost != prevKey.get) {
-          //if it's not a new program and if it's not in the correct cost bucket,
-          //remove it from the previous bucket and later add to the new bucket.
-          bank(prevKey.get).filterInPlace(_ != p)
-        }
-        bank(p.cost) +=  p
-      }
-    }
 
   def getNextProgram(): Option[ASTNode] = {
     var res: Option[ASTNode] = None
@@ -119,7 +109,7 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
       bank(res.get.cost) = ArrayBuffer(res.get)
     else
       bank(res.get.cost) += res.get
-    //Console.withOut(fos) { dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(",")) }
+    Console.withOut(fos) { dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(",")) }
     dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(","))
     res
   }

@@ -21,7 +21,7 @@ object Main extends App {
   //"src/test/benchmarks/modified_benchmarks/returns_garbage/compare-two-strings_1.sl"
    //"src/test/benchmarks/too-hard/strip-html-from-text-or-numbers.sl"
   //"src/test/benchmarks/too-hard/exceljet2.sl"
-    "src/test/benchmarks/too-hard/30732554.sl"
+    "src/test/benchmarks/too-hard/41503046.sl"
   //"C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track\\univ_2_short.sl"
    //"C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\euphony\\stackoverflow4.sl"//args(0)
   //"C:\\Users\\hila\\prime\\papers\\postdoc_papers\\partial_correctness\\figures\\count-line-breaks-in-cell.sl"
@@ -36,7 +36,7 @@ object Main extends App {
     synthesizeFromTask(task)
    }
 
-  def synthesizeFromTask(task: SygusFileTask, timeout: Int = 60) = {
+  def synthesizeFromTask(task: SygusFileTask, timeout: Int = 60000) = {
     val oeManager = new InputsValuesManager()
     //val enumerator = new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input))
     val enumerator = new enumeration.ProbEnumerator(task.vocab, oeManager, task)
@@ -119,5 +119,5 @@ object Main extends App {
 //  val (prog, _) = interpret(filename, "(str.++ firstname lastname)").get
 //  println(prog.code)
 //  println(prog.values)
-  synthesize(filename).foreach(pr => println((pr.program.code,pr.rank)))
+  synthesize(filename).foreach(pr => println((pr.program.code,pr.rank,pr.program.values)))
 }

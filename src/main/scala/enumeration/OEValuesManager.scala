@@ -4,6 +4,7 @@ import scala.collection.mutable
 
 trait OEValuesManager {
   def isRepresentative(program: ast.ASTNode): Boolean
+  def clear(): Unit
 }
 class InputsValuesManager extends OEValuesManager {
   val classValues = mutable.HashSet[List[Any]]()
@@ -16,4 +17,6 @@ class InputsValuesManager extends OEValuesManager {
       case ex: Exception => false
     }
   }
+
+  override def clear(): Unit = classValues.clear()
 }
