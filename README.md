@@ -68,14 +68,20 @@
 |  Program                                                                                            | # Passed |
 |-----------------------------------------------------------------------------------------------------|----------|
 | Height - (ite (str.contains (str.replace _arg_0 " " "") " ") (str.indexof _arg_0 " " 1) (+ 1 1))    | [2/3]    |                       
-| Size  -  (+ 1 (- (str.to.int (str.++ (int.to.str 1) (int.to.str 1))) (str.indexof _arg_0 " " 1)))   | [2/3]    |                                       
+| Size  -  (+ 1 (- (str.to.int (str.++ (int.to.str 1) (int.to.str 1))) (str.indexof _arg_0 " " 1)))   | [2/3]    |                       
+| Prob - ((+ -1 (+ -1 (+ -1 (+ (str.indexof _arg_0 " " 1) (str.to.int (str.at (int.to.str             | **[3/3]**|
+|(str.indexof _arg_0 " " (+ 1 (str.indexof _arg_0 " " 1)))) 1))))))  [65s]                            |          |
+
 
 * exceljet2.sl
 
 |  Program                                                                                            | # Passed |
 |-----------------------------------------------------------------------------------------------------|----------|
 | Height - (str.substr (str.replace _arg_0 "." _arg_0) (str.len _arg_0) (str.indexof _arg_0 "." 1))   | [1/3]    |                       
-| Size  -  (str.substr _arg_0 (+ -1 (+ -1 (+ -1 (str.len _arg_0)))) (str.len _arg_0))                 | [2/3]    |                                            
+| Size  -  (str.substr _arg_0 (+ -1 (+ -1 (+ -1 (str.len _arg_0)))) (str.len _arg_0))                 | [2/3]    |    
+| Prob - ((str.substr _arg_0 (+ 1 (str.indexof _arg_0 "." (+ -1 (+ -1 (+ -1 (str.len (str.substr      |**[3/3]** |
+| _arg_0 1 (str.len (str.++ _arg_0 _arg_0))))))))) (str.len (str.++ _arg_0 _arg_0))) [11s]            |          |
+
 * stackoverflow1.sl
 
 |  Program                                                                                            | # Passed |
