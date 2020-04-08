@@ -30,6 +30,7 @@ class EnumeratorTests  extends JUnitSuite{
     assertEquals(3,vocab.nonLeaves().size)
     val enumerator = new Enumerator(vocab, new OEValuesManager {
       override def isRepresentative(program: ASTNode): Boolean = true
+      override def clear(): Unit = {}
     },Map("input"->0) :: Nil)
     assertTrue(enumerator.hasNext)
     assertEquals("input",enumerator.next().code)
@@ -72,6 +73,7 @@ class EnumeratorTests  extends JUnitSuite{
     assertEquals("(+ input (+ input input))", enumerator.next().code)
     assertTrue(enumerator.hasNext)
   }
+
 
   @Test def enumerateVocabWithOE: Unit = {
     val grammar =
@@ -165,6 +167,7 @@ class EnumeratorTests  extends JUnitSuite{
     )
     val enumerator = new Enumerator(vocab, new OEValuesManager {
       override def isRepresentative(program: ASTNode): Boolean = true
+      override def clear(): Unit = {}
     },Map.empty[String,AnyRef] :: Nil)
     assertEquals("0",enumerator.next().code)
     assertEquals("1",enumerator.next().code)

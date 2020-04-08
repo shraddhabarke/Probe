@@ -36,7 +36,7 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var bank = scala.collection.mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
   val fos = new FileOutputStream(new File("out.txt"))
-  var maxFit: Double = 0
+  var fits = Set[Any]()
   var costLevel = 10
   resetEnumeration()
 
@@ -46,7 +46,6 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
     currLevelProgs.clear()
     oeManager.clear()
     bank.clear()
-    maxFit = 0
   }
 
   def advanceRoot(): Boolean = {
@@ -71,14 +70,14 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
 
   def changeLevel(): Boolean = {
     currIter = vocab.nonLeaves.toList.sortBy(_.rootCost).toIterator
-    val changed = ProbUpdate.updatePriors(maxFit, currLevelProgs, task)
+    val changed = ProbUpdate.updatePriors(fits, currLevelProgs, task)
     prevLevelProgs ++= currLevelProgs
     if (changed) {
       resetEnumeration()
       currIter = vocab.leaves()
       costLevel = 0
     }
-    maxFit = ProbUpdate.maximumFit
+    fits = ProbUpdate.fitExamples
     costLevel += 1
     currLevelProgs.clear()
     advanceRoot()
@@ -110,7 +109,7 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
     else
       bank(res.get.cost) += res.get
     Console.withOut(fos) { dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(",")) }
-    //dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(","))
+    dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(","))
     res
   }
 }

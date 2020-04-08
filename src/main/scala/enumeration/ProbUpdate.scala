@@ -11,40 +11,46 @@ import scala.collection.mutable
 
 object ProbUpdate {
   val fos = new FileOutputStream(new File("out_prog.txt"))
+
   def getAllNodeTypes(program: ASTNode): Set[Class[_]] = program.children.flatMap(c => getAllNodeTypes(c)).toSet + program.getClass
 
   var maximumFit: Double = 0
-
-  def updatePriors(maxFit: Double, currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask): Boolean = {
-    maximumFit = maxFit
+  var fitExamples = Set[Any]()
+  var newPrior = 0.0
+  def updatePriors(fits: Set[Any], currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask): Boolean = {
+    fitExamples = fits
     var diff = mutable.Map[Class[_], Int]()
-
     for (program <- currLevelProgs) {
       val exampleFit = task.fit(program)
-        val fit: Double = (exampleFit._1.toFloat) / exampleFit._2
-        if (fit > 0.2) {
-        if (maximumFit < fit) {
-          Console.withOut(fos) {dprintln(fit, program.code)}
+      val fit: Double = (exampleFit._1.toFloat) / exampleFit._2
+      if (fit > 0.2) {
+        val examplesPassed = task.fitExs(program)
+        val union = fitExamples.union(examplesPassed)
+        //if (fitExamples.isEmpty || fitExamples.size != examplesPassed.size || (fitExamples.size == examplesPassed.size && union.size > fitExamples.size)) {
+        if(fitExamples.isEmpty || !examplesPassed.diff(fitExamples).isEmpty) {
+          fitExamples = union
           val changed: Set[Class[_]] = getAllNodeTypes(program)
-
           for (changedNode <- changed) {
-            val newPrior = (1 - fit) * priors(changedNode)
+            val factorDecrease = (fitExamples.size.toFloat) / exampleFit._2
+            newPrior = (1.0 - factorDecrease) * priors(changedNode)
+            Console.withOut(fos) { dprintln(fit, program.code, factorDecrease) }
             if (!diff.contains(changedNode) || diff(changedNode) > newPrior) //TODO: is this the right direction? Always get smaller?
               diff += (changedNode -> roundValue(newPrior))
           }
-          maximumFit = fit
         }
       }
     }
 
     diff.foreach(d => priors += d) //update the priors
-    Console.withOut(fos) {dprintln(priors)}
+    Console.withOut(fos) {
+      dprintln(priors)
+    }
     !diff.isEmpty
   }
 
   def getRootPrior(node: ASTNode): Int = priors(node.getClass)
 
-  def roundValue(num: Double): Int = if (num - num.toInt > 0.5) math.ceil(num).toInt else math.floor(num).toInt
+  def roundValue(num: Double): Int = if (num == 0) 1 else if (num - num.toInt > 0.5) math.ceil(num).toInt else math.floor(num).toInt
 
   val priors = mutable.Map[Class[_], Int](
     classOf[StringConcat] -> 10,
