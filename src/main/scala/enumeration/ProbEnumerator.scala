@@ -70,7 +70,7 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
   }
 
   def changeLevel(): Boolean = {
-    currIter = vocab.nonLeaves
+    currIter = vocab.nonLeaves.toList.sortBy(_.rootCost).toIterator
     val changed = ProbUpdate.updatePriors(maxFit, currLevelProgs, task)
     prevLevelProgs ++= currLevelProgs
     if (changed) {
@@ -110,7 +110,7 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
     else
       bank(res.get.cost) += res.get
     Console.withOut(fos) { dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(",")) }
-    dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(","))
+    //dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(","))
     res
   }
 }
