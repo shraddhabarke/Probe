@@ -36,7 +36,7 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var bank = scala.collection.mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
   val fos = new FileOutputStream(new File("out.txt"))
-  var fits = Set[Any]()
+  var fits = Set[Set[Any]]()
   var costLevel = 10
   resetEnumeration()
 
@@ -52,15 +52,8 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
     if (!currIter.hasNext) return false
     rootMaker = currIter.next()
     val rootCost = rootMaker.rootCost
-    if (rootMaker.arity == 0 && rootCost == costLevel)
+    if (rootMaker.arity == 0)
       childrenIterator = Iterator.single(Nil)
-    else if (rootMaker.arity == 0 && rootCost > costLevel) {
-      if (!currIter.hasNext) {
-        currIter = vocab.leaves()
-        costLevel += 1
-        advanceRoot() }
-      else advanceRoot()
-    }
     else if (rootCost < costLevel) {
       val childrenCost = costLevel - rootCost
       childrenIterator = new ProbChildrenIterator(prevLevelProgs.toList, rootMaker.childTypes, childrenCost, bank)
@@ -74,7 +67,7 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
     prevLevelProgs ++= currLevelProgs
     if (changed) {
       resetEnumeration()
-      currIter = vocab.leaves()
+      currIter = vocab.leaves().toList.sortBy(_.rootCost).toIterator
       costLevel = 0
     }
     fits = ProbUpdate.fitExamples

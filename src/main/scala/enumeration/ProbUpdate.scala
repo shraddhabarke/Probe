@@ -15,9 +15,10 @@ object ProbUpdate {
   def getAllNodeTypes(program: ASTNode): Set[Class[_]] = program.children.flatMap(c => getAllNodeTypes(c)).toSet + program.getClass
 
   var maximumFit: Double = 0
-  var fitExamples = Set[Any]()
+  var fitExamples = Set[Set[Any]]()
   var newPrior = 0.0
-  def updatePriors(fits: Set[Any], currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask): Boolean = {
+
+  def updatePriors(fits: Set[Set[Any]], currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask): Boolean = {
     fitExamples = fits
     var diff = mutable.Map[Class[_], Int]()
     for (program <- currLevelProgs) {
@@ -25,22 +26,19 @@ object ProbUpdate {
       val fit: Double = (exampleFit._1.toFloat) / exampleFit._2
       if (fit > 0.2) {
         val examplesPassed = task.fitExs(program)
-        val union = fitExamples.union(examplesPassed)
-        //if (fitExamples.isEmpty || fitExamples.size != examplesPassed.size || (fitExamples.size == examplesPassed.size && union.size > fitExamples.size)) {
-        if(fitExamples.isEmpty || !examplesPassed.diff(fitExamples).isEmpty) {
+        val union = fitExamples + examplesPassed
+        if (fitExamples.isEmpty || !fitExamples.contains(examplesPassed)) {
           fitExamples = union
           val changed: Set[Class[_]] = getAllNodeTypes(program)
           for (changedNode <- changed) {
-            val factorDecrease = (fitExamples.size.toFloat) / exampleFit._2
-            newPrior = (1.0 - factorDecrease) * priors(changedNode)
-            Console.withOut(fos) { dprintln(fit, program.code, factorDecrease) }
-            if (!diff.contains(changedNode) || diff(changedNode) > newPrior) //TODO: is this the right direction? Always get smaller?
+            newPrior = (1.0 - fit) * priors(changedNode)
+            if (!diff.contains(changedNode) || diff(changedNode) > newPrior)
               diff += (changedNode -> roundValue(newPrior))
           }
+          Console.withOut(fos) { dprintln(fit, program.code, examplesPassed) }
         }
       }
     }
-
     diff.foreach(d => priors += d) //update the priors
     Console.withOut(fos) {
       dprintln(priors)
