@@ -1,16 +1,12 @@
 package enumeration
 
-import ast.ASTNode
-
 object ProbCosts{
-  def getCosts(childrenCost: Double, candidateChildren: List[ASTNode], childrenArity: Int): List[List[Int]] = {
-    val childrenCosts = candidateChildren.map(c => c.cost)
+  def getCosts(childrenCost: Double, childrenCosts: List[Int], childrenArity: Int): List[List[Int]] = {
     var candidateCosts = List[List[Int]]()
 
-    val combinations = childrenCosts.toList.combinations(childrenArity).toList.filter(c => c.sum == childrenCost)
-    candidateCosts = combinations.map(c => c.permutations.toList).flatten
+    val combinations = (childrenCosts ++ childrenCosts ++ childrenCosts).combinations(childrenArity).filter(c => c.sum == childrenCost)
+    candidateCosts = combinations.flatMap(c => c.permutations).toList
     candidateCosts = candidateCosts.distinct
     candidateCosts
   }
-
 }

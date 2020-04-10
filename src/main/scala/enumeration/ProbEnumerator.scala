@@ -31,7 +31,6 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
 
   var currIter: Iterator[VocabMaker] = null
   var childrenIterator: Iterator[List[ASTNode]] = null
-  var prevLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var bank = scala.collection.mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
   val fos = new FileOutputStream(new File("out.txt"))
@@ -43,7 +42,6 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
   def resetEnumeration():  Unit = {
     currIter = vocab.leaves().toList.sortBy(_.rootCost).toIterator
     childrenIterator = Iterator.single(Nil)
-    prevLevelProgs.clear()
     currLevelProgs.clear()
     oeManager.clear()
     bank.clear()
@@ -57,15 +55,22 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
       childrenIterator = Iterator.single(Nil)
     else if (rootCost < costLevel) {
       val childrenCost = costLevel - rootCost
-      childrenIterator = new ProbChildrenIterator(prevLevelProgs.toList, rootMaker.childTypes, childrenCost, bank)
+      childrenIterator = new ProbChildrenIterator(rootMaker.childTypes, childrenCost, bank)
     }
     true
+  }
+
+  def updateBank(program: ASTNode): Unit = {
+    if (!bank.contains(program.cost))
+      bank(program.cost) = ArrayBuffer(program)
+    else
+      bank(program.cost) += program
   }
 
   def changeLevel(): Boolean = {
     currIter = vocab.nonLeaves.toList.sortBy(_.rootCost).toIterator
     val changed = ProbUpdate.updatePriors(fits, currLevelProgs, task)
-    prevLevelProgs ++= currLevelProgs
+    currLevelProgs.map(c => updateBank(c))
     if (changed) {
       resetEnumeration()
       costLevel = 0
@@ -97,12 +102,8 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
       }
     }
     currLevelProgs += res.get
-    if (!bank.contains(res.get.cost))
-      bank(res.get.cost) = ArrayBuffer(res.get)
-    else
-      bank(res.get.cost) += res.get
     Console.withOut(fos) { dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(",")) }
-    dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(","))
+    //dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(","))
     res
   }
 }
