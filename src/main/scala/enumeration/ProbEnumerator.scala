@@ -29,9 +29,8 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
     res
   }
 
-  var currIter: Iterator[VocabMaker] = vocab.leaves()
+  var currIter: Iterator[VocabMaker] = null
   var childrenIterator: Iterator[List[ASTNode]] = null
-  var rootMaker: VocabMaker = currIter.next()
   var prevLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var bank = scala.collection.mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
@@ -39,8 +38,10 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
   var fits = Set[Set[Any]]()
   var costLevel = 10
   resetEnumeration()
+  var rootMaker: VocabMaker = currIter.next()
 
   def resetEnumeration():  Unit = {
+    currIter = vocab.leaves().toList.sortBy(_.rootCost).toIterator
     childrenIterator = Iterator.single(Nil)
     prevLevelProgs.clear()
     currLevelProgs.clear()
@@ -67,7 +68,6 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
     prevLevelProgs ++= currLevelProgs
     if (changed) {
       resetEnumeration()
-      currIter = vocab.leaves().toList.sortBy(_.rootCost).toIterator
       costLevel = 0
     }
     fits = ProbUpdate.fitExamples
