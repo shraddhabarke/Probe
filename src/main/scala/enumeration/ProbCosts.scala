@@ -1,11 +1,11 @@
 package enumeration
 
 object ProbCosts{
-  def getCosts(childrenCost: Double, childrenCosts: List[Int], childrenArity: Int): List[List[Int]] = {
-    var candidateCosts = List[List[Int]]()
+  def getCosts(childrenCost: Double, childrenCosts: Array[Int], childrenArity: Int): Array[Array[Int]] = {
+    var candidateCosts = Array[Array[Int]]()
 
     val combinations = (childrenCosts ++ childrenCosts ++ childrenCosts).combinations(childrenArity).filter(c => c.sum == childrenCost)
-    candidateCosts = combinations.flatMap(c => c.permutations).toList
+    candidateCosts = combinations.flatMap(c => c.permutations).toArray
     candidateCosts = candidateCosts.distinct
     candidateCosts
   }

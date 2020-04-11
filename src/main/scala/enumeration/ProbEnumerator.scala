@@ -67,11 +67,27 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
       bank(program.cost) += program
   }
 
+  def renewBank(p: ASTNode): Unit = {
+    p.renewCost()
+    if (!bank.contains(p.cost))
+      bank(p.cost) = ArrayBuffer(p) //if it's a new cost.
+    else {
+      val prevKey = bank.find(_._2 == p).map(_._1) //remove it from previous cost bucket.
+      if (prevKey != None && p.cost != prevKey.get) {
+        //if it's not a new program and if it's not in the correct cost bucket,
+        //remove it from the previous bucket and later add to the new bucket.
+        bank(prevKey.get) = bank(prevKey.get).filter(_ != p)
+      }
+      bank(p.cost) = bank(p.cost) :+ p
+    }
+  }
+
   def changeLevel(): Boolean = {
     currIter = vocab.nonLeaves.toList.sortBy(_.rootCost).toIterator
     val changed = ProbUpdate.updatePriors(fits, currLevelProgs, task)
     currLevelProgs.map(c => updateBank(c))
     if (changed) {
+      bank.values.flatten.map(c => renewBank(c))
       resetEnumeration()
       costLevel = 0
     }

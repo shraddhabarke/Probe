@@ -6,14 +6,14 @@ import ast.Types.Types
 import scala.collection.mutable
 
 class ProbChildrenIterator(val childTypes: List[Types], val childrenCost: Int, val bank: scala.collection.mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]) extends Iterator[List[ASTNode]] {
-  val childrenCosts = bank.keys.toList
+  val childrenCosts = bank.keys.toArray
 
   val costs = ProbCosts.getCosts(childrenCost, childrenCosts, childTypes.size)
   var childrenLists : List[List[ASTNode]] = Nil
 
   var candidates = Array[Iterator[ASTNode]]()
   var allExceptLast : Array[ASTNode] = Array.empty
-  def resetIterators(cost: List[Int]): Unit = {
+  def resetIterators(cost: Array[Int]): Unit = {
     childrenLists = childTypes.zip(cost).map { case (t, c) => bank(c).view.filter(c => c.nodeType == t).toList }
     candidates = if (childrenLists.exists(l => l.isEmpty)) childrenLists.map(l => Iterator.empty).toArray
     else childrenLists.map(l => l.iterator).toArray
