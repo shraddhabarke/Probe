@@ -27,16 +27,12 @@ object ProbUpdate {
       if (fit > 0.2) {
         val examplesPassed = task.fitExs(program)
         val union = fitSet + examplesPassed
-        if (fitSet.isEmpty || !fitSet.contains(examplesPassed)) { //one of the shortest programs that covers a given subset of examples
+        if (fitSet.isEmpty || !fitSet.contains(examplesPassed)) { // first shortest programs that covers a given subset of examples
           fitSet = union
           val changed: Set[Class[_]] = getAllNodeTypes(program)
           for (changedNode <- changed) {
             if (!fitMap.contains(changedNode) || fitMap(changedNode) > (1 - fit))
               fitMap += (changedNode -> (1 - fit))
-          }
-          Console.withOut(fos) {
-            dprintln(program.code, fit)
-            dprintln(fitMap)
           }
         }
       }

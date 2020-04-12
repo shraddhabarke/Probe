@@ -76,9 +76,9 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
   def changeLevel(): Boolean = {
     currIter = vocab.nonLeaves.toList.sortBy(_.rootCost).toIterator
     fitsMap = ProbUpdate.updateFit(fitsMap, fitSoFar, currLevelProgs, task, phaseChangeCheck)
-    currLevelProgs.map(c => updateBank(c)) // optimize this
+    for (p <- currLevelProgs) updateBank(p)
     phaseChangeCheck = ProbUpdate.phaseChange
-    if (phaseCounter == 1) {
+    if (phaseCounter == 30) {
       phaseCounter = 0
       if (phaseChangeCheck) {
         ProbUpdate.updatePriors(fitsMap)
@@ -115,7 +115,6 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
     }
     currLevelProgs += res.get
     Console.withOut(fos) { dprintln(currLevelProgs.takeRight(1).map(c => (c.code, c.cost)).mkString(",")) }
-    //dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(","))
     res
   }
 }
