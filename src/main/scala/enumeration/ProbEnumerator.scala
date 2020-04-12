@@ -34,7 +34,10 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var bank = scala.collection.mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
   val fos = new FileOutputStream(new File("out.txt"))
-  var fits = Set[Set[Any]]()
+  var fitSoFar = Set[Set[Any]]()
+  var phaseChangeCheck : Boolean = false
+  var phaseCounter : Int = 0
+  var fitsMap = mutable.Map[Class[_], Double]()
   var costLevel = 10
   resetEnumeration()
   var rootMaker: VocabMaker = currIter.next()
@@ -45,6 +48,9 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
     currLevelProgs.clear()
     oeManager.clear()
     bank.clear()
+    fitsMap.clear
+    phaseChangeCheck = false
+    phaseCounter = 0
   }
 
   def advanceRoot(): Boolean = {
@@ -67,32 +73,22 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
       bank(program.cost) += program
   }
 
-  def renewBank(p: ASTNode): Unit = {
-    p.renewCost()
-    if (!bank.contains(p.cost))
-      bank(p.cost) = ArrayBuffer(p) //if it's a new cost.
-    else {
-      val prevKey = bank.find(_._2 == p).map(_._1) //remove it from previous cost bucket.
-      if (prevKey != None && p.cost != prevKey.get) {
-        //if it's not a new program and if it's not in the correct cost bucket,
-        //remove it from the previous bucket and later add to the new bucket.
-        bank(prevKey.get) = bank(prevKey.get).filter(_ != p)
-      }
-      bank(p.cost) = bank(p.cost) :+ p
-    }
-  }
-
   def changeLevel(): Boolean = {
     currIter = vocab.nonLeaves.toList.sortBy(_.rootCost).toIterator
-    val changed = ProbUpdate.updatePriors(fits, currLevelProgs, task)
-    currLevelProgs.map(c => updateBank(c))
-    if (changed) {
-      bank.values.flatten.map(c => renewBank(c))
-      resetEnumeration()
-      costLevel = 0
+    fitsMap = ProbUpdate.updateFit(fitsMap, fitSoFar, currLevelProgs, task, phaseChangeCheck)
+    currLevelProgs.map(c => updateBank(c)) // optimize this
+    phaseChangeCheck = ProbUpdate.phaseChange
+    if (phaseCounter == 1) {
+      phaseCounter = 0
+      if (phaseChangeCheck) {
+        ProbUpdate.updatePriors(fitsMap)
+        resetEnumeration()
+        costLevel = 0
+      }
     }
-    fits = ProbUpdate.fitExamples
+    fitSoFar = ProbUpdate.fitSet
     costLevel += 1
+    phaseCounter += 1
     currLevelProgs.clear()
     advanceRoot()
   }
@@ -118,7 +114,7 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
       }
     }
     currLevelProgs += res.get
-    Console.withOut(fos) { dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(",")) }
+    Console.withOut(fos) { dprintln(currLevelProgs.takeRight(1).map(c => (c.code, c.cost)).mkString(",")) }
     //dprintln(currLevelProgs.takeRight(4).map(_.code).mkString(","))
     res
   }

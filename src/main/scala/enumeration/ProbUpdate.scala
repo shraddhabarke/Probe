@@ -8,42 +8,51 @@ import trace.DebugPrints.dprintln
 
 import scala.collection.mutable
 
-
 object ProbUpdate {
   val fos = new FileOutputStream(new File("out_prog.txt"))
+  var fitSet = Set[Set[Any]]()
+  var phaseChange: Boolean = false
+  var newPrior = 0.0
+  var fitMap = mutable.Map[Class[_], Double]()
 
   def getAllNodeTypes(program: ASTNode): Set[Class[_]] = program.children.flatMap(c => getAllNodeTypes(c)).toSet + program.getClass
 
-  var maximumFit: Double = 0
-  var fitExamples = Set[Set[Any]]()
-  var newPrior = 0.0
-
-  def updatePriors(fits: Set[Set[Any]], currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask): Boolean = {
-    fitExamples = fits
-    var diff = mutable.Map[Class[_], Int]()
+  def updateFit(fitsMap: mutable.Map[Class[_], Double],fitSoFar: Set[Set[Any]], currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask, phaseChangeCheck: Boolean): mutable.Map[Class[_], Double] = {
+    fitSet = fitSoFar
+    fitMap = fitsMap
+    phaseChange = phaseChangeCheck
     for (program <- currLevelProgs) {
       val exampleFit = task.fit(program)
       val fit: Double = (exampleFit._1.toFloat) / exampleFit._2
       if (fit > 0.2) {
         val examplesPassed = task.fitExs(program)
-        val union = fitExamples + examplesPassed
-        if (fitExamples.isEmpty || !fitExamples.contains(examplesPassed)) {
-          fitExamples = union
+        val union = fitSet + examplesPassed
+        if (fitSet.isEmpty || !fitSet.contains(examplesPassed)) { //one of the shortest programs that covers a given subset of examples
+          fitSet = union
           val changed: Set[Class[_]] = getAllNodeTypes(program)
           for (changedNode <- changed) {
-            newPrior = (1.0 - fit) * priors(changedNode)
-            if (!diff.contains(changedNode) || diff(changedNode) > newPrior)
-              diff += (changedNode -> roundValue(newPrior))
+            if (!fitMap.contains(changedNode) || fitMap(changedNode) > (1 - fit))
+              fitMap += (changedNode -> (1 - fit))
           }
-          Console.withOut(fos) { dprintln(fit, program.code, examplesPassed) }
+          Console.withOut(fos) {
+            dprintln(program.code, fit)
+            dprintln(fitMap)
+          }
         }
       }
     }
-    diff.foreach(d => priors += d) //update the priors
+    phaseChange = !fitMap.isEmpty || phaseChangeCheck
+    fitMap
+  }
+
+  //newPrior = (1.0 - fit) * priors(changedNode)
+  //diff += (changedNode -> roundValue(newPrior))
+
+  def updatePriors(fitMap: mutable.Map[Class[_], Double]): Unit = {
+    fitMap.foreach(d => priors += (d._1 -> roundValue(d._2 * priors(d._1))))
     Console.withOut(fos) {
       dprintln(priors)
     }
-    !diff.isEmpty
   }
 
   def getRootPrior(node: ASTNode): Int = priors(node.getClass)
