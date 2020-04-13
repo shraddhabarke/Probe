@@ -48,7 +48,7 @@ object Main extends App {
     synthesizeFromTask(task)
   }
 
-  def synthesizeFromTask(task: SygusFileTask, timeout: Int = 600000) = {
+  def synthesizeFromTask(task: SygusFileTask, timeout: Int = 1200) = {
     val oeManager = new InputsValuesManager()
     //val enumerator = new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input))
     val enumerator = new enumeration.ProbEnumerator(task.vocab, oeManager, task)
@@ -61,7 +61,7 @@ object Main extends App {
       for ((program, i) <- enumerator.zipWithIndex) {
         if (program.nodeType == task.functionReturnType) {
           val results = task.examples.zip(program.values).map(pair => pair._1.output == pair._2)
-          //There will only be one program matching 1...1, but portentially many for 1..101..1, do rank those as well?
+          //There will only be one program matching 1...1, but potentially many for 1..101..1, do rank those as well?
           if (results.exists(identity)) {
             //           if (!foundPrograms.contains(results)) foundPrograms.put(results, ListBuffer())
             //           foundPrograms(results) += program

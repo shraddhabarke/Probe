@@ -55,7 +55,7 @@ object ProbUpdate {
 
   def roundValue(num: Double): Int = if (num == 0) 1 else if (num - num.toInt > 0.5) math.ceil(num).toInt else math.floor(num).toInt
 
-  val priors = mutable.Map[Class[_], Int](
+  var priors = mutable.Map[Class[_], Int](
     classOf[StringConcat] -> 10,
     classOf[StringAt] -> 10,
     classOf[IntAddition] -> 10,
