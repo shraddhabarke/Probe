@@ -15,6 +15,7 @@ stackoverflow3.sl,"(str.substr _arg_0 (- (str.to.int (str.++ ""1"" ""9"")) 2) (s
 strip-html-from-text-or-numbers.sl,"(str.replace (str.substr _arg_0 0 (str.indexof _arg_0 ""<"" 1)) (str.++ ""<"" (str.++ ""b"" "">"")) """")",78s
 univ_2_short.sl,"(str.++ (str.++ col1 (str.++ "","" "" "")) col2) [4/6]",602s
 univ_3_short.sl,col2 [4/6],601s
+,,
 Size Based Enumeration,,
 11604909.sl,"(str.substr _arg_0 (+ -1 (str.indexof _arg_0 ""."" 1)) (str.indexof _arg_0 "" "" 1))",600s
 30732554.sl,"(str.substr _arg_0 0 (str.indexof (str.++ _arg_0 ""|"") ""|"" 1))",0s
@@ -32,3 +33,21 @@ stackoverflow3.sl,"(str.substr _arg_0 (- (str.to.int (str.++ ""1"" ""9"")) 2) (s
 strip-html-from-text-or-numbers.sl,N/A,608s
 univ_2_short.sl,"(str.++ (str.++ col1 (str.++ "","" "" "")) col2) ",602s
 univ_3_short.sl,col2 ,601s
+,,
+Height Based Enumeration,,
+11604909,(str.substr (str.++ " " _arg_0) (str.indexof _arg_0 "." 1) (str.indexof _arg_0 " " 1)),61s
+30732554.sl,_arg_0,60s
+38871714.sl,(str.replace (str.replace _arg_0 "<" "") ">" ""),61s
+39060015.sl,(ite (str.prefixof "/" _arg_0) "" _arg_0),71s
+41503046.sl,(str.substr _arg_0 0 (str.indexof _arg_0 " " 1)),62s
+43606446.sl,(str.++ (str.++ (str.at _arg_0 0) (str.at _arg_0 1)) (str.at (str.++ " " _arg_0) (str.indexof _arg_0 ">" 1))),60s
+44789427.sl,(str.substr _arg_0 0 (str.indexof _arg_0 "-" _arg_1)),62s
+bikes.sl,(str.++ (str.at name 0) (str.replace (str.substr name 1 5) (int.to.str 1) (str.at " " 1))),61s
+count-total-words-in-a-cell.sl,(ite (str.contains (str.replace _arg_0 " " "") " ") (str.indexof _arg_0 " " 1) (+ 1 1)),60s
+exceljet2.sl,(str.substr (str.replace _arg_0 "." _arg_0) (str.len _arg_0) (str.indexof _arg_0 "." 1)),60s
+stackoverflow1.sl,(str.replace (str.replace _arg_0 "." "") (str.++ " " "Inc") ""),182s
+stackoverflow2.sl,(str.++ (str.substr _arg_0 0 (str.indexof _arg_0 " " 1)) (str.substr (str.++ "in" _arg_0) (str.indexof _arg_0 "in" 1) (str.indexof _arg_0 " " 1))),60s
+stackoverflow3.sl,(ite (str.suffixof " " _arg_0) "" _arg_0),83s
+strip-html-from-text-or-numbers.sl,N/A,68s
+univ_2_short.sl,(str.++ (str.++ col1 ",") (str.++ " " col2)),62s
+univ_3_short.sl,col2,62s
