@@ -33,11 +33,11 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
   var childrenIterator: Iterator[List[ASTNode]] = null
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var bank = scala.collection.mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
-  val fos = new FileOutputStream(new File("blah.txt"))
+  val fos = new FileOutputStream(new File("out.txt"))
   var fitSoFar = Set[Set[Any]]()
   var phaseChangeCheck : Boolean = false
   var phaseCounter : Int = 0
-  var fitsMap = mutable.Map[Set[Any], ArrayBuffer[ASTNode]]()
+  var fitsMap = mutable.Map[Class[_], Double]()
   var costLevel = 10
   resetEnumeration()
   var rootMaker: VocabMaker = currIter.next()
@@ -75,17 +75,18 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
 
   def changeLevel(): Boolean = {
     currIter = vocab.nonLeaves.toList.sortBy(_.rootCost).toIterator
-    fitsMap = ProbUpdate.groupFit(currLevelProgs.distinct, task, phaseChangeCheck)
+    fitsMap = ProbUpdate.updateFit(fitsMap, fitSoFar, currLevelProgs, task, phaseChangeCheck)
     for (p <- currLevelProgs) updateBank(p)
     phaseChangeCheck = ProbUpdate.phaseChange
-    if (phaseCounter == 50) {
+    if (phaseCounter == 30) {
       phaseCounter = 0
       if (phaseChangeCheck) {
-        ProbUpdate.updatePriors(fitsMap, task)
+        ProbUpdate.updatePriors(fitsMap)
         resetEnumeration()
         costLevel = 0
       }
     }
+    fitSoFar = ProbUpdate.fitSet
     costLevel += 1
     phaseCounter += 1
     currLevelProgs.clear()
@@ -117,4 +118,3 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
     res
   }
 }
-

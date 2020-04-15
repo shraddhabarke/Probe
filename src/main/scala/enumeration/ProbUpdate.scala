@@ -7,29 +7,33 @@ import sygus.SygusFileTask
 import trace.DebugPrints.dprintln
 
 import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
 
 object ProbUpdate {
-  val fos = new FileOutputStream(new File("out.txt"))
+  val fos = new FileOutputStream(new File("out_prog.txt"))
+  var fitSet = Set[Set[Any]]()
   var phaseChange: Boolean = false
   var newPrior = 0.0
-  var fitMap = mutable.Map[Set[Any], ArrayBuffer[ASTNode]]()
+  var fitMap = mutable.Map[Class[_], Double]()
 
   def getAllNodeTypes(program: ASTNode): Set[Class[_]] = program.children.flatMap(c => getAllNodeTypes(c)).toSet + program.getClass
 
-  def groupFit(currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask, phaseChangeCheck: Boolean): mutable.Map[Set[Any], ArrayBuffer[ASTNode]] = {
+  def updateFit(fitsMap: mutable.Map[Class[_], Double],fitSoFar: Set[Set[Any]], currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask, phaseChangeCheck: Boolean): mutable.Map[Class[_], Double] = {
+    fitSet = fitSoFar
+    fitMap = fitsMap
     phaseChange = phaseChangeCheck
     for (program <- currLevelProgs) {
       val exampleFit = task.fit(program)
       val fit: Double = (exampleFit._1.toFloat) / exampleFit._2
       if (fit > 0.2) {
         val examplesPassed = task.fitExs(program)
-        if (!fitMap.contains(examplesPassed))
-          fitMap(examplesPassed) = ArrayBuffer(program)
-        else
-          fitMap(examplesPassed) += program
-        Console.withOut(fos) {
-          dprintln(fitMap.map(c => (c._1, c._2.toList.map(c => c.code))))
+        val union = fitSet + examplesPassed
+        if (fitSet.isEmpty || !fitSet.contains(examplesPassed)) { // first shortest programs that covers a given subset of examples
+          fitSet = union
+          val changed: Set[Class[_]] = getAllNodeTypes(program)
+          for (changedNode <- changed) {
+            if (!fitMap.contains(changedNode) || fitMap(changedNode) > (1 - fit))
+              fitMap += (changedNode -> (1 - fit))
+          }
         }
       }
     }
@@ -37,42 +41,14 @@ object ProbUpdate {
     fitMap
   }
 
-  def clusterAndPick(fitMap: mutable.Map[Set[Any], ArrayBuffer[ASTNode]]): ArrayBuffer[ASTNode] = {
-    var pickedPrograms = ArrayBuffer[ASTNode]()
-    for (group <- fitMap) {
-      val groupIterator = group._2.iterator
-      var compareWith = ArrayBuffer[ASTNode]()
-      compareWith = ArrayBuffer(groupIterator.next())
-      val compareWithBackup = compareWith
-      while (groupIterator.hasNext) { // if there are more than one programs
-        val nextProgram = groupIterator.next()
-        if (compareWith.iterator.hasNext) {
-          val nextCompare = compareWith.iterator.next()
-          if (SimilarityMetric.compute(nextCompare, nextProgram).toFloat / nextCompare.terms < 0.5)
-            compareWith = compareWithBackup ++ Iterator(nextProgram)
-        }
-      }
-      pickedPrograms ++= compareWith
-    }
-    pickedPrograms
-  }
+  //newPrior = (1.0 - fit) * priors(changedNode)
+  //diff += (changedNode -> roundValue(newPrior))
 
-  def updatePriors(fitMap: mutable.Map[Set[Any], ArrayBuffer[ASTNode]], task: SygusFileTask) = {
-    var diff = mutable.Map[Class[_], Int]()
-    val pickedPrograms = clusterAndPick(fitMap)
-    for (program <- pickedPrograms) {
-      val exampleFit = task.fit(program)
-      val fit: Double = (exampleFit._1.toFloat) / exampleFit._2
-      val changed: Set[Class[_]] = getAllNodeTypes(program)
-      for (changedNode <- changed) {
-        val newPrior = (1 - fit) * priors(changedNode)
-        if (!diff.contains(changedNode) || diff(changedNode) > newPrior) //TODO: is this the right direction? Always get smaller?
-          diff += (changedNode -> roundValue(newPrior))
-      }
+  def updatePriors(fitMap: mutable.Map[Class[_], Double]): Unit = {
+    fitMap.foreach(d => priors += (d._1 -> roundValue(d._2 * priors(d._1))))
+    Console.withOut(fos) {
+      dprintln(priors)
     }
-    diff.foreach(d => priors += d)
-    Console.withOut(fos) {dprintln(priors)}
-
   }
 
   def getRootPrior(node: ASTNode): Int = priors(node.getClass)
