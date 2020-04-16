@@ -10,25 +10,25 @@ import scala.collection.mutable
 
 object ProbUpdate {
   val fos = new FileOutputStream(new File("out_prog.txt"))
-  var fitSet = Set[Set[Any]]()
   var phaseChange: Boolean = false
   var newPrior = 0.0
+  var fitSet = mutable.Map[Set[Any], Double]()
   var fitMap = mutable.Map[Class[_], Double]()
 
   def getAllNodeTypes(program: ASTNode): Set[Class[_]] = program.children.flatMap(c => getAllNodeTypes(c)).toSet + program.getClass
 
-  def updateFit(fitsMap: mutable.Map[Class[_], Double],fitSoFar: Set[Set[Any]], currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask, phaseChangeCheck: Boolean): mutable.Map[Class[_], Double] = {
-    fitSet = fitSoFar
+  def updateFit(fitsMap: mutable.Map[Class[_], Double], currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask): mutable.Map[Class[_], Double] = {
     fitMap = fitsMap
-    phaseChange = phaseChangeCheck
     for (program <- currLevelProgs) {
       val exampleFit = task.fit(program)
       val fit: Double = (exampleFit._1.toFloat) / exampleFit._2
       if (fit > 0.2) {
         val examplesPassed = task.fitExs(program)
-        val union = fitSet + examplesPassed
-        if (fitSet.isEmpty || !fitSet.contains(examplesPassed)) { // first shortest programs that covers a given subset of examples
-          fitSet = union
+        if (!fitSet.contains(examplesPassed) || fitSet(examplesPassed) == program.cost) { // all shortest programs that covers a given subset of examples
+          fitSet += (examplesPassed -> program.cost)
+          Console.withOut(fos) {
+            dprintln(program.code, examplesPassed)
+          }
           val changed: Set[Class[_]] = getAllNodeTypes(program)
           for (changedNode <- changed) {
             if (!fitMap.contains(changedNode) || fitMap(changedNode) > (1 - fit))
@@ -37,7 +37,6 @@ object ProbUpdate {
         }
       }
     }
-    phaseChange = !fitMap.isEmpty || phaseChangeCheck
     fitMap
   }
 

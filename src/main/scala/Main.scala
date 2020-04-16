@@ -22,7 +22,7 @@ object Main extends App {
   //"src/test/benchmarks/modified_benchmarks/returns_garbage/compare-two-strings_1.sl"
   //"src/test/benchmarks/too-hard/strip-html-from-text-or-numbers.sl"
   //"src/test/benchmarks/too-hard/stackoverflow1.sl"
-  //"src/test/benchmarks/too-hard/11604909.sl"
+  "src/test/benchmarks/too-hard/11604909.sl"
   //"src/test/benchmarks/too-hard/44789427.sl"
   //"src/test/benchmarks/too-hard/43606446.sl"
   //"src/test/benchmarks/too-hard/count-total-words-in-a-cell.sl"
@@ -48,7 +48,7 @@ object Main extends App {
     synthesizeFromTask(task)
   }
 
-  def synthesizeFromTask(task: SygusFileTask, timeout: Int = 1200) = {
+  def synthesizeFromTask(task: SygusFileTask, timeout: Int = 600) = {
     val oeManager = new InputsValuesManager()
     //val enumerator = new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input))
     val enumerator = new enumeration.ProbEnumerator(task.vocab, oeManager, task)
