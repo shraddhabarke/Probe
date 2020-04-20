@@ -33,14 +33,14 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
   var childrenIterator: Iterator[List[ASTNode]] = null
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var bank = scala.collection.mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
-  var fos = new FileOutputStream("output.txt", true)
+  //var fos = new FileOutputStream("output.txt", true)
   var phaseCounter : Int = 0
   var fitsMap = mutable.Map[Class[_], Double]()
   var costLevel = 10
 
   resetEnumeration()
   var rootMaker: VocabMaker = currIter.next()
-  var probBased: Boolean = false
+  var probBased: Boolean = true
 
   def resetEnumeration():  Unit = {
     currIter = vocab.leaves().toList.sortBy(_.rootCost).toIterator
@@ -113,13 +113,14 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
       }
     }
     currLevelProgs += res.get
+    /**
     val exampleFit = task.fit(res.get)
     val fit: Double = (exampleFit._1.toFloat) / exampleFit._2
     if (fit > 0.2) {
-      Console.withOut(fos) {
-        println(res.get.code)
+      //Console.withOut(fos) {
+        //println(res.get.code)
       }
-    }
+    }**/
     //Console.withOut(fos) { dprintln(currLevelProgs.takeRight(1).map(c => (c.code, c.cost)).mkString(",")) }
     res
   }

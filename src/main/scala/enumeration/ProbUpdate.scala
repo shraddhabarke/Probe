@@ -9,10 +9,12 @@ import trace.DebugPrints.dprintln
 import scala.collection.mutable
 
 object ProbUpdate {
-  val fos = new FileOutputStream(new File("out_prog.txt"))
+  var fos = new FileOutputStream("output_p.txt", true)
   var phaseChange: Boolean = false
   var newPrior = 0.0
-  var fitSet = mutable.Map[Set[Any], Double]()
+  var fitSet = mutable.Map[Set[Any], List[ASTNode]]()
+  var fitCost = mutable.Map[Set[Any], Double]()
+  var fitProgs: mutable.ArrayBuffer[String] = mutable.ArrayBuffer()
   var fitMap = mutable.Map[Class[_], Double]()
 
   def getAllNodeTypes(program: ASTNode): Set[Class[_]] = program.children.flatMap(c => getAllNodeTypes(c)).toSet + program.getClass
@@ -22,13 +24,11 @@ object ProbUpdate {
     for (program <- currLevelProgs) {
       val exampleFit = task.fit(program)
       val fit: Double = (exampleFit._1.toFloat) / exampleFit._2
-      if (fit > 0.2) {
+      if (fit > 0) {
         val examplesPassed = task.fitExs(program)
-        if (!fitSet.contains(examplesPassed) || fitSet(examplesPassed) == program.cost) { // all shortest programs that covers a given subset of examples
-          fitSet += (examplesPassed -> program.cost)
-          Console.withOut(fos) {
-            dprintln(program.code, examplesPassed)
-          }
+        if (!fitCost.contains(examplesPassed) || (fitCost(examplesPassed) > program.cost) && !fitProgs.contains(program.code)) {
+          fitCost += (examplesPassed -> program.cost)
+          fitProgs += program.code
           val changed: Set[Class[_]] = getAllNodeTypes(program)
           for (changedNode <- changed) {
             if (!fitMap.contains(changedNode) || fitMap(changedNode) > (1 - fit))
@@ -40,14 +40,11 @@ object ProbUpdate {
     fitMap
   }
 
-  //newPrior = (1.0 - fit) * priors(changedNode)
-  //diff += (changedNode -> roundValue(newPrior))
-
   def updatePriors(fitMap: mutable.Map[Class[_], Double]): Unit = {
     fitMap.foreach(d => priors += (d._1 -> roundValue(d._2 * priors(d._1))))
-    Console.withOut(fos) {
-      dprintln(priors)
-    }
+    //Console.withOut(fos) {
+    //  dprintln(priors)
+    //}
   }
 
   def getRootPrior(node: ASTNode): Int = priors(node.getClass)
