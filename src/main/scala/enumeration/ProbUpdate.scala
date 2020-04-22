@@ -34,6 +34,7 @@ object ProbUpdate {
             if (!fitMap.contains(changedNode) || fitMap(changedNode) > (1 - fit))
               fitMap += (changedNode -> (1 - fit))
           }
+          Console.withOut(fos) { println(program.code, examplesPassed, program.cost) }
         }
       }
     }
@@ -42,9 +43,9 @@ object ProbUpdate {
 
   def updatePriors(fitMap: mutable.Map[Class[_], Double]): Unit = {
     fitMap.foreach(d => priors += (d._1 -> roundValue(d._2 * priors(d._1))))
-    //Console.withOut(fos) {
-    //  dprintln(priors)
-    //}
+    Console.withOut(fos) {
+      println(priors)
+    }
   }
 
   def getRootPrior(node: ASTNode): Int = priors(node.getClass)
