@@ -53,7 +53,7 @@ object BenchmarksTests extends App {
     "," + program.code + "," + msec / 1000 + "s"
   }
 
-  val tooHardBenchmarks = runBenchmarks("src/test/benchmarks/test", regularBenchmarkPrinter)
+  val tooHardBenchmarks = runBenchmarks("src/test/benchmarks/euphony", regularBenchmarkPrinter)
   tooHardBenchmarks.foreach(println)
 
 }

@@ -40,7 +40,7 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
 
   resetEnumeration()
   var rootMaker: VocabMaker = currIter.next()
-  var probBased: Boolean = true
+  var probBased: Boolean = false
 
   def resetEnumeration():  Unit = {
     currIter = vocab.leaves().toList.sortBy(_.rootCost).toIterator
