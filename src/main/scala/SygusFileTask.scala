@@ -16,7 +16,18 @@ object Logic extends Enumeration{
 }
 
 
-class SygusFileTask(content: String) {
+class SygusFileTask(content: String) extends Cloneable{
+  def enhance(variables: Iterable[Map[String, Any]]) = {
+    val c = this.clone().asInstanceOf[SygusFileTask]
+    c.vocab = new VocabFactory(c.vocab.leavesMakers ++  variables.head.map{ case (name,value) => SygusFileTask.variableVocabMaker(value match {
+      case _:Boolean => Types.Bool
+      case _:Int => Types.Int
+      case _:String => Types.String
+      },name)} ,c.vocab.nodeMakers)
+    c.examples = variables.map(vars => Example(vars.map(kv => kv._1 -> kv._2.asInstanceOf[AnyRef]),null)).toList
+    c
+  }
+
   private val parsed = new SyGuSParser(new BufferedTokenStream(new SyGuSLexer(CharStreams.fromString(content)))).syGuS()
   private val synthFun = parsed.cmd().asScala.filter(cmd => cmd.getChild(1) != null && cmd.getChild(1).getText == "synth-fun").head
 
@@ -33,12 +44,12 @@ class SygusFileTask(content: String) {
     val constraints = parsed.cmd().asScala.filter(cmd => cmd.getChild(1) != null && cmd.getChild(1).getText == "constraint").map(_.term())
     !constraints.isEmpty && constraints.forall(constraint => SygusFileTask.isExample(constraint,functionName))
   }
-  lazy val examples: List[Example] = {
+  var examples: List[Example] = {
     val constraints = parsed.cmd().asScala.filter(cmd => cmd.getChild(1) != null && cmd.getChild(1).getText == "constraint").map(_.term())
     constraints.map(constraint => SygusFileTask.exampleFromConstraint(constraint,functionName,functionReturnType,functionParameters)).toList.distinct
   }
 
-  val vocab: VocabFactory = {
+  var vocab: VocabFactory = {
     val nonTerminals = synthFun.grammarDef().groupedRuleList().asScala.map{nonTerminal =>
       nonTerminal.Symbol().getSymbol.getText -> Types.withName(nonTerminal.sort().identifier().getText)
     }.toMap
@@ -128,32 +139,7 @@ object SygusFileTask{
       }
       else {
       val varname = vocabElem.bfTerm().identifier().Symbol().getText
-      retType match {
-        case Types.Int => new VocabMaker {
-          override val arity: Int = 0
-          override val childTypes: List[Types] = Nil
-          override val returnType: Types = retType
-          override val head: String = varname
-          override protected val nodeType: Class[_ <: ASTNode] = classOf[IntVariable]
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode = new IntVariable(varname,contexts)
-        }
-        case Types.String => new VocabMaker {
-          override val arity: Int = 0
-          override val childTypes: List[Types] = Nil
-          override val returnType: Types = retType
-          override val head: String = varname
-          override protected val nodeType: Class[_ <: ASTNode] = classOf[StringVariable]
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode = new StringVariable(varname,contexts)
-        }
-        case Types.Bool => new VocabMaker {
-          override val arity: Int = 0
-          override val childTypes: List[Types] = Nil
-          override val returnType: Types = retType
-          override val head: String = varname
-          override protected val nodeType: Class[_ <: ASTNode] = classOf[BoolVariable]
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode = new BoolVariable(varname,contexts)
-        }
-      }
+      variableVocabMaker(retType,varname)
     }
     else {
       val funcName = vocabElem.bfTerm().identifier().Symbol().getText
@@ -334,6 +320,33 @@ object SygusFileTask{
         }
       }
     }
+
+  def variableVocabMaker(retType: Types.Types, varname: String) = retType match {
+    case Types.Int => new VocabMaker {
+      override val arity: Int = 0
+      override val childTypes: List[Types] = Nil
+      override val returnType: Types = retType
+      override val head: String = varname
+      override protected val nodeType: Class[_ <: ASTNode] = classOf[IntVariable]
+      override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode = new IntVariable(varname,contexts)
+    }
+    case Types.String => new VocabMaker {
+      override val arity: Int = 0
+      override val childTypes: List[Types] = Nil
+      override val returnType: Types = retType
+      override val head: String = varname
+      override protected val nodeType: Class[_ <: ASTNode] = classOf[StringVariable]
+      override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode = new StringVariable(varname,contexts)
+    }
+    case Types.Bool => new VocabMaker {
+      override val arity: Int = 0
+      override val childTypes: List[Types] = Nil
+      override val returnType: Types = retType
+      override val head: String = varname
+      override protected val nodeType: Class[_ <: ASTNode] = classOf[BoolVariable]
+      override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode = new BoolVariable(varname,contexts)
+    }
+  }
 
   def literalToAny(literal: SyGuSParser.LiteralContext, returnType: Types): Any = returnType match {
     case Types.String => literal.StringConst().getSymbol.getText.drop(1).dropRight(1)//unescape

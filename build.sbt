@@ -28,5 +28,8 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.0" % Test
 libraryDependencies += "org.scalatestplus" %% "scalatestplus-junit" % "1.0.0-SNAP9"
 
 //javaOptions += "-Xmx1024m Regexer"
+// https://mvnrepository.com/artifact/io.spray/spray-json
+libraryDependencies += "io.spray" %% "spray-json" % "1.3.5"
+
 //Anlr command line:
 //java -jar antlr-4.7.2-complete.jar -package "sygus" -visitor SyGuS.g4
