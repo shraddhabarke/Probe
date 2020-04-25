@@ -44,16 +44,16 @@ object BenchmarksTests extends App {
       file.getName + resultPrinter(program, t1 - t0)
     }
     else {
-      println(file.getName + ",N/A" + ",Timeout")
-      file.getName + ",N/A" + ",Timeout"
+      println(file.getName + ",None" + ",Timeout")
+      file.getName + ",None" + ",Timeout"
     }
   }
 
   def regularBenchmarkPrinter(program: ASTNode, msec: Long): String = {
-    "," + program.code + "," + msec / 1000 + "s"
+    "," + program.code + "," + (msec.toFloat / 1000)
   }
 
   val tooHardBenchmarks = runBenchmarks("src/test/benchmarks/euphony", regularBenchmarkPrinter)
-  tooHardBenchmarks.foreach(println)
+  //tooHardBenchmarks.foreach(println)
 
 }
