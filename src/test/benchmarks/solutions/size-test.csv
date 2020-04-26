@@ -1,0 +1,84 @@
+Benchmarks (82),Size Based Time (s),Size Based Program
+11604909.sl,12.306,(str.substr (str.++ " " _arg_0) (str.indexof _arg_0 "." 1) (+ 1 (+ 1 1)))
+17212077.sl,2.331,(str.replace _arg_0 (str.substr _arg_0 (+ 1 1) (+ 1 (+ 1 1))) "")
+25239569.sl,10.97,(str.replace (str.replace (str.replace _arg_0 "BRD" "Branding") "DRS" "Direct Response") "LDS" "Leads")
+31753108.sl,Timeout,None
+33619752.sl,Timeout,None
+35744094.sl,44.934,(ite (str.suffixof "/" _arg_0) "microsoft" (ite (str.suffixof "windows" _arg_0) "windows" "mac"))
+36462127.sl,30.559,(str.substr _arg_0 (+ 1 (str.indexof _arg_0 "/" (str.to.int (str.++ (int.to.str 1) (int.to.str 1))))) (str.len _arg_0))
+38871714.sl,Timeout,None
+39060015.sl,Timeout,None
+43120683.sl,Timeout,None
+43606446.sl,112.011,(str.replace (str.substr _arg_0 (+ (+ (+ -1 (+ -1 -1)) (str.len _arg_0)) -1) (str.len _arg_0)) ">" "")
+44789427.sl,Timeout,None
+clean-and-reformat-telephone-numbers.sl,Timeout,None
+count-total-words-in-a-cell.sl,Timeout,None
+exceljet1.sl,1.42,(str.substr _arg_1 (+ (str.indexof _arg_1 "_" 1) 1) (str.len _arg_1))
+exceljet2.sl,6.706,(str.replace (str.substr _arg_0 (- (str.len _arg_0) (str.indexof _arg_0 "." 1)) (str.len _arg_0)) "." "")
+exceljet3.sl,1.97,(str.substr _arg_0 (+ (str.indexof _arg_0 "=" 1) (+ 1 1)) (str.len _arg_0))
+exceljet4.sl,5.321,(str.substr _arg_0 (+ (str.indexof _arg_0 "/" 1) (+ 1 1)) (str.len _arg_0))
+extract-nth-word-from-text-string.sl,Timeout,None
+extract-text-between-parentheses.sl,2.676,(str.to.int (str.substr _arg_0 (+ (str.indexof _arg_0 "<" 1) 1) (+ 1 1)))
+extract-word-containing-specific-text.sl,Timeout,None
+extract-word-that-begins-with-specific-character.sl,Timeout,None
+find-nth-occurrence-of-character.sl,8.374,(+ 1 (str.indexof _arg_0 "_" (str.to.int (str.++ (int.to.str (+ _arg_1 -1)) (int.to.str _arg_1)))))
+get-domain-name-from-url.sl,Timeout,None
+get-first-name-from-name-with-comma.sl,97.443,(str.substr _arg_0 (str.indexof (str.++ "," _arg_0) "," (- 2 _arg_1)) (str.indexof _arg_0 "," _arg_1))
+get-last-line-in-cell.sl,Timeout,None
+get-last-name-from-name-with-comma.sl,12.693,(str.substr (str.++ _arg_0 (str.++ "," _arg_0)) (+ (str.indexof _arg_0 "," 1) 1) (str.len _arg_0))
+get-last-word.sl,2.917,(str.substr _arg_0 (+ (+ (+ -1 (+ -1 -1)) (str.len _arg_0)) -1) (str.len _arg_0))
+get-middle-name-from-full-name.sl,Timeout,None
+initials-long-repeat.sl,Timeout,None
+initials-long.sl,Timeout,None
+initials.sl,110.844,(str.++ (str.++ (str.at name 0) ".") (str.++ (str.at name (+ (str.indexof name " " 0) 1)) "."))
+initials_small.sl,109.802,(str.++ (str.++ (str.at name 0) ".") (str.++ (str.at name (+ (str.indexof name " " 0) 1)) "."))
+phone-10-long-repeat.sl,Timeout,None
+phone-10-long.sl,Timeout,None
+phone-10.sl,69.879,(str.replace (str.replace name " " (str.++ " " "(")) "-" (str.++ ")" " "))
+phone-10_short.sl,59.041,(str.replace (str.replace name " " (str.++ " " "(")) "-" (str.++ ")" " "))
+phone-5-long-repeat.sl,10.402,(str.substr name 1 (- (str.indexof name " " 0) 1))
+phone-5-long.sl,11.982,(str.substr name 1 (- (str.indexof name " " 0) 1))
+phone-5-short.sl,1.171,(str.substr name 1 (- (str.indexof name " " 0) 1))
+phone-5.sl,1.246,(str.substr name 1 (- (str.indexof name " " 0) 1))
+phone-6-long-repeat.sl,14.236,(str.substr name (+ (str.indexof name " " 0) 1) 3)
+phone-6-long.sl,9.276,(str.substr name (+ (str.indexof name " " 0) 1) 3)
+phone-6-short.sl,1.315,(str.substr name (+ (str.indexof name " " 0) 1) 3)
+phone-6.sl,1.967,(str.substr name (+ (str.indexof name " " 0) 1) 3)
+phone-7-long-repeat.sl,12.008,(str.substr name (+ (str.indexof name " " 0) 5) 3)
+phone-7-long.sl,13.382,(str.substr name (+ (str.indexof name " " 0) 5) 3)
+phone-7-short.sl,1.069,(str.substr name (+ (str.indexof name " " 0) 5) 3)
+phone-7.sl,1.1,(str.substr name (+ (str.indexof name " " 0) 5) 3)
+phone-9-long-repeat.sl,Timeout,None
+phone-9-long.sl,Timeout,None
+phone-9-short.sl,Timeout,None
+phone-9.sl,Timeout,None
+remove-leading-and-trailing-spaces-from-text.sl,Timeout,None
+remove-text-by-position.sl,73.427,(str.substr _arg_0 (+ 1 (str.indexof _arg_0 "/" (str.to.int (str.++ (int.to.str 1) (int.to.str 1))))) (str.len _arg_0))
+split-text-string-at-specific-character.sl,Timeout,None
+stackoverflow1.sl,2.918,(str.substr _arg_0 0 (+ (str.indexof _arg_0 "Inc" 1) -1))
+stackoverflow10.sl,39.259,(str.substr _arg_0 (+ (str.indexof (str.replace _arg_0 " " "") " " 1) 2) 4)
+stackoverflow11.sl,Timeout,None
+stackoverflow2.sl,0.33,(str.substr _arg_0 0 (str.indexof _arg_0 " " (str.indexof _arg_0 "in" 1)))
+stackoverflow3.sl,1.477,(str.substr _arg_0 (- (str.to.int (str.++ "1" "9")) 2) (str.len _arg_0))
+stackoverflow4.sl,165.845,(str.replace (str.replace (str.replace (str.replace _arg_0 "<" " ") ">" "") "," " ") "," " ")
+stackoverflow5.sl,1.114,(str.substr _arg_0 0 (+ (str.indexof _arg_0 "1" 1) -1))
+stackoverflow6.sl,Timeout,None
+stackoverflow7.sl,0.858,(str.replace (str.replace _arg_0 (str.++ (int.to.str 1) " ") (int.to.str 1)) _arg_1 "")
+stackoverflow8.sl,6.545,(str.replace (str.substr _arg_0 (+ 2 (+ 4 4)) (str.len _arg_0)) "/" "")
+stackoverflow9.sl,0.99,(str.substr _arg_0 (str.indexof (str.replace _arg_0 " " (int.to.str (str.len _arg_0))) " " 1)
+strip-html-from-text-or-numbers.sl,72.372,(str.replace (str.substr _arg_0 0 (str.indexof _arg_0 "<" 1)) (str.++ "<" (str.++ "b" ">")) "")
+strip-non-numeric-characters.sl,Timeout,None
+strip-numeric-characters-from-cell.sl,Timeout,None
+univ_4-long-repeat.sl,None,Timeout
+univ_4-long.sl,None,Timeout
+univ_4.sl,Timeout,None
+univ_4_short.sl,Timeout,None
+univ_5-long-repeat.sl,Timeout,None
+univ_5-long.sl,Timeout,None
+univ_5.sl,Timeout,None
+univ_5_short.sl,Timeout,None
+univ_6-long-repeat.sl,Timeout,None
+univ_6-long.sl,Timeout,None
+univ_6.sl,Timeout,None
+univ_6_short.sl,Timeout,None
+
