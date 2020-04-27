@@ -1,6 +1,8 @@
 package ast
 
 import enumeration.ProbUpdate
+import jdk.nashorn.internal.runtime.BitVector
+import scala.collection.BitSet
 
 trait ASTNode {
   val nodeType: Types.Types
@@ -34,4 +36,9 @@ trait IntNode extends ASTNode {
 trait BoolNode extends ASTNode {
   override val values: List[Boolean]
   override val nodeType = Types.Bool
+}
+
+trait BVNode extends ASTNode {
+  override val values: List[Long]
+  override val nodeType = Types.BitVector
 }

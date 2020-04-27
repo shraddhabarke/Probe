@@ -1,7 +1,10 @@
 import ast._
+import jdk.nashorn.internal.runtime.BitVector
 import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
 import org.junit.Assert._
+
+import scala.collection.BitSet
 
 class ASTNodeTests extends JUnitSuite{
   @Test def stringLiteralNode(): Unit = {
@@ -33,6 +36,16 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(0,boolLiteral.height)
     assertEquals(1,boolLiteral.terms)
     assertTrue(boolLiteral.children.isEmpty)
+  }
+
+  @Test def bvLiteralNode(): Unit = {
+    val bvLiteral: BVNode = new BVLiteral(2,1)
+    assertEquals(2,bvLiteral.values(0))
+    assertEquals(Types.BitVector,bvLiteral.nodeType)
+    assertEquals("2",bvLiteral.code)
+    assertEquals(0,bvLiteral.height)
+    assertEquals(1,bvLiteral.terms)
+    assertTrue(bvLiteral.children.isEmpty)
   }
 
   @Test def variableNode(): Unit = {

@@ -7,7 +7,8 @@ import Logic.Logic
 import sygus.SyGuSParser.TermContext
 import ast._
 import ast.Types.Types
-import enumeration.ProbUpdate
+import jdk.nashorn.internal.runtime.BitVector
+import scala.collection.BitSet
 
 
 object Logic extends Enumeration{
@@ -122,6 +123,17 @@ object SygusFileTask{
             override val head: String = lit.toString
             override protected val nodeType: Class[_ <: ASTNode] = classOf[BoolLiteral]
             override def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = new BoolLiteral(lit, contexts.length)
+          }
+        }
+        case Types.BitVector => {
+          val lit = vocabElem.bfTerm().literal().BinConst().getText.asInstanceOf[Long]
+          new VocabMaker {
+            override val arity: Int = 0
+            override val childTypes: List[Types] = Nil
+            override val returnType: Types = retType
+            override val head: String = lit.toString
+            override protected val nodeType: Class[_ <: ASTNode] = classOf[BVLiteral]
+            override def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = new BVLiteral(lit, contexts.length)
           }
         }
       }

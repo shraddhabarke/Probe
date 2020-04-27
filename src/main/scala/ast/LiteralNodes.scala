@@ -1,4 +1,5 @@
 package ast
+import scala.collection.BitSet
 
 abstract class LiteralNode[T](numContexts: Int) extends ASTNode{
   assert(numContexts > 0)
@@ -20,3 +21,7 @@ class IntLiteral(val value: Int, numContexts: Int) extends LiteralNode[Int](numC
 class BoolLiteral(val value: Boolean, numContexts: Int) extends LiteralNode[Boolean](numContexts) with BoolNode {
   override lazy val code: String = value.toString
   }
+
+class BVLiteral(val value: Long, numContexts: Int) extends LiteralNode[Long](numContexts) with BVNode {
+  override lazy val code: String = value.toString
+}
