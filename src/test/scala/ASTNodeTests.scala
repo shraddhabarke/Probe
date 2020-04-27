@@ -311,6 +311,74 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(List(lhs,rhs),contains.children)
   }
 
+  @Test def bvAndNode: Unit = {
+    val lhs = new BVLiteral(23,1)
+    val rhs = new BVLiteral(8,1)
+    val bvAndNode: BVNode = new BVAnd(lhs,rhs)
+    assertEquals(Types.BitVector, bvAndNode.nodeType)
+    assertEquals(1, bvAndNode.height)
+    assertEquals(3, bvAndNode.terms)
+    assertEquals("(bv.and 23 8)", bvAndNode.code)
+    assertEquals(List(0),bvAndNode.values)
+    assertEquals(List(lhs,rhs), bvAndNode.children)
+  }
+
+  @Test def bvOrNode: Unit = {
+    val lhs = new BVLiteral(23,1)
+    val rhs = new BVLiteral(8,1)
+    val bvOrNode: BVNode = new BVOr(lhs,rhs)
+    assertEquals(Types.BitVector, bvOrNode.nodeType)
+    assertEquals(1, bvOrNode.height)
+    assertEquals(3, bvOrNode.terms)
+    assertEquals("(bv.or 23 8)", bvOrNode.code)
+    assertEquals(List(31),bvOrNode.values)
+    assertEquals(List(lhs,rhs), bvOrNode.children)
+  }
+
+  @Test def bvXOrNode: Unit = {
+    val lhs = new BVLiteral(23,1)
+    val rhs = new BVLiteral(8,1)
+    val bvXOrNode: BVNode = new BVXor(lhs,rhs)
+    assertEquals(Types.BitVector, bvXOrNode.nodeType)
+    assertEquals(1, bvXOrNode.height)
+    assertEquals(3, bvXOrNode.terms)
+    assertEquals("(bv.xor 23 8)", bvXOrNode.code)
+    assertEquals(List(31),bvXOrNode.values)
+    assertEquals(List(lhs,rhs), bvXOrNode.children)
+  }
+
+  @Test def bvComplement: Unit = {
+    val arg = new BVLiteral(23,1)
+    val bvComplement: BVNode = new BVNot(arg)
+    assertEquals(Types.BitVector, bvComplement.nodeType)
+    assertEquals(1, bvComplement.height)
+    assertEquals(2, bvComplement.terms)
+    assertEquals("(bv.not 23)", bvComplement.code)
+    assertEquals(List(-24),bvComplement.values)
+    assertEquals(List(arg), bvComplement.children)
+  }
+
+  @Test def bvShiftLeft: Unit = {
+    val lhs = new BVLiteral(23,1)
+    val rhs = new BVLiteral(8,1)
+    val one = new BVLiteral(value = 1, numContexts = 1)
+    val zero = new BVLiteral(value = 0, numContexts = 1)
+    val signedOne = new BVLiteral(value = -1, numContexts = 1)
+    val bvShlNode: BVNode = new BVShiftLeft(lhs,rhs)
+    val bvSimple0: BVNode = new BVShiftLeft(one,one)
+    val bvSimple1: BVNode = new BVShiftLeft(one,zero)
+    val bvSigned0: BVNode = new BVShiftLeft(one,signedOne)
+    assertEquals(Types.BitVector, bvShlNode.nodeType)
+    assertEquals(1, bvShlNode.height)
+    assertEquals(3, bvShlNode.terms)
+    assertEquals("(bv.shl 23 8)", bvShlNode.code)
+    assertEquals(List(5888),bvShlNode.values)
+    //assertEquals(List(11),bvSigned0.values)
+    assertEquals(List(2),bvSimple0.values)
+    assertEquals(List(1),bvSimple1.values)
+    assertEquals(List(lhs,rhs), bvShlNode.children)
+  }
+
   @Test def includesVarWithName: Unit = {
     val variable = new IntVariable("x",Map("x" -> 2) :: Nil)
     assertTrue(variable.includes("x"))

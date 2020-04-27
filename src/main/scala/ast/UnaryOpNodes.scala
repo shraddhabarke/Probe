@@ -34,3 +34,12 @@ class StringLength(val arg: StringNode) extends UnaryOpNode[Int] with IntNode {
   override lazy val code: String = "(str.len " + arg.code + ")"
 
 }
+
+class BVNot(val arg: BVNode) extends UnaryOpNode[Long] with BVNode {
+  override def doOp(x: Any): Long = {
+    val bv = x.asInstanceOf[Long]
+    ~bv
+  }
+
+  override lazy val code: String = "(bv.not " + arg.code + ")"
+}

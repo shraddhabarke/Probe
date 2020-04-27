@@ -82,3 +82,54 @@ class Contains(val lhs: StringNode, val rhs: StringNode) extends  BinaryOpNode[B
   override lazy val code: String = "(str.contains " + lhs.code + " " + rhs.code + ")"
 
 }
+
+class BVAnd(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+  override def doOp(l: Any, r: Any): Long = {
+    val lhsNode = l.asInstanceOf[Long]
+    val rhsNode = r.asInstanceOf[Long]
+    lhsNode & rhsNode
+  }
+  override lazy val code: String = "(bv.and " + lhs.code + " " + rhs.code + ")"
+}
+
+class BVOr(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+  override def doOp(l: Any, r: Any): Long = {
+    val lhsNode = l.asInstanceOf[Long]
+    val rhsNode = r.asInstanceOf[Long]
+    lhsNode | rhsNode
+  }
+  override lazy val code: String = "(bv.or " + lhs.code + " " + rhs.code + ")"
+}
+
+class BVXor(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+  override def doOp(l: Any, r: Any): Long = {
+    val lhsNode = l.asInstanceOf[Long]
+    val rhsNode = r.asInstanceOf[Long]
+    lhsNode ^ rhsNode
+  }
+  override lazy val code: String = "(bv.xor " + lhs.code + " " + rhs.code + ")"
+}
+
+class BVShiftLeft(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+  override def doOp(l: Any, r: Any): Long = {
+    val lhsNode = l.asInstanceOf[Long]
+    val rhsNode = r.asInstanceOf[Long]
+    if (rhsNode > lhsNode) 0
+    else lhsNode << rhsNode //todo: specify semantics for when shifting left by a negative number?
+  }
+  override lazy val code: String = "(bv.shl " + lhs.code + " " + rhs.code + ")"
+}
+
+class BVAdd(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+  override def doOp(l: Any, r: Any): Long = {
+    val lhsNode = l.asInstanceOf[Long]
+    val rhsNode = r.asInstanceOf[Long]
+    lhsNode + rhsNode
+  }
+  override lazy val code: String = "(bv.add " + lhs.code + " " + rhs.code + ")"
+}
+
+
+
+
+
