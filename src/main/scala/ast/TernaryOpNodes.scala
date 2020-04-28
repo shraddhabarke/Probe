@@ -63,3 +63,9 @@ class IndexOf(val arg0: StringNode, val arg1: StringNode, val arg2: IntNode) ext
 
   override lazy val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(str.indexof "," ",")")
   }
+
+class BVITE(val arg0: BoolNode, val arg1: BVNode, val arg2: BVNode) extends TernaryOpNode[Long] with BVNode {
+  override def doOp(a0: Any, a1: Any, a2: Any): Long = if (a0.asInstanceOf[Boolean]) a1.asInstanceOf[Long] else a2.asInstanceOf[Long]
+
+  override val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(ite "," ",")")
+}

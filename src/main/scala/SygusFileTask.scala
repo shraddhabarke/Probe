@@ -504,6 +504,16 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new LNot(children(0).asInstanceOf[BoolNode])
         }
+        case ("ite",Types.BitVec64,3) => new VocabMaker {
+          override val arity: Int = 3
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVITE]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVITE(children(0).asInstanceOf[BoolNode],children(1).asInstanceOf[BVNode], children(2).asInstanceOf[BVNode])
+        }
       }
     }
 

@@ -521,6 +521,16 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(List(true,false),lnot.values)
   }
 
+  @Test def bvITE: Unit = {
+    val ctx = List(Map("b" -> true, "a" -> 2L, "c" -> 8L),Map("b" -> false, "a" -> 3L, "c" -> 9L))
+    val ite = new BVITE(new BoolVariable("b",ctx), new BVVariable("a",ctx), new BVVariable("c",ctx))
+    assertEquals(1,ite.height)
+    assertEquals(4,ite.terms)
+    assertEquals(Types.BitVec64, ite.nodeType)
+    assertEquals("(ite b a c)", ite.code)
+    assertEquals(List(2L,9L), ite.values)
+  }
+
   @Test def includesVarWithName: Unit = {
     val variable = new IntVariable("x",Map("x" -> 2) :: Nil)
     assertTrue(variable.includes("x"))

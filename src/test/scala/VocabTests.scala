@@ -528,7 +528,7 @@ class VocabTests  extends JUnitSuite{
     assertEquals(List(true),node.values)
     assertEquals(Types.Bool,node.nodeType)
   }
-  @Test def logicalNot: Unit = {
+  @Test def logicalNotMaker: Unit = {
     val vocabLine = "(ntBool Bool ((not ntBool)))"
     val parsed = readVocabElem(vocabLine)
     val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
@@ -539,5 +539,17 @@ class VocabTests  extends JUnitSuite{
     assertTrue(node.isInstanceOf[LNot])
     assertEquals(List(true),node.values)
     assertEquals(Types.Bool,node.nodeType)
+  }
+  @Test def bvITEMaker: Unit = {
+    val vocabLine = "(nBitVec (BitVec 64) ((ite ntBool nBitVec nBitVec)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(3,maker.arity)
+    assertEquals(Types.BitVec64,maker.returnType)
+    assertEquals(List(Types.Bool,Types.BitVec64,Types.BitVec64),maker.childTypes)
+    val node = maker(List(new BoolLiteral(false,1),new BVLiteral(2L,1), new BVLiteral(3L,1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[BVITE])
+    assertEquals(List(3L),node.values)
+    assertEquals(Types.BitVec64,node.nodeType)
   }
 }
