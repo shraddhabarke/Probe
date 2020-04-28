@@ -89,7 +89,7 @@ class SygusGrammarTests extends JUnitSuite{
                           |(declare-var x Int)
                           |(declare-var y Int)
                           |
-                          |(constraint (= (comm x y) (comm y x)))
+                          |(constraint (= (comm 1 2) 3))
                           |
                           |
                           |(check-synth)
@@ -100,7 +100,7 @@ class SygusGrammarTests extends JUnitSuite{
     assertEquals("comm",task.functionName)
     assertEquals(Types.Int,task.functionReturnType)
     assertEquals(List("x" -> Types.Int,"y" -> Types.Int),task.functionParameters)
-    assertFalse(task.isPBE)
+    assertTrue(task.isPBE)
   }
 
   @Test def parseWholeTaskPBE: Unit = {
