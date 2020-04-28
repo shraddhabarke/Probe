@@ -23,5 +23,5 @@ class BoolLiteral(val value: Boolean, numContexts: Int) extends LiteralNode[Bool
   }
 
 class BVLiteral(val value: Long, numContexts: Int) extends LiteralNode[Long](numContexts) with BVNode {
-  override lazy val code: String = value.toString
+  override lazy val code: String = f"#x$value%016x"
 }
