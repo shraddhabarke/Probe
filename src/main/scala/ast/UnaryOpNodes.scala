@@ -41,5 +41,5 @@ class BVNot(val arg: BVNode) extends UnaryOpNode[Long] with BVNode {
     ~bv
   }
 
-  override lazy val code: String = "(bv.not " + arg.code + ")"
+  override lazy val code: String = "(bvnot " + arg.code + ")"
 }

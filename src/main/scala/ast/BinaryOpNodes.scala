@@ -89,7 +89,7 @@ class BVAnd(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BV
     val rhsNode = r.asInstanceOf[Long]
     lhsNode & rhsNode
   }
-  override lazy val code: String = "(bv.and " + lhs.code + " " + rhs.code + ")"
+  override lazy val code: String = "(bvand " + lhs.code + " " + rhs.code + ")"
 }
 
 class BVOr(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
@@ -98,7 +98,7 @@ class BVOr(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVN
     val rhsNode = r.asInstanceOf[Long]
     lhsNode | rhsNode
   }
-  override lazy val code: String = "(bv.or " + lhs.code + " " + rhs.code + ")"
+  override lazy val code: String = "(bvor " + lhs.code + " " + rhs.code + ")"
 }
 
 class BVXor(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
@@ -107,7 +107,7 @@ class BVXor(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BV
     val rhsNode = r.asInstanceOf[Long]
     lhsNode ^ rhsNode
   }
-  override lazy val code: String = "(bv.xor " + lhs.code + " " + rhs.code + ")"
+  override lazy val code: String = "(bvxor " + lhs.code + " " + rhs.code + ")"
 }
 
 class BVShiftLeft(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
@@ -117,7 +117,7 @@ class BVShiftLeft(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] w
     if (rhsNode > lhsNode) 0
     else lhsNode << rhsNode //todo: specify semantics for when shifting left by a negative number?
   }
-  override lazy val code: String = "(bv.shl " + lhs.code + " " + rhs.code + ")"
+  override lazy val code: String = "(bvshl " + lhs.code + " " + rhs.code + ")"
 }
 
 class BVAdd(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
@@ -126,7 +126,7 @@ class BVAdd(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BV
     val rhsNode = r.asInstanceOf[Long]
     lhsNode + rhsNode
   }
-  override lazy val code: String = "(bv.add " + lhs.code + " " + rhs.code + ")"
+  override lazy val code: String = "(bvadd " + lhs.code + " " + rhs.code + ")"
 }
 
 class BVShrLogical(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
@@ -135,7 +135,7 @@ class BVShrLogical(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] 
     val rhsNode = r.asInstanceOf[Long]
     lhsNode >>> rhsNode
   }
-  override lazy val code: String = "(bv.lshr " + lhs.code + " " + rhs.code + ")"
+  override lazy val code: String = "(bvlshr " + lhs.code + " " + rhs.code + ")"
 }
 
 class BVShrArithmetic(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
@@ -144,7 +144,7 @@ class BVShrArithmetic(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Lon
     val rhsNode = r.asInstanceOf[Long]
     lhsNode >> rhsNode
   }
-  override lazy val code: String = "(bv.ashr " + lhs.code + " " + rhs.code + ")"
+  override lazy val code: String = "(bvashr " + lhs.code + " " + rhs.code + ")"
 }
 
 
