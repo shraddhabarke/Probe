@@ -38,8 +38,8 @@ class SygusFileTask(content: String) extends Cloneable{
     Logic.withName(setLogic.head.Symbol().getText)
   }
   val functionName = synthFun.Symbol(0).getSymbol.getText
-  val functionReturnType = Types.withName(synthFun.sort().identifier().getText)
-  val functionParameters = synthFun.sortedVar().asScala.map(svar => (svar.Symbol().getText -> Types.withName(svar.sort().identifier().getText))).toList
+  val functionReturnType = Types.withName(synthFun.sort().getText)
+  val functionParameters = synthFun.sortedVar().asScala.map(svar => (svar.Symbol().getText -> Types.withName(svar.sort().getText))).toList
 
   val isPBE: Boolean = {
     val constraints = parsed.cmd().asScala.filter(cmd => cmd.getChild(1) != null && cmd.getChild(1).getText == "constraint").map(_.term())
@@ -52,7 +52,7 @@ class SygusFileTask(content: String) extends Cloneable{
 
   var vocab: VocabFactory = {
     val nonTerminals = synthFun.grammarDef().groupedRuleList().asScala.map{nonTerminal =>
-      nonTerminal.Symbol().getSymbol.getText -> Types.withName(nonTerminal.sort().identifier().getText)
+      nonTerminal.Symbol().getSymbol.getText -> Types.withName(nonTerminal.sort().getText)
     }.toMap
     val makers = synthFun.grammarDef().groupedRuleList().asScala.flatMap{ nonTerminal =>
       nonTerminal.gTerm().asScala.filter(vocabElem =>
@@ -60,12 +60,12 @@ class SygusFileTask(content: String) extends Cloneable{
         vocabElem.bfTerm().identifier() == null ||
         !nonTerminals.contains(vocabElem.bfTerm().identifier().Symbol().getText)
       ).map { vocabElem =>
-        SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().identifier().getText),nonTerminals)
+        SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().getText),nonTerminals)
 //        if (!) //operator or func name
 //              SygusFileTask.makeVocabMaker(
 //                  ,
 //                  ,
-//                  nonTerminal.sort().identifier().getText,
+//                  nonTerminal.sort().getText,
 //                  vocabElem.bfTerm().bfTerm().asScala.map(child => nonTerminals(child.identifier().Symbol().getText))
 //              ).mkString("|")
 

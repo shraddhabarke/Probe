@@ -12,7 +12,8 @@ class VocabTests  extends JUnitSuite{
     assert(ruleList.gTerm().size() == 1)
     val res = ruleList.gTerm(0)
     assert(res != null)
-    (res,ruleList.sort().identifier().getText)
+    val sort = ruleList.sort().getText
+    (res,if (sort == "(BitVec64)") "BitVector64" else sort)
   }
   val nonTerminals = Map("ntBool" -> Types.Bool,"ntInt" -> Types.Int, "ntString" -> Types.String)
 

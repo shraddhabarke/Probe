@@ -3,7 +3,7 @@ grammar SyGuS;
 syGuS : cmd*
       ;
 
-sort : identifier | '(' identifier sort+ ')'
+sort : 'Int' | 'Bool' | 'Real' | '(' 'BitVec' index ')' | Symbol // identifier | '(' identifier sort+ ')'
     ;
 
 bfTerm : identifier
