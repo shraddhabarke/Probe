@@ -1,3 +1,5 @@
+import java.io.{BufferedWriter, FileWriter}
+
 import spray.json._
 import DefaultJsonProtocol._
 import org.antlr.v4.runtime.{BailErrorStrategy, BufferedTokenStream, CharStreams, Token}
@@ -6,6 +8,7 @@ import sygus.{ASTGenerator, SyGuSLexer, SyGuSParser, SygusFileTask, ThrowingLexe
 object Reevaluator extends App {
   val slFile = args(0)
   val jsonFile = args(1)
+  val outFile = args(2)
   val origTask = new SygusFileTask(scala.io.Source.fromFile(slFile).mkString)
   val jsonified = scala.io.Source.fromFile(jsonFile).mkString.parseJson
   val res = for ((key,value) <- jsonified.asInstanceOf[JsObject].fields) yield {
@@ -37,5 +40,7 @@ object Reevaluator extends App {
       })
     }.toVector)
   }
-  println(JsObject(res).prettyPrint)
+  val bw = new BufferedWriter(new FileWriter(outFile))
+  bw.write(JsObject(res).prettyPrint)
+  bw.close()
 }
