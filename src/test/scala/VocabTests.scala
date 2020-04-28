@@ -15,7 +15,7 @@ class VocabTests  extends JUnitSuite{
     val sort = ruleList.sort().getText
     (res,if (sort == "(BitVec64)") "BitVector64" else sort)
   }
-  val nonTerminals = Map("ntBool" -> Types.Bool,"ntInt" -> Types.Int, "ntString" -> Types.String)
+  val nonTerminals = Map("ntBool" -> Types.Bool,"ntInt" -> Types.Int, "ntString" -> Types.String, "nBitVec" -> Types.BitVector64)
 
   @Test def boolLiteralMaker(): Unit =  {
     val vocabLine = "(ntBool Bool (false))"
@@ -296,5 +296,18 @@ class VocabTests  extends JUnitSuite{
     assertTrue(node.isInstanceOf[Contains])
     assertEquals(List(true),node.values)
     assertEquals(Types.Bool,node.nodeType)
+  }
+
+  @Test def bvLiteralMaker: Unit = {
+    val vocabLine = "(nBitVec (BitVec 64) (#x0000000000000006))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(0,maker.arity)
+    assertEquals(Types.BitVector64,maker.returnType)
+    assertEquals(Nil,maker.childTypes)
+    val node = maker(Nil,Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[BVLiteral])
+    assertEquals(List(6),node.values)
+    assertEquals(Types.BitVector64,node.nodeType)
   }
 }

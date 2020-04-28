@@ -21,11 +21,12 @@ libraryDependencies += "commons-io" % "commons-io" % "2.6"
 
 // https://mvnrepository.com/artifact/junit/junit
 libraryDependencies += "junit" % "junit" % "4.13-rc-1" % Test
+
 // https://mvnrepository.com/artifact/org.scalatest/scalatest
-//libraryDependencies += "org.scalactic" %% "scalactic" % "3.1.0"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.0" % Test
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1" % Test
+
 // https://mvnrepository.com/artifact/org.scalatestplus/scalatestplus-junit
-libraryDependencies += "org.scalatestplus" %% "scalatestplus-junit" % "1.0.0-SNAP9"
+libraryDependencies += "org.scalatestplus" %% "scalatestplus-junit" % "1.0.0-SNAP9" % Test
 
 //javaOptions += "-Xmx1024m Regexer"
 // https://mvnrepository.com/artifact/io.spray/spray-json

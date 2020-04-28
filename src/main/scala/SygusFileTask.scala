@@ -125,8 +125,10 @@ object SygusFileTask{
             override def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = new BoolLiteral(lit, contexts.length)
           }
         }
-        case Types.BitVector => {
-          val lit = vocabElem.bfTerm().literal().BinConst().getText.asInstanceOf[Long]
+        case Types.BitVector64 => {
+          val lit = if (vocabElem.bfTerm().literal().BinConst() != null)
+            java.lang.Long.parseUnsignedLong(vocabElem.bfTerm().literal().BinConst().getText.drop(2),2)
+          else java.lang.Long.parseUnsignedLong(vocabElem.bfTerm().literal().HexConst().getText.drop(2),16)
           new VocabMaker {
             override val arity: Int = 0
             override val childTypes: List[Types] = Nil
