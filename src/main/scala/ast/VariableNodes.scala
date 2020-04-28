@@ -18,3 +18,5 @@ class StringVariable(val name: String, contexts: List[Map[String,Any]]) extends 
 class IntVariable(val name: String, contexts: List[Map[String,Any]]) extends VariableNode[Int](contexts) with IntNode
 
 class BoolVariable(val name: String, contexts: List[Map[String,Any]]) extends VariableNode[Boolean](contexts) with BoolNode
+
+class BVVariable(val name: String, contexts: List[Map[String,Any]]) extends VariableNode[Long](contexts) with BVNode

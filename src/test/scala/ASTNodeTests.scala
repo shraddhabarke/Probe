@@ -443,6 +443,14 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(List(0),neg4.values)
   }
 
+  @Test def bvVarialbe: Unit = {
+    val x = new BVVariable("x",Map("x" -> Long.MinValue) :: Nil)
+    assertEquals(0,x.height)
+    assertEquals(1,x.terms)
+    assertEquals("x",x.code)
+    assertEquals(List(Long.MinValue),x.values)
+  }
+
   @Test def includesVarWithName: Unit = {
     val variable = new IntVariable("x",Map("x" -> 2) :: Nil)
     assertTrue(variable.includes("x"))

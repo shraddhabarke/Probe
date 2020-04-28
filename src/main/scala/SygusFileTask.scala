@@ -440,6 +440,14 @@ object SygusFileTask{
       override protected val nodeType: Class[_ <: ASTNode] = classOf[BoolVariable]
       override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode = new BoolVariable(varname,contexts)
     }
+    case Types.BitVector64 => new VocabMaker {
+      override val arity: Int = 0
+      override val childTypes: List[Types] = Nil
+      override val returnType: Types = retType
+      override val head: String = varname
+      override protected val nodeType: Class[_ <: ASTNode] = classOf[BVVariable]
+      override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode = new BVVariable(varname,contexts)
+    }
   }
 
   def literalToAny(literal: SyGuSParser.LiteralContext, returnType: Types): Any = returnType match {
