@@ -472,6 +472,13 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals("(bvsdiv #xfffffffffffffff8 #x0000000000000004)", divnode.code)
     assertEquals("18446744073709551614",java.lang.Long.toUnsignedString(divnode.values(0)))
   }
+  @Test def bvMul: Unit = {
+    val mul = new BVMul(new BVVariable("x",Map("x" -> Long.MinValue) :: Map("x" -> 2L) :: Nil),new BVLiteral(2L,2))
+    assertEquals(1,mul.height)
+    assertEquals(3,mul.terms)
+    assertEquals("(bvmul x #x0000000000000002)",mul.code)
+    assertEquals(List(0,4),mul.values)
+  }
 
   @Test def includesVarWithName: Unit = {
     val variable = new IntVariable("x",Map("x" -> 2) :: Nil)

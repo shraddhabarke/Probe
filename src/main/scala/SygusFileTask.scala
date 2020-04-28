@@ -442,6 +442,16 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new BVUDiv(children(0).asInstanceOf[BVNode], children(1).asInstanceOf[BVNode])
         }
+        case ("bvmul",Types.BitVector64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVMul]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVMul(children(0).asInstanceOf[BVNode], children(1).asInstanceOf[BVNode])
+        }
       }
     }
 

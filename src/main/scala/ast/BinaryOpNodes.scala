@@ -151,6 +151,12 @@ class BVUDiv(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with B
   override val code: String = "(bvudiv " + lhs.code + " " + rhs.code + ")"
 }
 
+class BVMul(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+  override def doOp(l: Any, r: Any): Long = l.asInstanceOf[Long] * r.asInstanceOf[Long]
+
+  override val code: String = "(bvmul " + lhs.code + " " + rhs.code + ")"
+}
+
 class BVShrLogical(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
   override def doOp(l: Any, r: Any): Long = {
     val lhsNode = l.asInstanceOf[Long]
