@@ -552,4 +552,28 @@ class VocabTests  extends JUnitSuite{
     assertEquals(List(3L),node.values)
     assertEquals(Types.BitVec64,node.nodeType)
   }
+  @Test def bvSRemMaker: Unit = {
+    val vocabLine = "(nBitVec (BitVec 64) ((bvsrem nBitVec nBitVec)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(2,maker.arity)
+    assertEquals(Types.BitVec64,maker.returnType)
+    assertEquals(List(Types.BitVec64,Types.BitVec64),maker.childTypes)
+    val node = maker(List(new BVLiteral(-2L,1), new BVLiteral(3L,1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[BVSRem])
+    assertEquals(List(-2L),node.values)
+    assertEquals(Types.BitVec64,node.nodeType)
+  }
+  @Test def bvURemMaker: Unit = {
+    val vocabLine = "(nBitVec (BitVec 64) ((bvurem nBitVec nBitVec)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(2,maker.arity)
+    assertEquals(Types.BitVec64,maker.returnType)
+    assertEquals(List(Types.BitVec64,Types.BitVec64),maker.childTypes)
+    val node = maker(List(new BVLiteral(-2L,1), new BVLiteral(3L,1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[BVURem])
+    assertEquals(List(2L),node.values)
+    assertEquals(Types.BitVec64,node.nodeType)
+  }
 }

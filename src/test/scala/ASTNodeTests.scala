@@ -531,6 +531,25 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(List(2L,9L), ite.values)
   }
 
+  @Test def bvSignedRem: Unit = {
+    val ctx = List(Map("a" -> 0L, "b" -> 5L),Map("a" -> 2L, "b" -> -5L),Map("a" -> -2L, "b" -> 5L), Map("a" -> Long.MaxValue, "b" -> Long.MinValue), Map("a" -> Long.MinValue, "b" -> Long.MaxValue))
+    val srem = new BVSRem(new BVVariable("a",ctx), new BVVariable("b",ctx))
+    assertEquals(1,srem.height)
+    assertEquals(3, srem.terms)
+    assertEquals(Types.BitVec64,srem.nodeType)
+    assertEquals("(bvsrem a b)", srem.code)
+    assertEquals(List(0L,2L,0xfffffffffffffffeL,9223372036854775807L,0xffffffffffffffffL),srem.values)
+  }
+  @Test def bvUnsignedRem: Unit = {
+    val ctx = List(Map("a" -> 0L, "b" -> 5L),Map("a" -> 2L, "b" -> -5L),Map("a" -> -2L, "b" -> 5L), Map("a" -> Long.MaxValue, "b" -> Long.MinValue), Map("a" -> Long.MinValue, "b" -> Long.MaxValue))
+    val srem = new BVURem(new BVVariable("a",ctx), new BVVariable("b",ctx))
+    assertEquals(1,srem.height)
+    assertEquals(3, srem.terms)
+    assertEquals(Types.BitVec64,srem.nodeType)
+    assertEquals("(bvurem a b)", srem.code)
+    assertEquals(List(0L,2L,4L,9223372036854775807L,1),srem.values)
+  }
+
   @Test def includesVarWithName: Unit = {
     val variable = new IntVariable("x",Map("x" -> 2) :: Nil)
     assertTrue(variable.includes("x"))
