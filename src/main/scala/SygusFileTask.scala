@@ -400,7 +400,17 @@ object SygusFileTask{
           override protected val nodeType: Class[_ <: ASTNode] = classOf[BVXor]
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-            new BVXor(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
+            new BVXor(children(0).asInstanceOf[BVNode], children(1).asInstanceOf[BVNode])
+        }
+        case ("bvneg",Types.BitVector64,1) => new VocabMaker {
+          override val arity: Int = 1
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVNeg]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVNeg(children(0).asInstanceOf[BVNode])
         }
       }
     }

@@ -43,3 +43,9 @@ class BVNot(val arg: BVNode) extends UnaryOpNode[Long] with BVNode {
 
   override lazy val code: String = "(bvnot " + arg.code + ")"
 }
+
+class BVNeg(val arg: BVNode) extends UnaryOpNode[Long] with BVNode {
+  override def doOp(x: Any): Long = -x.asInstanceOf[Long]
+
+  override val code: String = "(bvneg " + arg.code + ")"
+}

@@ -420,6 +420,29 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(List(arg,one), bvShrNode.children)
   }
 
+  @Test def bvNeg: Unit = {
+    val arg1 = new BVLiteral(0,1)
+    val arg2 = new BVLiteral(-5,1)
+    val arg3 = new BVLiteral(101,1)
+
+    val neg1 = new BVNeg(arg1)
+    val neg2 = new BVNeg(arg2)
+    val neg3 = new BVNeg(arg3)
+    val neg4 = new BVNeg(new BVLiteral(Long.MinValue,1))
+
+    assertEquals(1,neg1.height)
+    assertEquals(2,neg1.terms)
+    assertEquals("(bvneg #x0000000000000000)",neg1.code)
+    assertEquals("(bvneg #xfffffffffffffffb)",neg2.code)
+    assertEquals("(bvneg #x0000000000000065)",neg3.code)
+    assertEquals("(bvneg #x8000000000000000)",neg4.code)
+
+    assertEquals(List(0),neg1.values)
+    assertEquals(List(5),neg2.values)
+    assertEquals(List(-101),neg3.values)
+    assertEquals(List(0),neg4.values)
+  }
+
   @Test def includesVarWithName: Unit = {
     val variable = new IntVariable("x",Map("x" -> 2) :: Nil)
     assertTrue(variable.includes("x"))
