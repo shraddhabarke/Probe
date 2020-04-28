@@ -501,6 +501,16 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(List(false,true,false),land.values)
   }
 
+  @Test def logicalOr: Unit = {
+    val ctx = List(Map("x" -> true, "y" -> false), Map("x" -> true, "y" -> true), Map("x" -> false, "y" -> false))
+    val lor = new LOr(new BoolVariable("x",ctx), new BoolVariable("y",ctx))
+    assertEquals(1, lor.height)
+    assertEquals(3,lor.terms)
+    assertEquals(Types.Bool,lor.nodeType)
+    assertEquals("(or x y)",lor.code)
+    assertEquals(List(true,true,false),lor.values)
+  }
+
   @Test def includesVarWithName: Unit = {
     val variable = new IntVariable("x",Map("x" -> 2) :: Nil)
     assertTrue(variable.includes("x"))
