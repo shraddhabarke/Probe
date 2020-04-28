@@ -332,7 +332,7 @@ class VocabTests  extends JUnitSuite{
     assertEquals(Types.BitVector64,maker.returnType)
     assertEquals(List(Types.BitVector64,Types.BitVector64),maker.childTypes)
     val node = maker(List(new BVLiteral(100,1),new BVLiteral(1,1)),Map.empty[String,AnyRef] :: Nil)
-    assertTrue(node.isInstanceOf[BVAnd])
+    assertTrue(node.isInstanceOf[BVOr])
     assertEquals(List(101),node.values)
     assertEquals(Types.BitVector64,node.nodeType)
   }
@@ -356,7 +356,7 @@ class VocabTests  extends JUnitSuite{
     val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
     assertEquals(1,maker.arity)
     assertEquals(Types.BitVector64,maker.returnType)
-    assertEquals(List(Types.BitVector64,Types.BitVector64),maker.childTypes)
+    assertEquals(List(Types.BitVector64),maker.childTypes)
     val node = maker(List(new BVLiteral(100,1)),Map.empty[String,AnyRef] :: Nil)
     assertTrue(node.isInstanceOf[BVNot])
     assertEquals("ffffffffffffff9b",java.lang.Long.toUnsignedString(node.values(0).asInstanceOf[Long],16))

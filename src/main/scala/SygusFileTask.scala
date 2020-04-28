@@ -332,6 +332,76 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new Contains(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[StringNode])
         }
+        case ("bvand",Types.BitVector64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVAnd]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVAnd(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
+        }
+        case ("bvor",Types.BitVector64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVOr]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVOr(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
+        }
+        case ("bvlshr",Types.BitVector64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVShrLogical]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVShrLogical(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
+        }
+        case ("bvshl",Types.BitVector64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVShiftLeft]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVShiftLeft(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
+        }
+        case ("bvashr",Types.BitVector64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVShrArithmetic]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVShrArithmetic(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
+        }
+        case ("bvnot",Types.BitVector64,1) => new VocabMaker {
+          override val arity: Int = 1
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVNot]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVNot(children(0).asInstanceOf[BVNode])
+        }
+        case ("bvxor",Types.BitVector64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVXor]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVXor(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
+        }
       }
     }
 

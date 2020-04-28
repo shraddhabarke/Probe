@@ -256,4 +256,6 @@ class SygusGrammarTests extends JUnitSuite{
     assertEquals(Example(Map("name" -> "981-424-843"),"843"),task.examples(3))
 
   }
+
+  @Test def parseTaskWithBitVec64: Unit = ???
 }
