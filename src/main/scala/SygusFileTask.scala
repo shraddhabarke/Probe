@@ -38,8 +38,8 @@ class SygusFileTask(content: String) extends Cloneable{
     Logic.withName(setLogic.head.Symbol().getText)
   }
   val functionName = synthFun.Symbol(0).getSymbol.getText
-  val functionReturnType = Types.withName(synthFun.sort().getText)
-  val functionParameters = synthFun.sortedVar().asScala.map(svar => (svar.Symbol().getText -> Types.withName(svar.sort().getText))).toList
+  val functionReturnType = Types.withName(synthFun.sort().getText.replaceAllLiterally("(","").replaceAllLiterally(")",""))
+  val functionParameters = synthFun.sortedVar().asScala.map(svar => (svar.Symbol().getText -> Types.withName(svar.sort().getText.replaceAllLiterally("(","").replaceAllLiterally(")","")))).toList
 
   val isPBE: Boolean = {
     val constraints = parsed.cmd().asScala.filter(cmd => cmd.getChild(1) != null && cmd.getChild(1).getText == "constraint").map(_.term())
@@ -125,7 +125,7 @@ object SygusFileTask{
             override def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = new BoolLiteral(lit, contexts.length)
           }
         }
-        case Types.BitVector64 => {
+        case Types.BitVec64 => {
           val lit = if (vocabElem.bfTerm().literal().BinConst() != null)
             java.lang.Long.parseUnsignedLong(vocabElem.bfTerm().literal().BinConst().getText.drop(2),2)
           else java.lang.Long.parseUnsignedLong(vocabElem.bfTerm().literal().HexConst().getText.drop(2),16)
@@ -332,7 +332,7 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new Contains(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[StringNode])
         }
-        case ("bvand",Types.BitVector64,2) => new VocabMaker {
+        case ("bvand",Types.BitVec64,2) => new VocabMaker {
           override val arity: Int = 2
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
@@ -342,7 +342,7 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new BVAnd(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
         }
-        case ("bvor",Types.BitVector64,2) => new VocabMaker {
+        case ("bvor",Types.BitVec64,2) => new VocabMaker {
           override val arity: Int = 2
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
@@ -352,7 +352,7 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new BVOr(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
         }
-        case ("bvlshr",Types.BitVector64,2) => new VocabMaker {
+        case ("bvlshr",Types.BitVec64,2) => new VocabMaker {
           override val arity: Int = 2
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
@@ -362,7 +362,7 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new BVShrLogical(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
         }
-        case ("bvshl",Types.BitVector64,2) => new VocabMaker {
+        case ("bvshl",Types.BitVec64,2) => new VocabMaker {
           override val arity: Int = 2
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
@@ -372,7 +372,7 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new BVShiftLeft(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
         }
-        case ("bvashr",Types.BitVector64,2) => new VocabMaker {
+        case ("bvashr",Types.BitVec64,2) => new VocabMaker {
           override val arity: Int = 2
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
@@ -382,7 +382,7 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new BVShrArithmetic(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
         }
-        case ("bvnot",Types.BitVector64,1) => new VocabMaker {
+        case ("bvnot",Types.BitVec64,1) => new VocabMaker {
           override val arity: Int = 1
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
@@ -392,7 +392,7 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new BVNot(children(0).asInstanceOf[BVNode])
         }
-        case ("bvxor",Types.BitVector64,2) => new VocabMaker {
+        case ("bvxor",Types.BitVec64,2) => new VocabMaker {
           override val arity: Int = 2
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
@@ -402,7 +402,7 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new BVXor(children(0).asInstanceOf[BVNode], children(1).asInstanceOf[BVNode])
         }
-        case ("bvneg",Types.BitVector64,1) => new VocabMaker {
+        case ("bvneg",Types.BitVec64,1) => new VocabMaker {
           override val arity: Int = 1
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
@@ -412,7 +412,7 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new BVNeg(children(0).asInstanceOf[BVNode])
         }
-        case ("bvsub",Types.BitVector64,2) => new VocabMaker {
+        case ("bvsub",Types.BitVec64,2) => new VocabMaker {
           override val arity: Int = 2
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
@@ -422,7 +422,7 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new BVSub(children(0).asInstanceOf[BVNode], children(1).asInstanceOf[BVNode])
         }
-        case ("bvsdiv",Types.BitVector64,2) => new VocabMaker {
+        case ("bvsdiv",Types.BitVec64,2) => new VocabMaker {
           override val arity: Int = 2
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
@@ -432,7 +432,7 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new BVSDiv(children(0).asInstanceOf[BVNode], children(1).asInstanceOf[BVNode])
         }
-        case ("bvudiv",Types.BitVector64,2) => new VocabMaker {
+        case ("bvudiv",Types.BitVec64,2) => new VocabMaker {
           override val arity: Int = 2
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
@@ -442,7 +442,7 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new BVUDiv(children(0).asInstanceOf[BVNode], children(1).asInstanceOf[BVNode])
         }
-        case ("bvmul",Types.BitVector64,2) => new VocabMaker {
+        case ("bvmul",Types.BitVec64,2) => new VocabMaker {
           override val arity: Int = 2
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
@@ -480,7 +480,7 @@ object SygusFileTask{
       override protected val nodeType: Class[_ <: ASTNode] = classOf[BoolVariable]
       override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode = new BoolVariable(varname,contexts)
     }
-    case Types.BitVector64 => new VocabMaker {
+    case Types.BitVec64 => new VocabMaker {
       override val arity: Int = 0
       override val childTypes: List[Types] = Nil
       override val returnType: Types = retType
