@@ -49,3 +49,9 @@ class BVNeg(val arg: BVNode) extends UnaryOpNode[Long] with BVNode {
 
   override val code: String = "(bvneg " + arg.code + ")"
 }
+
+class LNot(val arg: BoolNode) extends UnaryOpNode[Boolean] with BoolNode {
+  override def doOp(x: Any): Boolean = !x.asInstanceOf[Boolean]
+
+  override val code: String = "(not " + arg.code + ")"
+}

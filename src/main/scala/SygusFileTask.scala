@@ -494,6 +494,16 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new LOr(children(0).asInstanceOf[BoolNode], children(1).asInstanceOf[BoolNode])
         }
+        case ("not",Types.Bool,1) => new VocabMaker {
+          override val arity: Int = 1
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[LNot]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new LNot(children(0).asInstanceOf[BoolNode])
+        }
       }
     }
 

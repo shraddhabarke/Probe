@@ -528,4 +528,16 @@ class VocabTests  extends JUnitSuite{
     assertEquals(List(true),node.values)
     assertEquals(Types.Bool,node.nodeType)
   }
+  @Test def logicalNot: Unit = {
+    val vocabLine = "(ntBool Bool ((not ntBool)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(1,maker.arity)
+    assertEquals(Types.Bool,maker.returnType)
+    assertEquals(List(Types.Bool),maker.childTypes)
+    val node = maker(List(new BoolLiteral(false,1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[LNot])
+    assertEquals(List(true),node.values)
+    assertEquals(Types.Bool,node.nodeType)
+  }
 }
