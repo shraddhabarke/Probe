@@ -379,6 +379,40 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(List(lhs,rhs), bvShlNode.children)
   }
 
+  @Test def bvAShiftRight: Unit = {
+    val arg = new BVLiteral(2,1)
+    val one = new BVLiteral(value = 1, numContexts = 1)
+    val signedOne = new BVLiteral(value = -1, numContexts = 1)
+    val bvShrNode: BVNode = new BVShrArithmetic(arg,one)
+    val bvShrNodeSigned: BVNode = new BVShrArithmetic(arg,signedOne)
+    val bvShrNodeSigned1: BVNode = new BVShrArithmetic(signedOne,signedOne)
+    val bvShrNodeSigned2: BVNode = new BVShrArithmetic(signedOne,one)
+    assertEquals(Types.BitVector, bvShrNode.nodeType)
+    assertEquals(1, bvShrNode.height)
+    assertEquals(3, bvShrNode.terms)
+    assertEquals("(bv.ashr 2 1)", bvShrNode.code)
+    assertEquals(List(1),bvShrNode.values)
+    assertEquals(List(0),bvShrNodeSigned.values)
+    assertEquals(List(-1),bvShrNodeSigned1.values)
+    assertEquals(List(-1),bvShrNodeSigned2.values)
+    assertEquals(List(arg,one), bvShrNode.children)
+  }
+
+  @Test def bvLShiftRight: Unit = {
+    val arg = new BVLiteral(2,1)
+    val one = new BVLiteral(value = 1, numContexts = 1)
+    val signedOne = new BVLiteral(value = -1, numContexts = 1)
+    val bvShrNode: BVNode = new BVShrLogical(arg,one)
+    val bvShrNodeSigned: BVNode = new BVShrLogical(arg,signedOne)
+    assertEquals(Types.BitVector, bvShrNode.nodeType)
+    assertEquals(1, bvShrNode.height)
+    assertEquals(3, bvShrNode.terms)
+    assertEquals("(bv.lshr 2 1)", bvShrNode.code)
+    assertEquals(List(1),bvShrNode.values)
+    assertEquals(List(0),bvShrNodeSigned.values)
+    assertEquals(List(arg,one), bvShrNode.children)
+  }
+
   @Test def includesVarWithName: Unit = {
     val variable = new IntVariable("x",Map("x" -> 2) :: Nil)
     assertTrue(variable.includes("x"))

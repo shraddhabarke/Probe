@@ -129,6 +129,24 @@ class BVAdd(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BV
   override lazy val code: String = "(bv.add " + lhs.code + " " + rhs.code + ")"
 }
 
+class BVShrLogical(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+  override def doOp(l: Any, r: Any): Long = {
+    val lhsNode = l.asInstanceOf[Long]
+    val rhsNode = r.asInstanceOf[Long]
+    lhsNode >>> rhsNode
+  }
+  override lazy val code: String = "(bv.lshr " + lhs.code + " " + rhs.code + ")"
+}
+
+class BVShrArithmetic(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+  override def doOp(l: Any, r: Any): Long = {
+    val lhsNode = l.asInstanceOf[Long]
+    val rhsNode = r.asInstanceOf[Long]
+    lhsNode >> rhsNode
+  }
+  override lazy val code: String = "(bv.ashr " + lhs.code + " " + rhs.code + ")"
+}
+
 
 
 
