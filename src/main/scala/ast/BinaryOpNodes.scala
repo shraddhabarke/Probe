@@ -181,5 +181,10 @@ class BVEquals(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Boolean] w
   override val code: String = "(= " + lhs.code + " " + rhs.code + ")"
 }
 
+class LAnd(val lhs: BoolNode, val rhs: BoolNode) extends BinaryOpNode[Boolean] with BoolNode {
+  override def doOp(l: Any, r: Any): Boolean = l.asInstanceOf[Boolean] && r.asInstanceOf[Boolean]
+
+  override val code: String = "(and " + lhs.code + " " + rhs.code + ")"
+}
 
 
