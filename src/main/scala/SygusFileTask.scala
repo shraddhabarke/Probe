@@ -52,7 +52,7 @@ class SygusFileTask(content: String) extends Cloneable{
 
   var vocab: VocabFactory = {
     val nonTerminals = synthFun.grammarDef().groupedRuleList().asScala.map{nonTerminal =>
-      nonTerminal.Symbol().getSymbol.getText -> Types.withName(nonTerminal.sort().getText)
+      nonTerminal.Symbol().getSymbol.getText -> Types.withName(nonTerminal.sort().getText.replaceAllLiterally("(","").replaceAllLiterally(")",""))
     }.toMap
     val makers = synthFun.grammarDef().groupedRuleList().asScala.flatMap{ nonTerminal =>
       nonTerminal.gTerm().asScala.filter(vocabElem =>
@@ -60,7 +60,7 @@ class SygusFileTask(content: String) extends Cloneable{
         vocabElem.bfTerm().identifier() == null ||
         !nonTerminals.contains(vocabElem.bfTerm().identifier().Symbol().getText)
       ).map { vocabElem =>
-        SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().getText),nonTerminals)
+        SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().getText.replaceAllLiterally("(","").replaceAllLiterally(")","")),nonTerminals)
 //        if (!) //operator or func name
 //              SygusFileTask.makeVocabMaker(
 //                  ,
@@ -452,6 +452,16 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new BVMul(children(0).asInstanceOf[BVNode], children(1).asInstanceOf[BVNode])
         }
+        case ("bvadd",Types.BitVec64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVAdd]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVAdd(children(0).asInstanceOf[BVNode], children(1).asInstanceOf[BVNode])
+        }
       }
     }
 
@@ -494,6 +504,9 @@ object SygusFileTask{
     case Types.String => literal.StringConst().getSymbol.getText.drop(1).dropRight(1)//unescape
     case Types.Int => literal.Numeral().getText.toInt
     case Types.Bool => literal.BoolConst().toString.toBoolean
+    case Types.BitVec64 => if (literal.HexConst() != null)
+      java.lang.Long.parseUnsignedLong(literal.HexConst().getText.drop(2),16)
+    else java.lang.Long.parseUnsignedLong(literal.BinConst().getText.drop(2),2)
   }
 
   def exampleFromConstraint(constraint: TermContext, functionName: String, retType: Types, parameters: Seq[(String,Types)]): Example = {

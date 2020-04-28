@@ -415,6 +415,19 @@ class VocabTests  extends JUnitSuite{
     assertEquals(Types.BitVec64,node.nodeType)
   }
 
+  @Test def bvAddMaker: Unit = {
+    val vocabLine = "(nBitVec (BitVec 64) ((bvadd nBitVec nBitVec)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(2,maker.arity)
+    assertEquals(Types.BitVec64,maker.returnType)
+    assertEquals(List(Types.BitVec64,Types.BitVec64),maker.childTypes)
+    val node = maker(List(new BVLiteral(2,1),new BVLiteral(3,1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[BVAdd])
+    assertEquals(List(5),node.values)
+    assertEquals(Types.BitVec64,node.nodeType)
+  }
+
   @Test def bvSubMaker: Unit = {
     val vocabLine = "(nBitVec (BitVec 64) ((bvsub nBitVec nBitVec)))"
     val parsed = readVocabElem(vocabLine)
