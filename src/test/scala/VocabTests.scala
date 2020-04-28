@@ -415,6 +415,45 @@ class VocabTests  extends JUnitSuite{
     assertEquals(Types.BitVector64,node.nodeType)
   }
 
+  @Test def bvSubMaker: Unit = {
+    val vocabLine = "(nBitVec (BitVec 64) ((bvsub nBitVec nBitVec)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(2,maker.arity)
+    assertEquals(Types.BitVector64,maker.returnType)
+    assertEquals(List(Types.BitVector64,Types.BitVector64),maker.childTypes)
+    val node = maker(List(new BVLiteral(Long.MaxValue,1),new BVLiteral(0,1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[BVSub])
+    assertEquals(List(Long.MaxValue),node.values)
+    assertEquals(Types.BitVector64,node.nodeType)
+  }
+
+  @Test def bvSDivMaker: Unit = {
+    val vocabLine = "(nBitVec (BitVec 64) ((bvsdiv nBitVec nBitVec)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(2,maker.arity)
+    assertEquals(Types.BitVector64,maker.returnType)
+    assertEquals(List(Types.BitVector64,Types.BitVector64),maker.childTypes)
+    val node = maker(List(new BVLiteral(0L,1),new BVLiteral(100L,1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[BVSDiv])
+    assertEquals(List(0),node.values)
+    assertEquals(Types.BitVector64,node.nodeType)
+  }
+
+  @Test def bvUDivMaker: Unit = {
+    val vocabLine = "(nBitVec (BitVec 64) ((bvudiv nBitVec nBitVec)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(2,maker.arity)
+    assertEquals(Types.BitVector64,maker.returnType)
+    assertEquals(List(Types.BitVector64,Types.BitVector64),maker.childTypes)
+    val node = maker(List(new BVLiteral(-1L,1),new BVLiteral(100L,1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[BVUDiv])
+    assertEquals(List(0x028f5c28f5c28f5cL),node.values)
+    assertEquals(Types.BitVector64,node.nodeType)
+  }
+
   @Test def bvVarMaker: Unit = {
     val vocabLine = "(nBitVec (BitVec 64) (bv0))"
     val parsed = readVocabElem(vocabLine)

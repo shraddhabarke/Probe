@@ -412,6 +412,36 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new BVNeg(children(0).asInstanceOf[BVNode])
         }
+        case ("bvsub",Types.BitVector64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVSub]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVSub(children(0).asInstanceOf[BVNode], children(1).asInstanceOf[BVNode])
+        }
+        case ("bvsdiv",Types.BitVector64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVSDiv]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVSDiv(children(0).asInstanceOf[BVNode], children(1).asInstanceOf[BVNode])
+        }
+        case ("bvudiv",Types.BitVector64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVUDiv]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVUDiv(children(0).asInstanceOf[BVNode], children(1).asInstanceOf[BVNode])
+        }
       }
     }
 

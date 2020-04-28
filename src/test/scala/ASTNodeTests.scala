@@ -451,6 +451,28 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(List(Long.MinValue),x.values)
   }
 
+  @Test def bvSub: Unit = {
+    val x = new BVVariable("x",Map("x" -> Long.MinValue) :: Map("x" -> 0L) :: Map("x" -> Long.MaxValue) :: Nil)
+    val y = new BVVariable("y",Map("y" -> Long.MinValue) :: Map("y" -> Long.MaxValue) :: Map("y" -> 0L) ::  Nil)
+    val sub = new BVSub(x,y)
+    assertEquals("(bvsub x y)",sub.code)
+    assertEquals(List(0,-9223372036854775807L,9223372036854775807L),sub.values)
+  }
+  @Test def bvSDiv: Unit = {
+    val divnode = new BVUDiv(new BVLiteral(-8,1),new BVLiteral(4,1))
+    assertEquals(1,divnode.height)
+    assertEquals(3,divnode.terms)
+    assertEquals("(bvudiv #xfffffffffffffff8 #x0000000000000004)", divnode.code)
+    assertEquals(List(0x3ffffffffffffffeL),divnode.values)
+  }
+  @Test def bvUDiv: Unit = {
+    val divnode = new BVSDiv(new BVLiteral(-8,1),new BVLiteral(4,1))
+    assertEquals(1,divnode.height)
+    assertEquals(3,divnode.terms)
+    assertEquals("(bvsdiv #xfffffffffffffff8 #x0000000000000004)", divnode.code)
+    assertEquals("18446744073709551614",java.lang.Long.toUnsignedString(divnode.values(0)))
+  }
+
   @Test def includesVarWithName: Unit = {
     val variable = new IntVariable("x",Map("x" -> 2) :: Nil)
     assertTrue(variable.includes("x"))

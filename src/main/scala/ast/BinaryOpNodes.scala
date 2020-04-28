@@ -129,6 +129,28 @@ class BVAdd(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BV
   override lazy val code: String = "(bvadd " + lhs.code + " " + rhs.code + ")"
 }
 
+class BVSub(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+  override def doOp(l: Any, r: Any): Long = {
+    val lhsNode = l.asInstanceOf[Long]
+    val rhsNode = r.asInstanceOf[Long]
+    lhsNode - rhsNode
+  }
+
+  override val code: String = "(bvsub " + lhs.code + " " + rhs.code + ")"
+}
+
+class BVSDiv(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+  override def doOp(l: Any, r: Any): Long = l.asInstanceOf[Long] / r.asInstanceOf[Long]
+
+  override val code: String = "(bvsdiv " + lhs.code + " " + rhs.code + ")"
+}
+
+class BVUDiv(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+  override def doOp(l: Any, r: Any): Long = java.lang.Long.divideUnsigned(l.asInstanceOf[Long],r.asInstanceOf[Long])
+
+  override val code: String = "(bvudiv " + lhs.code + " " + rhs.code + ")"
+}
+
 class BVShrLogical(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
   override def doOp(l: Any, r: Any): Long = {
     val lhsNode = l.asInstanceOf[Long]
