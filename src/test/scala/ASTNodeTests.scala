@@ -476,8 +476,19 @@ class ASTNodeTests extends JUnitSuite{
     val mul = new BVMul(new BVVariable("x",Map("x" -> Long.MinValue) :: Map("x" -> 2L) :: Nil),new BVLiteral(2L,2))
     assertEquals(1,mul.height)
     assertEquals(3,mul.terms)
+    assertEquals(Types.BitVec64,mul.nodeType)
     assertEquals("(bvmul x #x0000000000000002)",mul.code)
     assertEquals(List(0,4),mul.values)
+  }
+
+  @Test def bvEquals: Unit = {
+    val eq = new BVEquals(new BVLiteral(4,2), new BVVariable("v", Map("v" -> 4L) :: Map("v" -> 0L) :: Nil))
+    assertEquals(1,eq.height)
+    assertEquals(3,eq.terms)
+    assertTrue(eq.isInstanceOf[BoolNode])
+    assertEquals(Types.Bool,eq.nodeType)
+    assertEquals("(= #x0000000000000004 v)",eq.code)
+    assertEquals(List(true,false), eq.values)
   }
 
   @Test def includesVarWithName: Unit = {

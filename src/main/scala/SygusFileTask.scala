@@ -303,6 +303,16 @@ object SygusFileTask{
             override def apply (children: List[ASTNode], contexts: List[Map[String, Any]] ): ASTNode =
             new IntEquals (children (0).asInstanceOf[IntNode], children (1).asInstanceOf[IntNode] )
           }
+          case List(Types.BitVec64,Types.BitVec64) => new VocabMaker {
+            override val arity: Int = 2
+            override val childTypes: List[Types] = childrenTypes
+            override val returnType: Types = retType
+            override val head: String = funcName
+            override protected val nodeType: Class[_ <: ASTNode] = classOf[BVEquals]
+
+            override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+              new BVEquals(children (0).asInstanceOf[BVNode], children (1).asInstanceOf[BVNode] )
+          }
         }
         case ("str.prefixof", Types.Bool,2) => new VocabMaker {
           override val arity: Int = 2

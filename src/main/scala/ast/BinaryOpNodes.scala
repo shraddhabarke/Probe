@@ -175,7 +175,11 @@ class BVShrArithmetic(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Lon
   override lazy val code: String = "(bvashr " + lhs.code + " " + rhs.code + ")"
 }
 
+class BVEquals(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Boolean] with BoolNode {
+  override def doOp(l: Any, r: Any): Boolean = l.asInstanceOf[Long] == r.asInstanceOf[Long]
 
+  override val code: String = "(= " + lhs.code + " " + rhs.code + ")"
+}
 
 
 

@@ -491,4 +491,17 @@ class VocabTests  extends JUnitSuite{
     assertEquals(List(Long.MaxValue,0L),node.values)
     assertEquals(Types.BitVec64,node.nodeType)
   }
+
+  @Test def bvEqualsMaker: Unit = {
+    val vocabLine = "(ntBool Bool ((= nBitVec nBitVec)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(2,maker.arity)
+    assertEquals(Types.Bool,maker.returnType)
+    val ctx = Map("bv0" -> Long.MaxValue) :: Map("bv0" -> 0L) :: Nil
+    val node = maker(List(new BVVariable("bv0",ctx), new BVLiteral(Long.MaxValue,2)),ctx)
+    assertTrue(node.isInstanceOf[BVEquals])
+    assertEquals(List(true,false),node.values)
+    assertEquals(Types.Bool,node.nodeType)
+  }
 }
