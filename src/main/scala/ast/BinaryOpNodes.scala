@@ -114,8 +114,8 @@ class BVShiftLeft(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] w
   override def doOp(l: Any, r: Any): Long = {
     val lhsNode = l.asInstanceOf[Long]
     val rhsNode = r.asInstanceOf[Long]
-    if (rhsNode > lhsNode) 0
-    else lhsNode << rhsNode //todo: specify semantics for when shifting left by a negative number?
+    if (rhsNode >= 64 || rhsNode < 0) 0
+    else lhsNode << rhsNode
   }
   override lazy val code: String = "(bvshl " + lhs.code + " " + rhs.code + ")"
 }
