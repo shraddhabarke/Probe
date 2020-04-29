@@ -256,4 +256,57 @@ class SygusGrammarTests extends JUnitSuite{
     assertEquals(Example(Map("name" -> "981-424-843"),"843"),task.examples(3))
 
   }
+
+  @Test def parseTaskWithBitVec64: Unit = {
+    val grammarFile =
+      """(set-logic BV)
+        |(synth-fun f ( (x (BitVec 64)) ) (BitVec 64)
+        |((Start (BitVec 64)
+        |((bvnot Start)
+        |(bvxor Start Start)
+        |(bvand Start Start)
+        |(bvor Start Start)
+        |(bvneg Start)
+        |(bvadd Start Start)
+        |(bvmul Start Start)
+        |(bvudiv Start Start)
+        |(bvurem Start Start)
+        |(bvlshr Start Start)
+        |(bvashr Start Start)
+        |(bvshl Start Start)
+        |(bvsdiv Start Start)
+        |(bvsrem Start Start)
+        |(bvsub Start Start)
+        |x
+        |#x0000000000000000
+        |#x0000000000000001
+        |#x0000000000000002
+        |#x0000000000000009
+        |#x000000000000000A
+        |#x000000000000000B
+        |#x000000000000000C
+        |#x000000000000000D
+        |#x000000000000000E
+        |#x000000000000000F
+        |#x0000000000000010
+        |(ite StartBool Start Start)
+        |))
+        |(StartBool Bool
+        |((= Start Start)
+        |(not StartBool)
+        |(and StartBool StartBool)
+        |(or StartBool StartBool)
+        |))))
+        |(constraint (= (f #x12ae34cae3ede3e3) #x09571a6571f6f1f1))
+        |(constraint (= (f #x39060c0c082d1e90) #x720c1818105a3d20))
+        |(constraint (= (f #x41a0ebb90215cee0) #x8341d772042b9dc0))
+        |(constraint (= (f #xe9915852cd3e1ede) #xd322b0a59a7c3dbc))""".stripMargin
+    val task = new SygusFileTask(grammarFile)
+    assertTrue(task.isPBE)
+    assertEquals(4, task.examples.length)
+    assertEquals(Example(Map("x" -> 0x12ae34cae3ede3e3L.asInstanceOf[AnyRef]), 0x09571a6571f6f1f1L), task.examples(0))
+    assertEquals(Example(Map("x" -> 0x39060c0c082d1e90L.asInstanceOf[AnyRef]), 0x720c1818105a3d20L), task.examples(1))
+    assertEquals(Example(Map("x" -> 0x41a0ebb90215cee0L.asInstanceOf[AnyRef]), 0x8341d772042b9dc0L), task.examples(2))
+    assertEquals(Example(Map("x" -> 0xe9915852cd3e1edeL.asInstanceOf[AnyRef]), 0xd322b0a59a7c3dbcL), task.examples(3))
+  }
 }

@@ -38,8 +38,8 @@ class SygusFileTask(content: String) extends Cloneable{
     Logic.withName(setLogic.head.Symbol().getText)
   }
   val functionName = synthFun.Symbol(0).getSymbol.getText
-  val functionReturnType = Types.withName(synthFun.sort().identifier().getText)
-  val functionParameters = synthFun.sortedVar().asScala.map(svar => (svar.Symbol().getText -> Types.withName(svar.sort().identifier().getText))).toList
+  val functionReturnType = Types.withName(synthFun.sort().getText.replaceAllLiterally("(","").replaceAllLiterally(")",""))
+  val functionParameters = synthFun.sortedVar().asScala.map(svar => (svar.Symbol().getText -> Types.withName(svar.sort().getText.replaceAllLiterally("(","").replaceAllLiterally(")","")))).toList
 
   val isPBE: Boolean = {
     val constraints = parsed.cmd().asScala.filter(cmd => cmd.getChild(1) != null && cmd.getChild(1).getText == "constraint").map(_.term())
@@ -52,7 +52,7 @@ class SygusFileTask(content: String) extends Cloneable{
 
   var vocab: VocabFactory = {
     val nonTerminals = synthFun.grammarDef().groupedRuleList().asScala.map{nonTerminal =>
-      nonTerminal.Symbol().getSymbol.getText -> Types.withName(nonTerminal.sort().identifier().getText)
+      nonTerminal.Symbol().getSymbol.getText -> Types.withName(nonTerminal.sort().getText.replaceAllLiterally("(","").replaceAllLiterally(")",""))
     }.toMap
     val makers = synthFun.grammarDef().groupedRuleList().asScala.flatMap{ nonTerminal =>
       nonTerminal.gTerm().asScala.filter(vocabElem =>
@@ -60,12 +60,12 @@ class SygusFileTask(content: String) extends Cloneable{
         vocabElem.bfTerm().identifier() == null ||
         !nonTerminals.contains(vocabElem.bfTerm().identifier().Symbol().getText)
       ).map { vocabElem =>
-        SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().identifier().getText),nonTerminals)
+        SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().getText.replaceAllLiterally("(","").replaceAllLiterally(")","")),nonTerminals)
 //        if (!) //operator or func name
 //              SygusFileTask.makeVocabMaker(
 //                  ,
 //                  ,
-//                  nonTerminal.sort().identifier().getText,
+//                  nonTerminal.sort().getText,
 //                  vocabElem.bfTerm().bfTerm().asScala.map(child => nonTerminals(child.identifier().Symbol().getText))
 //              ).mkString("|")
 
@@ -125,8 +125,10 @@ object SygusFileTask{
             override def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = new BoolLiteral(lit, contexts.length)
           }
         }
-        case Types.BitVector => {
-          val lit = vocabElem.bfTerm().literal().BinConst().getText.asInstanceOf[Long]
+        case Types.BitVec64 => {
+          val lit = if (vocabElem.bfTerm().literal().BinConst() != null)
+            java.lang.Long.parseUnsignedLong(vocabElem.bfTerm().literal().BinConst().getText.drop(2),2)
+          else java.lang.Long.parseUnsignedLong(vocabElem.bfTerm().literal().HexConst().getText.drop(2),16)
           new VocabMaker {
             override val arity: Int = 0
             override val childTypes: List[Types] = Nil
@@ -290,15 +292,27 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new IntLessThanEq(children(0).asInstanceOf[IntNode], children(1).asInstanceOf[IntNode])
         }
-        case ("=",Types.Bool,2) => new VocabMaker {
-          override val arity: Int = 2
-          override val childTypes: List[Types] = childrenTypes
-          override val returnType: Types = retType
-          override val head: String = funcName
-          override protected val nodeType: Class[_ <: ASTNode] = classOf[IntEquals]
+        case ("=",Types.Bool,2) => childrenTypes match {
+          case List(Types.Int,Types.Int) => new VocabMaker {
+            override val arity: Int = 2
+            override val childTypes: List[Types] = childrenTypes
+            override val returnType: Types = retType
+            override val head: String = funcName
+            override protected val nodeType: Class[_ <: ASTNode] = classOf[IntEquals]
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-            new IntEquals(children(0).asInstanceOf[IntNode], children(1).asInstanceOf[IntNode])
+            override def apply (children: List[ASTNode], contexts: List[Map[String, Any]] ): ASTNode =
+            new IntEquals (children (0).asInstanceOf[IntNode], children (1).asInstanceOf[IntNode] )
+          }
+          case List(Types.BitVec64,Types.BitVec64) => new VocabMaker {
+            override val arity: Int = 2
+            override val childTypes: List[Types] = childrenTypes
+            override val returnType: Types = retType
+            override val head: String = funcName
+            override protected val nodeType: Class[_ <: ASTNode] = classOf[BVEquals]
+
+            override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+              new BVEquals(children (0).asInstanceOf[BVNode], children (1).asInstanceOf[BVNode] )
+          }
         }
         case ("str.prefixof", Types.Bool,2) => new VocabMaker {
           override val arity: Int = 2
@@ -330,6 +344,196 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new Contains(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[StringNode])
         }
+        case ("bvand",Types.BitVec64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVAnd]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVAnd(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
+        }
+        case ("bvor",Types.BitVec64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVOr]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVOr(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
+        }
+        case ("bvlshr",Types.BitVec64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVShrLogical]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVShrLogical(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
+        }
+        case ("bvshl",Types.BitVec64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVShiftLeft]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVShiftLeft(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
+        }
+        case ("bvashr",Types.BitVec64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVShrArithmetic]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVShrArithmetic(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
+        }
+        case ("bvnot",Types.BitVec64,1) => new VocabMaker {
+          override val arity: Int = 1
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVNot]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVNot(children(0).asInstanceOf[BVNode])
+        }
+        case ("bvxor",Types.BitVec64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVXor]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVXor(children(0).asInstanceOf[BVNode], children(1).asInstanceOf[BVNode])
+        }
+        case ("bvneg",Types.BitVec64,1) => new VocabMaker {
+          override val arity: Int = 1
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVNeg]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVNeg(children(0).asInstanceOf[BVNode])
+        }
+        case ("bvsub",Types.BitVec64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVSub]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVSub(children(0).asInstanceOf[BVNode], children(1).asInstanceOf[BVNode])
+        }
+        case ("bvsdiv",Types.BitVec64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVSDiv]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVSDiv(children(0).asInstanceOf[BVNode], children(1).asInstanceOf[BVNode])
+        }
+        case ("bvudiv",Types.BitVec64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVUDiv]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVUDiv(children(0).asInstanceOf[BVNode], children(1).asInstanceOf[BVNode])
+        }
+        case ("bvmul",Types.BitVec64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVMul]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVMul(children(0).asInstanceOf[BVNode], children(1).asInstanceOf[BVNode])
+        }
+        case ("bvadd",Types.BitVec64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVAdd]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVAdd(children(0).asInstanceOf[BVNode], children(1).asInstanceOf[BVNode])
+        }
+        case ("and",Types.Bool,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[LAnd]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new LAnd(children(0).asInstanceOf[BoolNode], children(1).asInstanceOf[BoolNode])
+        }
+        case ("or",Types.Bool,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[LOr]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new LOr(children(0).asInstanceOf[BoolNode], children(1).asInstanceOf[BoolNode])
+        }
+        case ("not",Types.Bool,1) => new VocabMaker {
+          override val arity: Int = 1
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[LNot]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new LNot(children(0).asInstanceOf[BoolNode])
+        }
+        case ("ite",Types.BitVec64,3) => new VocabMaker {
+          override val arity: Int = 3
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVITE]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVITE(children(0).asInstanceOf[BoolNode],children(1).asInstanceOf[BVNode], children(2).asInstanceOf[BVNode])
+        }
+        case ("bvsrem",Types.BitVec64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVSRem]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVSRem(children(0).asInstanceOf[BVNode], children(1).asInstanceOf[BVNode])
+        }
+        case ("bvurem",Types.BitVec64,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override protected val nodeType: Class[_ <: ASTNode] = classOf[BVURem]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVURem(children(0).asInstanceOf[BVNode], children(1).asInstanceOf[BVNode])
+        }
       }
     }
 
@@ -358,12 +562,23 @@ object SygusFileTask{
       override protected val nodeType: Class[_ <: ASTNode] = classOf[BoolVariable]
       override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode = new BoolVariable(varname,contexts)
     }
+    case Types.BitVec64 => new VocabMaker {
+      override val arity: Int = 0
+      override val childTypes: List[Types] = Nil
+      override val returnType: Types = retType
+      override val head: String = varname
+      override protected val nodeType: Class[_ <: ASTNode] = classOf[BVVariable]
+      override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode = new BVVariable(varname,contexts)
+    }
   }
 
   def literalToAny(literal: SyGuSParser.LiteralContext, returnType: Types): Any = returnType match {
     case Types.String => literal.StringConst().getSymbol.getText.drop(1).dropRight(1)//unescape
     case Types.Int => literal.Numeral().getText.toInt
     case Types.Bool => literal.BoolConst().toString.toBoolean
+    case Types.BitVec64 => if (literal.HexConst() != null)
+      java.lang.Long.parseUnsignedLong(literal.HexConst().getText.drop(2),16)
+    else java.lang.Long.parseUnsignedLong(literal.BinConst().getText.drop(2),2)
   }
 
   def exampleFromConstraint(constraint: TermContext, functionName: String, retType: Types, parameters: Seq[(String,Types)]): Example = {

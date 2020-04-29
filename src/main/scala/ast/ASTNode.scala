@@ -40,5 +40,5 @@ trait BoolNode extends ASTNode {
 
 trait BVNode extends ASTNode {
   override val values: List[Long]
-  override val nodeType = Types.BitVector
+  override val nodeType = Types.BitVec64
 }

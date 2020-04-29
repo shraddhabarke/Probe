@@ -41,8 +41,8 @@ class ASTNodeTests extends JUnitSuite{
   @Test def bvLiteralNode(): Unit = {
     val bvLiteral: BVNode = new BVLiteral(2,1)
     assertEquals(2,bvLiteral.values(0))
-    assertEquals(Types.BitVector,bvLiteral.nodeType)
-    assertEquals("2",bvLiteral.code)
+    assertEquals(Types.BitVec64,bvLiteral.nodeType)
+    assertEquals("#x0000000000000002",bvLiteral.code)
     assertEquals(0,bvLiteral.height)
     assertEquals(1,bvLiteral.terms)
     assertTrue(bvLiteral.children.isEmpty)
@@ -315,10 +315,10 @@ class ASTNodeTests extends JUnitSuite{
     val lhs = new BVLiteral(23,1)
     val rhs = new BVLiteral(8,1)
     val bvAndNode: BVNode = new BVAnd(lhs,rhs)
-    assertEquals(Types.BitVector, bvAndNode.nodeType)
+    assertEquals(Types.BitVec64, bvAndNode.nodeType)
     assertEquals(1, bvAndNode.height)
     assertEquals(3, bvAndNode.terms)
-    assertEquals("(bv.and 23 8)", bvAndNode.code)
+    assertEquals("(bvand #x0000000000000017 #x0000000000000008)", bvAndNode.code)
     assertEquals(List(0),bvAndNode.values)
     assertEquals(List(lhs,rhs), bvAndNode.children)
   }
@@ -327,10 +327,10 @@ class ASTNodeTests extends JUnitSuite{
     val lhs = new BVLiteral(23,1)
     val rhs = new BVLiteral(8,1)
     val bvOrNode: BVNode = new BVOr(lhs,rhs)
-    assertEquals(Types.BitVector, bvOrNode.nodeType)
+    assertEquals(Types.BitVec64, bvOrNode.nodeType)
     assertEquals(1, bvOrNode.height)
     assertEquals(3, bvOrNode.terms)
-    assertEquals("(bv.or 23 8)", bvOrNode.code)
+    assertEquals("(bvor #x0000000000000017 #x0000000000000008)", bvOrNode.code)
     assertEquals(List(31),bvOrNode.values)
     assertEquals(List(lhs,rhs), bvOrNode.children)
   }
@@ -339,10 +339,10 @@ class ASTNodeTests extends JUnitSuite{
     val lhs = new BVLiteral(23,1)
     val rhs = new BVLiteral(8,1)
     val bvXOrNode: BVNode = new BVXor(lhs,rhs)
-    assertEquals(Types.BitVector, bvXOrNode.nodeType)
+    assertEquals(Types.BitVec64, bvXOrNode.nodeType)
     assertEquals(1, bvXOrNode.height)
     assertEquals(3, bvXOrNode.terms)
-    assertEquals("(bv.xor 23 8)", bvXOrNode.code)
+    assertEquals("(bvxor #x0000000000000017 #x0000000000000008)", bvXOrNode.code)
     assertEquals(List(31),bvXOrNode.values)
     assertEquals(List(lhs,rhs), bvXOrNode.children)
   }
@@ -350,10 +350,10 @@ class ASTNodeTests extends JUnitSuite{
   @Test def bvComplement: Unit = {
     val arg = new BVLiteral(23,1)
     val bvComplement: BVNode = new BVNot(arg)
-    assertEquals(Types.BitVector, bvComplement.nodeType)
+    assertEquals(Types.BitVec64, bvComplement.nodeType)
     assertEquals(1, bvComplement.height)
     assertEquals(2, bvComplement.terms)
-    assertEquals("(bv.not 23)", bvComplement.code)
+    assertEquals("(bvnot #x0000000000000017)", bvComplement.code)
     assertEquals(List(-24),bvComplement.values)
     assertEquals(List(arg), bvComplement.children)
   }
@@ -364,18 +364,21 @@ class ASTNodeTests extends JUnitSuite{
     val one = new BVLiteral(value = 1, numContexts = 1)
     val zero = new BVLiteral(value = 0, numContexts = 1)
     val signedOne = new BVLiteral(value = -1, numContexts = 1)
-    val bvShlNode: BVNode = new BVShiftLeft(lhs,rhs)
-    val bvSimple0: BVNode = new BVShiftLeft(one,one)
-    val bvSimple1: BVNode = new BVShiftLeft(one,zero)
-    val bvSigned0: BVNode = new BVShiftLeft(one,signedOne)
-    assertEquals(Types.BitVector, bvShlNode.nodeType)
+    val bvShlNode = new BVShiftLeft(lhs,rhs)
+    val bvSimple0 = new BVShiftLeft(one,one)
+    val bvSimple1 = new BVShiftLeft(one,zero)
+    val bvSigned0 = new BVShiftLeft(one,signedOne)
+    assertEquals(Types.BitVec64, bvShlNode.nodeType)
     assertEquals(1, bvShlNode.height)
     assertEquals(3, bvShlNode.terms)
-    assertEquals("(bv.shl 23 8)", bvShlNode.code)
+    assertEquals("(bvshl #x0000000000000017 #x0000000000000008)", bvShlNode.code)
+    assertEquals("(bvshl #x0000000000000001 #x0000000000000001)",bvSimple0.code)
+    assertEquals("(bvshl #x0000000000000001 #x0000000000000000)",bvSimple1.code)
+    assertEquals("(bvshl #x0000000000000001 #xffffffffffffffff)",bvSigned0.code)
     assertEquals(List(5888),bvShlNode.values)
-    //assertEquals(List(11),bvSigned0.values)
     assertEquals(List(2),bvSimple0.values)
     assertEquals(List(1),bvSimple1.values)
+    assertEquals(List(0),bvSigned0.values)
     assertEquals(List(lhs,rhs), bvShlNode.children)
   }
 
@@ -383,14 +386,17 @@ class ASTNodeTests extends JUnitSuite{
     val arg = new BVLiteral(2,1)
     val one = new BVLiteral(value = 1, numContexts = 1)
     val signedOne = new BVLiteral(value = -1, numContexts = 1)
-    val bvShrNode: BVNode = new BVShrArithmetic(arg,one)
-    val bvShrNodeSigned: BVNode = new BVShrArithmetic(arg,signedOne)
-    val bvShrNodeSigned1: BVNode = new BVShrArithmetic(signedOne,signedOne)
-    val bvShrNodeSigned2: BVNode = new BVShrArithmetic(signedOne,one)
-    assertEquals(Types.BitVector, bvShrNode.nodeType)
+    val bvShrNode = new BVShrArithmetic(arg,one)
+    val bvShrNodeSigned = new BVShrArithmetic(arg,signedOne)
+    val bvShrNodeSigned1 = new BVShrArithmetic(signedOne,signedOne)
+    val bvShrNodeSigned2 = new BVShrArithmetic(signedOne,one)
+    assertEquals(Types.BitVec64, bvShrNode.nodeType)
     assertEquals(1, bvShrNode.height)
     assertEquals(3, bvShrNode.terms)
-    assertEquals("(bv.ashr 2 1)", bvShrNode.code)
+    assertEquals("(bvashr #x0000000000000002 #x0000000000000001)", bvShrNode.code)
+    assertEquals("(bvashr #x0000000000000002 #xffffffffffffffff)",bvShrNodeSigned.code)
+    assertEquals("(bvashr #xffffffffffffffff #xffffffffffffffff)",bvShrNodeSigned1.code)
+    assertEquals("(bvashr #xffffffffffffffff #x0000000000000001)",bvShrNodeSigned2.code)
     assertEquals(List(1),bvShrNode.values)
     assertEquals(List(0),bvShrNodeSigned.values)
     assertEquals(List(-1),bvShrNodeSigned1.values)
@@ -404,13 +410,144 @@ class ASTNodeTests extends JUnitSuite{
     val signedOne = new BVLiteral(value = -1, numContexts = 1)
     val bvShrNode: BVNode = new BVShrLogical(arg,one)
     val bvShrNodeSigned: BVNode = new BVShrLogical(arg,signedOne)
-    assertEquals(Types.BitVector, bvShrNode.nodeType)
+    assertEquals(Types.BitVec64, bvShrNode.nodeType)
     assertEquals(1, bvShrNode.height)
     assertEquals(3, bvShrNode.terms)
-    assertEquals("(bv.lshr 2 1)", bvShrNode.code)
+    assertEquals("(bvlshr #x0000000000000002 #x0000000000000001)", bvShrNode.code)
+    assertEquals("(bvlshr #x0000000000000002 #xffffffffffffffff)", bvShrNodeSigned.code)
     assertEquals(List(1),bvShrNode.values)
     assertEquals(List(0),bvShrNodeSigned.values)
     assertEquals(List(arg,one), bvShrNode.children)
+  }
+
+  @Test def bvNeg: Unit = {
+    val arg1 = new BVLiteral(0,1)
+    val arg2 = new BVLiteral(-5,1)
+    val arg3 = new BVLiteral(101,1)
+
+    val neg1 = new BVNeg(arg1)
+    val neg2 = new BVNeg(arg2)
+    val neg3 = new BVNeg(arg3)
+    val neg4 = new BVNeg(new BVLiteral(Long.MinValue,1))
+
+    assertEquals(1,neg1.height)
+    assertEquals(2,neg1.terms)
+    assertEquals("(bvneg #x0000000000000000)",neg1.code)
+    assertEquals("(bvneg #xfffffffffffffffb)",neg2.code)
+    assertEquals("(bvneg #x0000000000000065)",neg3.code)
+    assertEquals("(bvneg #x8000000000000000)",neg4.code)
+
+    assertEquals(List(0),neg1.values)
+    assertEquals(List(5),neg2.values)
+    assertEquals(List(-101),neg3.values)
+    assertEquals(List(Long.MinValue),neg4.values)
+  }
+
+  @Test def bvVarialbe: Unit = {
+    val x = new BVVariable("x",Map("x" -> Long.MinValue) :: Nil)
+    assertEquals(0,x.height)
+    assertEquals(1,x.terms)
+    assertEquals("x",x.code)
+    assertEquals(List(Long.MinValue),x.values)
+  }
+
+  @Test def bvSub: Unit = {
+    val x = new BVVariable("x",Map("x" -> Long.MinValue) :: Map("x" -> 0L) :: Map("x" -> Long.MaxValue) :: Nil)
+    val y = new BVVariable("y",Map("y" -> Long.MinValue) :: Map("y" -> Long.MaxValue) :: Map("y" -> 0L) ::  Nil)
+    val sub = new BVSub(x,y)
+    assertEquals("(bvsub x y)",sub.code)
+    assertEquals(List(0,-9223372036854775807L,9223372036854775807L),sub.values)
+  }
+  @Test def bvSDiv: Unit = {
+    val divnode = new BVUDiv(new BVLiteral(-8,1),new BVLiteral(4,1))
+    assertEquals(1,divnode.height)
+    assertEquals(3,divnode.terms)
+    assertEquals("(bvudiv #xfffffffffffffff8 #x0000000000000004)", divnode.code)
+    assertEquals(List(0x3ffffffffffffffeL),divnode.values)
+  }
+  @Test def bvUDiv: Unit = {
+    val divnode = new BVSDiv(new BVLiteral(-8,1),new BVLiteral(4,1))
+    assertEquals(1,divnode.height)
+    assertEquals(3,divnode.terms)
+    assertEquals("(bvsdiv #xfffffffffffffff8 #x0000000000000004)", divnode.code)
+    assertEquals("18446744073709551614",java.lang.Long.toUnsignedString(divnode.values(0)))
+  }
+  @Test def bvMul: Unit = {
+    val mul = new BVMul(new BVVariable("x",Map("x" -> Long.MinValue) :: Map("x" -> 2L) :: Nil),new BVLiteral(2L,2))
+    assertEquals(1,mul.height)
+    assertEquals(3,mul.terms)
+    assertEquals(Types.BitVec64,mul.nodeType)
+    assertEquals("(bvmul x #x0000000000000002)",mul.code)
+    assertEquals(List(0,4),mul.values)
+  }
+
+  @Test def bvEquals: Unit = {
+    val eq = new BVEquals(new BVLiteral(4,2), new BVVariable("v", Map("v" -> 4L) :: Map("v" -> 0L) :: Nil))
+    assertEquals(1,eq.height)
+    assertEquals(3,eq.terms)
+    assertTrue(eq.isInstanceOf[BoolNode])
+    assertEquals(Types.Bool,eq.nodeType)
+    assertEquals("(= #x0000000000000004 v)",eq.code)
+    assertEquals(List(true,false), eq.values)
+  }
+
+  @Test def logicalAnd: Unit = {
+    val ctx = List(Map("x" -> true, "y" -> false), Map("x" -> true, "y" -> true), Map("x" -> false, "y" -> false))
+    val land = new LAnd(new BoolVariable("x",ctx), new BoolVariable("y",ctx))
+    assertEquals(1, land.height)
+    assertEquals(3,land.terms)
+    assertEquals(Types.Bool,land.nodeType)
+    assertEquals("(and x y)",land.code)
+    assertEquals(List(false,true,false),land.values)
+  }
+
+  @Test def logicalOr: Unit = {
+    val ctx = List(Map("x" -> true, "y" -> false), Map("x" -> true, "y" -> true), Map("x" -> false, "y" -> false))
+    val lor = new LOr(new BoolVariable("x",ctx), new BoolVariable("y",ctx))
+    assertEquals(1, lor.height)
+    assertEquals(3,lor.terms)
+    assertEquals(Types.Bool,lor.nodeType)
+    assertEquals("(or x y)",lor.code)
+    assertEquals(List(true,true,false),lor.values)
+  }
+
+  @Test def logicalNot: Unit = {
+    val ctx = List(Map("x" -> true, "y" -> false), Map("x" -> true, "y" -> true))
+    val lnot = new LNot(new BoolVariable("y",ctx))
+    assertEquals(1, lnot.height)
+    assertEquals(2,lnot.terms)
+    assertEquals(Types.Bool,lnot.nodeType)
+    assertEquals("(not y)",lnot.code)
+    assertEquals(List(true,false),lnot.values)
+  }
+
+  @Test def bvITE: Unit = {
+    val ctx = List(Map("b" -> true, "a" -> 2L, "c" -> 8L),Map("b" -> false, "a" -> 3L, "c" -> 9L))
+    val ite = new BVITE(new BoolVariable("b",ctx), new BVVariable("a",ctx), new BVVariable("c",ctx))
+    assertEquals(1,ite.height)
+    assertEquals(4,ite.terms)
+    assertEquals(Types.BitVec64, ite.nodeType)
+    assertEquals("(ite b a c)", ite.code)
+    assertEquals(List(2L,9L), ite.values)
+  }
+
+  @Test def bvSignedRem: Unit = {
+    val ctx = List(Map("a" -> 0L, "b" -> 5L),Map("a" -> 2L, "b" -> -5L),Map("a" -> -2L, "b" -> 5L), Map("a" -> Long.MaxValue, "b" -> Long.MinValue), Map("a" -> Long.MinValue, "b" -> Long.MaxValue))
+    val srem = new BVSRem(new BVVariable("a",ctx), new BVVariable("b",ctx))
+    assertEquals(1,srem.height)
+    assertEquals(3, srem.terms)
+    assertEquals(Types.BitVec64,srem.nodeType)
+    assertEquals("(bvsrem a b)", srem.code)
+    assertEquals(List(0L,2L,0xfffffffffffffffeL,9223372036854775807L,0xffffffffffffffffL),srem.values)
+  }
+  @Test def bvUnsignedRem: Unit = {
+    val ctx = List(Map("a" -> 0L, "b" -> 5L),Map("a" -> 2L, "b" -> -5L),Map("a" -> -2L, "b" -> 5L), Map("a" -> Long.MaxValue, "b" -> Long.MinValue), Map("a" -> Long.MinValue, "b" -> Long.MaxValue))
+    val srem = new BVURem(new BVVariable("a",ctx), new BVVariable("b",ctx))
+    assertEquals(1,srem.height)
+    assertEquals(3, srem.terms)
+    assertEquals(Types.BitVec64,srem.nodeType)
+    assertEquals("(bvurem a b)", srem.code)
+    assertEquals(List(0L,2L,4L,9223372036854775807L,1),srem.values)
   }
 
   @Test def includesVarWithName: Unit = {

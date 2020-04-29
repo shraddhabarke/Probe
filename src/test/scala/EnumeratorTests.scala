@@ -20,11 +20,11 @@ class EnumeratorTests  extends JUnitSuite{
     val parser = new SyGuSParser(new BufferedTokenStream(new SyGuSLexer(CharStreams.fromString(grammar))))
     val grammarDef = parser.grammarDef()
     val nonTerminals = grammarDef.groupedRuleList().asScala.map{nonTerminal =>
-      nonTerminal.Symbol().getSymbol.getText -> Types.withName(nonTerminal.sort().identifier().getText)
+      nonTerminal.Symbol().getSymbol.getText -> Types.withName(nonTerminal.sort().getText)
     }.toMap
     val vocab = ast.VocabFactory(
       grammarDef.groupedRuleList().asScala.flatMap{nonTerminal => nonTerminal.gTerm().asScala.map(vocabElem =>
-        SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().identifier().getText),nonTerminals))}.toList
+        SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().getText),nonTerminals))}.toList
     )
     assertEquals(4,vocab.leaves.size)
     assertEquals(3,vocab.nonLeaves().size)
@@ -85,11 +85,11 @@ class EnumeratorTests  extends JUnitSuite{
     val parser = new SyGuSParser(new BufferedTokenStream(new SyGuSLexer(CharStreams.fromString(grammar))))
     val grammarDef = parser.grammarDef()
     val nonTerminals = grammarDef.groupedRuleList().asScala.map{nonTerminal =>
-      nonTerminal.Symbol().getSymbol.getText -> Types.withName(nonTerminal.sort().identifier().getText)
+      nonTerminal.Symbol().getSymbol.getText -> Types.withName(nonTerminal.sort().getText)
     }.toMap
     val vocab = ast.VocabFactory(
       grammarDef.groupedRuleList().asScala.flatMap{nonTerminal => nonTerminal.gTerm().asScala.map(vocabElem =>
-        SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().identifier().getText),nonTerminals))}.toList
+        SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().getText),nonTerminals))}.toList
     )
     val inputValues: Map[String,AnyRef] = Map("x" -> 1.asInstanceOf[AnyRef])
     val enumerator = new Enumerator(vocab, new InputsValuesManager,inputValues :: Nil)
@@ -112,11 +112,11 @@ class EnumeratorTests  extends JUnitSuite{
     val parser = new SyGuSParser(new BufferedTokenStream(new SyGuSLexer(CharStreams.fromString(grammar))))
     val grammarDef = parser.grammarDef()
     val nonTerminals = grammarDef.groupedRuleList().asScala.map{nonTerminal =>
-      nonTerminal.Symbol().getSymbol.getText -> Types.withName(nonTerminal.sort().identifier().getText)
+      nonTerminal.Symbol().getSymbol.getText -> Types.withName(nonTerminal.sort().getText)
     }.toMap
     val vocab = ast.VocabFactory(
       grammarDef.groupedRuleList().asScala.flatMap{nonTerminal => nonTerminal.gTerm().asScala.map(vocabElem =>
-        SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().identifier().getText),nonTerminals))}.toList
+        SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().getText),nonTerminals))}.toList
     )
     val inputValues: List[Map[String,AnyRef]] = List(Map("x" -> 1.asInstanceOf[AnyRef]), Map("x" -> 0.asInstanceOf[AnyRef]))
     val enumerator = new Enumerator(vocab, new InputsValuesManager,inputValues)
@@ -138,11 +138,11 @@ class EnumeratorTests  extends JUnitSuite{
     val parser = new SyGuSParser(new BufferedTokenStream(new SyGuSLexer(CharStreams.fromString(grammar))))
     val grammarDef = parser.grammarDef()
     val nonTerminals = grammarDef.groupedRuleList().asScala.map{nonTerminal =>
-      nonTerminal.Symbol().getSymbol.getText -> Types.withName(nonTerminal.sort().identifier().getText)
+      nonTerminal.Symbol().getSymbol.getText -> Types.withName(nonTerminal.sort().getText)
     }.toMap
     val vocab = ast.VocabFactory(
       grammarDef.groupedRuleList().asScala.flatMap{nonTerminal => nonTerminal.gTerm().asScala.map(vocabElem =>
-        SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().identifier().getText),nonTerminals))}.toList
+        SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().getText),nonTerminals))}.toList
     )
     val enumerator = new Enumerator(vocab, new InputsValuesManager, Map.empty[String,AnyRef] :: Nil)
     assertTrue(enumerator.hasNext)
@@ -159,11 +159,11 @@ class EnumeratorTests  extends JUnitSuite{
     val parser = new SyGuSParser(new BufferedTokenStream(new SyGuSLexer(CharStreams.fromString(grammar))))
     val grammarDef = parser.grammarDef()
     val nonTerminals = grammarDef.groupedRuleList().asScala.map{nonTerminal =>
-      nonTerminal.Symbol().getSymbol.getText -> Types.withName(nonTerminal.sort().identifier().getText)
+      nonTerminal.Symbol().getSymbol.getText -> Types.withName(nonTerminal.sort().getText)
     }.toMap
     val vocab = ast.VocabFactory(
       grammarDef.groupedRuleList().asScala.flatMap{nonTerminal => nonTerminal.gTerm().asScala.map(vocabElem =>
-        SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().identifier().getText),nonTerminals))}.toList
+        SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().getText),nonTerminals))}.toList
     )
     val enumerator = new Enumerator(vocab, new OEValuesManager {
       override def isRepresentative(program: ASTNode): Boolean = true
