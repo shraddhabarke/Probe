@@ -9,7 +9,7 @@ import sygus.SygusFileTask
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
-class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, val task: SygusFileTask) extends Iterator[ASTNode] {
+class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, val task: SygusFileTask, val probBased: Boolean) extends Iterator[ASTNode] {
   override def toString(): String = "enumeration.Enumerator"
 
   var nextProgram: Option[ASTNode] = None
@@ -40,8 +40,7 @@ class ProbEnumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, va
 
   resetEnumeration()
   var rootMaker: VocabMaker = currIter.next()
-  var probBased: Boolean = true
-
+  
   def resetEnumeration():  Unit = {
     currIter = vocab.leaves().toList.sortBy(_.rootCost).toIterator
     childrenIterator = Iterator.single(Nil)

@@ -48,16 +48,9 @@ object Main extends App {
     synthesizeFromTask(task)
   }
 
-  def synthesizeFullSols(filename: String) = {
-    val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
-    assert(task.isPBE)
-    synthesizeFullSolutions(task)
-  }
-
   def synthesizeFromTask(task: SygusFileTask, timeout: Int = 600) = {
     val oeManager = new InputsValuesManager()
-    //val enumerator = new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input))
-    val enumerator = new enumeration.ProbEnumerator(task.vocab, oeManager, task)
+    val enumerator = new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input))
     //val foundPrograms: mutable.Map[List[Boolean], mutable.ListBuffer[ASTNode]] = mutable.HashMap()
     val deadline = timeout.seconds.fromNow
     val ranks = mutable.ListBuffer[RankedProgram]()
@@ -102,34 +95,6 @@ object Main extends App {
     //val rankedProgs: List[(ASTNode, Double)] = foundPrograms.toList.flatMap { case (sat, progs) => progs.map(p => (p, ProgramRanking.ranking(p, task.examples.map(_.output), task.functionParameters.map(_._1)))) }
     ranks.reverse
     //rankedProgs.sortBy(-_._2).take(50).map(p => RankedProgram(p._1,p._2))
-  }
-
-  def synthesizeFullSolutions(task: SygusFileTask, timeout: Int = 600): ASTNode = {
-    val oeManager = new InputsValuesManager()
-    val enumerator = new enumeration.ProbEnumerator(task.vocab, oeManager, task)
-    //val foundPrograms: mutable.Map[List[Boolean], mutable.ListBuffer[ASTNode]] = mutable.HashMap()
-    val deadline = timeout.seconds.fromNow
-    var p: ASTNode = null
-
-    breakable {
-      for ((program, i) <- enumerator.zipWithIndex) {
-        if (program.nodeType == task.functionReturnType) {
-          val results = task.examples.zip(program.values).map(pair => pair._1.output == pair._2)
-          //There will only be one program matching 1...1, but potentially many for 1..101..1, do rank those as well?
-          if (results.forall(identity)) {
-            p = program
-            iprintln(program.code)
-            break
-          }
-        }
-
-        if ((consoleEnabled && in.ready()) || !deadline.hasTimeLeft) {
-          cprintln("")
-          break
-        }
-      }
-    }
-    p
   }
 
   case class ExpectedEOFException() extends Exception

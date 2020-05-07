@@ -1,4 +1,4 @@
-name := "partialcorrectness_sem"
+name := "probe"
 
 version := "0.1"
 
@@ -21,16 +21,21 @@ libraryDependencies += "commons-io" % "commons-io" % "2.6"
 
 // https://mvnrepository.com/artifact/junit/junit
 libraryDependencies += "junit" % "junit" % "4.13-rc-1" % Test
-
 // https://mvnrepository.com/artifact/org.scalatest/scalatest
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1" % Test
-
+//libraryDependencies += "org.scalactic" %% "scalactic" % "3.1.0"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.0" % Test
 // https://mvnrepository.com/artifact/org.scalatestplus/scalatestplus-junit
-libraryDependencies += "org.scalatestplus" %% "scalatestplus-junit" % "1.0.0-SNAP9" % Test
+libraryDependencies += "org.scalatestplus" %% "scalatestplus-junit" % "1.0.0-SNAP9"
 
-//javaOptions += "-Xmx1024m Regexer"
-// https://mvnrepository.com/artifact/io.spray/spray-json
 libraryDependencies += "io.spray" %% "spray-json" % "1.3.5"
 
+// https://mvnrepository.com/artifact/commons-cli/commons-cli
+libraryDependencies += "commons-cli" % "commons-cli" % "1.4"
+
+//mainClass in (assembly) := Some("pcShell.ShellMain")
+Project.inConfig(Test)(baseAssemblySettings)
+assemblyJarName in (Test, assembly) := s"${name.value}-full.jar"
+
+javaOptions += "-Xmx4096m"
 //Anlr command line:
 //java -jar antlr-4.7.2-complete.jar -package "sygus" -visitor SyGuS.g4
