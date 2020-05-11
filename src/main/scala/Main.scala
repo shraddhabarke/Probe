@@ -6,6 +6,7 @@ import ast.ASTNode
 import enumeration.{InputsValuesManager, ProgramRanking}
 import jline.console.ConsoleReader
 import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams, RecognitionException, Token}
+import sygus.ProbeMain.synthesizeProbe
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -22,7 +23,7 @@ object Main extends App {
   //"src/test/benchmarks/modified_benchmarks/returns_garbage/compare-two-strings_1.sl"
   //"src/test/benchmarks/too-hard/strip-html-from-text-or-numbers.sl"
   //"src/test/benchmarks/too-hard/stackoverflow1.sl"
-  "src/test/benchmarks/too-hard/38871714.sl"
+  "src/test/benchmarks/euphony/38871714.sl"
   //"src/test/benchmarks/too-hard/44789427.sl"
   //"src/test/benchmarks/too-hard/43606446.sl"
   //"src/test/benchmarks/too-hard/count-total-words-in-a-cell.sl"
@@ -129,9 +130,44 @@ object Main extends App {
     }
   }
 
-  trace.DebugPrints.setDebug()
+  def synthesizeProbe(filename: String, task: SygusFileTask, timeout: Int = 600): List[ASTNode] = {
+    val oeManager = new InputsValuesManager()
+    //val enumerator = new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input))
+    val enumerator = new enumeration.ProbEnumerator(true, filename, task.vocab, oeManager, task, true)
+    //val foundPrograms: mutable.Map[List[Boolean], mutable.ListBuffer[ASTNode]] = mutable.HashMap()
+    val deadline = timeout.seconds.fromNow
+    var p = List[ASTNode]()
+
+    breakable {
+      for ((program, i) <- enumerator.zipWithIndex) {
+        if (program.nodeType == task.functionReturnType) {
+          val results = task.examples.zip(program.values).map(pair => pair._1.output == pair._2)
+          //There will only be one program matching 1...1, but potentially many for 1..101..1, do rank those as well?
+          if (results.forall(identity)) {
+            p = List(program)
+            iprintln(program.code)
+            break
+          }
+        }
+
+        if ((consoleEnabled && in.ready()) || !deadline.hasTimeLeft) {
+          cprintln("")
+          break
+        }
+      }
+    }
+    p
+  }
+
+  def synthesizeFullSols(filename: String) = {
+    val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
+    assert(task.isPBE)
+    synthesizeProbe(filename, task)
+  }
+
+  trace.DebugPrints.setInfo()
   //  val (prog, _) = interpret(filename, "(str.++ firstname lastname)").get
   //  println(prog.code)
   //  println(prog.values)
-  synthesize(filename)//.foreach(pr => println((pr.program.code, pr.rank, pr.program.values)))
+  synthesizeFullSols(filename)//.foreach(pr => println((pr.program.code, pr.rank, pr.program.values)))
 }

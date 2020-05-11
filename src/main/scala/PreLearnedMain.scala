@@ -15,7 +15,7 @@ import pcShell.ConsolePrints._
 
 import scala.collection.mutable
 
-object ProbeMain extends App {
+object PreLearnedMain extends App {
   def runBenchmarks(filename: String,
                     resultPrinter: (ASTNode, Long, Long) => String
                    ): String = {
@@ -74,7 +74,7 @@ object ProbeMain extends App {
   def synthesizeProbe(filename: String, task: SygusFileTask, timeout: Int = 600): List[ASTNode] = {
     val oeManager = new InputsValuesManager()
     //val enumerator = new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input))
-    val enumerator = new enumeration.ProbEnumerator(false, filename, task.vocab, oeManager, task, true)
+    val enumerator = new enumeration.ProbEnumerator(true, filename, task.vocab, oeManager, task, true)
     //val foundPrograms: mutable.Map[List[Boolean], mutable.ListBuffer[ASTNode]] = mutable.HashMap()
     val deadline = timeout.seconds.fromNow
     var p = List[ASTNode]()
