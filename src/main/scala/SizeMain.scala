@@ -68,13 +68,13 @@ object SizeMain extends App {
   def synthesizeFullSols(filename: String) = {
     val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
     assert(task.isPBE)
-    synthesizeProbe(task)
+    synthesizeProbe(filename, task)
   }
 
   def synthesizeProbe(task: SygusFileTask, timeout: Int = 3600): List[ASTNode] = {
     val oeManager = new InputsValuesManager()
     //val enumerator = new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input))
-    val enumerator = new enumeration.ProbEnumerator(task.vocab, oeManager, task, false)
+    val enumerator = new enumeration.ProbEnumerator(false, filename, task.vocab, oeManager, task, false)
     //val foundPrograms: mutable.Map[List[Boolean], mutable.ListBuffer[ASTNode]] = mutable.HashMap()
     val deadline = timeout.seconds.fromNow
     var p = List[ASTNode]()

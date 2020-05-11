@@ -1,7 +1,7 @@
 package enumeration
 
 import java.io.{File, FileOutputStream}
-
+import sygus.ParseJson
 import ast._
 import sygus.SygusFileTask
 import trace.DebugPrints.dprintln
@@ -9,7 +9,7 @@ import trace.DebugPrints.dprintln
 import scala.collection.mutable
 
 object ProbUpdate {
-  //var fos = new FileOutputStream("output_p.txt", true)
+  var fos = new FileOutputStream("overview-ex.txt", true)
   var phaseChange: Boolean = false
   var newPrior = 0.0
   var fitSet = mutable.Map[Set[Any], List[ASTNode]]()
@@ -34,7 +34,7 @@ object ProbUpdate {
             if (!fitMap.contains(changedNode) || fitMap(changedNode) > (1 - fit))
               fitMap += (changedNode -> (1 - fit))
           }
-          //Console.withOut(fos) { println(program.code, examplesPassed, program.cost) }
+          Console.withOut(fos) { println(program.code, examplesPassed, program.cost) }
         }
       }
     }
@@ -43,14 +43,14 @@ object ProbUpdate {
 
   def updatePriors(fitMap: mutable.Map[Class[_], Double]): Unit = {
     fitMap.foreach(d => priors += (d._1 -> roundValue(d._2 * priors(d._1))))
-    //Console.withOut(fos) {
-    //  println(priors)
-    //}
+    Console.withOut(fos) {
+      println(priors)
+    }
   }
 
   def getRootPrior(node: ASTNode): Int = priors(node.getClass)
 
-  def roundValue(num: Double): Int = if (num == 0) 1 else if (num - num.toInt > 0.5) math.ceil(num).toInt else math.floor(num).toInt
+  def roundValue(num: Double): Int = if (num < 1) 1 else if (num - num.toInt > 0.5) math.ceil(num).toInt else math.floor(num).toInt
 
   var priors = mutable.Map[Class[_], Int](
     classOf[StringConcat] -> 10,
