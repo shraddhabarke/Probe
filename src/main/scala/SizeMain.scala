@@ -71,7 +71,7 @@ object SizeMain extends App {
     synthesizeProbe(task)
   }
 
-  def synthesizeProbe(task: SygusFileTask, timeout: Int = 600): List[ASTNode] = {
+  def synthesizeProbe(task: SygusFileTask, timeout: Int = 3600): List[ASTNode] = {
     val oeManager = new InputsValuesManager()
     //val enumerator = new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input))
     val enumerator = new enumeration.ProbEnumerator(task.vocab, oeManager, task, false)
