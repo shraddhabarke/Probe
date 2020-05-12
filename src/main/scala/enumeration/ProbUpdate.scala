@@ -1,11 +1,9 @@
 package enumeration
 
 import java.io.{File, FileOutputStream}
-import sygus.ParseJson
+
 import ast._
 import sygus.SygusFileTask
-import trace.DebugPrints.dprintln
-
 import scala.collection.mutable
 
 object ProbUpdate {
@@ -15,11 +13,17 @@ object ProbUpdate {
   var fitSet = mutable.Map[Set[Any], List[ASTNode]]()
   var fitCost = mutable.Map[Set[Any], Double]()
   var fitProgs: mutable.ArrayBuffer[String] = mutable.ArrayBuffer()
-  var fitMap = mutable.Map[Class[_], Double]()
+  var fitMap = mutable.Map[(Class[_],Option[Any]), Double]()
+  var priors = mutable.Map[(Class[_], Option[Any]), Int]()
 
-  def getAllNodeTypes(program: ASTNode): Set[Class[_]] = program.children.flatMap(c => getAllNodeTypes(c)).toSet + program.getClass
+  def getAllNodeTypes(program: ASTNode): Set[(Class[_], Option[Any])] = {
+    val recurseValue = if (program.isInstanceOf[StringLiteral] || program.isInstanceOf[IntLiteral] || program.isInstanceOf[StringVariable]
+    || program.isInstanceOf[IntVariable] || program.isInstanceOf[StringLiteral] || program.isInstanceOf[BoolLiteral] || program.isInstanceOf[BoolVariable])
+      (program.getClass -> Some(program.code)) else (program.getClass -> None)
+      program.children.flatMap(c => getAllNodeTypes(c)).toSet + recurseValue
+  }
 
-  def updateFit(fitsMap: mutable.Map[Class[_], Double], currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask): mutable.Map[Class[_], Double] = {
+  def updateFit(fitsMap: mutable.Map[(Class[_], Option[Any]), Double], currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask): mutable.Map[(Class[_], Option[Any]), Double] = {
     fitMap = fitsMap
     for (program <- currLevelProgs) {
       val exampleFit = task.fit(program)
@@ -29,7 +33,7 @@ object ProbUpdate {
         if (!fitCost.contains(examplesPassed) || (fitCost(examplesPassed) > program.cost) && !fitProgs.contains(program.code)) {
           fitCost += (examplesPassed -> program.cost)
           fitProgs += program.code
-          val changed: Set[Class[_]] = getAllNodeTypes(program)
+          val changed: Set[(Class[_], Option[Any])] = getAllNodeTypes(program)
           for (changedNode <- changed) {
             if (!fitMap.contains(changedNode) || fitMap(changedNode) > (1 - fit))
               fitMap += (changedNode -> (1 - fit))
@@ -41,65 +45,26 @@ object ProbUpdate {
     fitMap
   }
 
-  def updatePriors(fitMap: mutable.Map[Class[_], Double]): Unit = {
+  def updatePriors(fitMap: mutable.Map[(Class[_], Option[Any]), Double]): Unit = {
     fitMap.foreach(d => priors += (d._1 -> roundValue(d._2 * priors(d._1))))
-    Console.withOut(fos) {
-      println(priors)
-    }
+    Console.withOut(fos) { println(priors) }
   }
 
-  def getRootPrior(node: ASTNode): Int = priors(node.getClass)
+  def getRootPrior(node: ASTNode): Int = if (node.isInstanceOf[StringLiteral] || node.isInstanceOf[StringVariable] || node.isInstanceOf[IntVariable]
+                                              || node.isInstanceOf[IntLiteral] || node.isInstanceOf[BoolVariable] || node.isInstanceOf[BoolLiteral]) {
+                                        priors((node.getClass,Some(node.code)))
+                                        } else priors((node.getClass, None))
 
   def roundValue(num: Double): Int = if (num < 1) 1 else if (num - num.toInt > 0.5) math.ceil(num).toInt else math.floor(num).toInt
 
-  var priors = mutable.Map[Class[_], Int](
-    classOf[StringConcat] -> 10,
-    classOf[StringAt] -> 10,
-    classOf[IntAddition] -> 10,
-    classOf[IntSubtraction] -> 10,
-    classOf[IntLessThanEq] -> 10,
-    classOf[IntEquals] -> 10,
-    classOf[PrefixOf] -> 10,
-    classOf[SuffixOf] -> 10,
-    classOf[Contains] -> 10,
-    classOf[StringLiteral] -> 10,
-    classOf[IntLiteral] -> 10,
-    classOf[BoolLiteral] -> 10,
-    classOf[StringReplace] -> 10,
-    classOf[StringITE] -> 10,
-    classOf[IntITE] -> 10,
-    classOf[Substring] -> 10,
-    classOf[IndexOf] -> 10,
-    classOf[IntToString] -> 10,
-    classOf[StringToInt] -> 10,
-    classOf[StringLength] -> 10,
-    classOf[StringVariable] -> 10,
-    classOf[IntVariable] -> 10,
-    classOf[BoolVariable] -> 10,
-    classOf[IntEquals] -> 10,
-    classOf[IntEquals] -> 10,
-    classOf[BVEquals] -> 10,
-    classOf[BVAnd] -> 10,
-    classOf[BVOr] -> 10,
-    classOf[BVShrLogical] -> 10,
-    classOf[BVShiftLeft] -> 10,
-    classOf[BVShrArithmetic] -> 10,
-    classOf[BVNot] -> 10,
-    classOf[BVXor] -> 10,
-    classOf[BVNeg] -> 10,
-    classOf[BVSub] -> 10,
-    classOf[BVSDiv] -> 10,
-    classOf[BVUDiv] -> 10,
-    classOf[BVMul] -> 10,
-    classOf[BVAdd] -> 10,
-    classOf[LAnd] -> 10,
-    classOf[LOr] -> 10,
-    classOf[LNot] -> 10,
-    classOf[BVITE] -> 10,
-    classOf[BVSRem] -> 10,
-    classOf[BVURem] -> 10,
-    classOf[BoolVariable] -> 10,
-    classOf[BVVariable] -> 10,
-  )
+  def resetPrior(): mutable.Map[(Class[_], Option[Any]), Int] = {
+    priors.foreach(c => (c._1 -> 10))
+    priors
+  }
 
+  def createPrior(vocab: VocabFactory): mutable.Map[(Class[_], Option[Any]), Int] = {
+    vocab.leavesMakers.foreach(l => priors += ((l.nodeType, Some(l.head)) -> 10))
+    vocab.nonLeaves().foreach(l => priors += ((l.nodeType, None) -> 10))
+    priors
+  }
 }

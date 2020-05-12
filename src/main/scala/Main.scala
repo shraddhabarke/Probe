@@ -132,11 +132,10 @@ object Main extends App {
 
   def synthesizeProbe(filename: String, task: SygusFileTask, timeout: Int = 600): List[ASTNode] = {
     val oeManager = new InputsValuesManager()
-    //val enumerator = new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input))
-    val enumerator = new enumeration.ProbEnumerator(true, filename, task.vocab, oeManager, task, true)
-    //val foundPrograms: mutable.Map[List[Boolean], mutable.ListBuffer[ASTNode]] = mutable.HashMap()
+    val enumerator = new enumeration.ProbEnumerator(filename, task.vocab, oeManager, task, true)
     val deadline = timeout.seconds.fromNow
     var p = List[ASTNode]()
+    val t0 = System.currentTimeMillis / 1000
 
     breakable {
       for ((program, i) <- enumerator.zipWithIndex) {
@@ -156,6 +155,8 @@ object Main extends App {
         }
       }
     }
+    val t1 = System.currentTimeMillis / 1000
+    iprintln(s"${t1 - t0}s")
     p
   }
 
@@ -166,8 +167,5 @@ object Main extends App {
   }
 
   trace.DebugPrints.setInfo()
-  //  val (prog, _) = interpret(filename, "(str.++ firstname lastname)").get
-  //  println(prog.code)
-  //  println(prog.values)
-  synthesizeFullSols(filename)//.foreach(pr => println((pr.program.code, pr.rank, pr.program.values)))
+  synthesizeFullSols(filename)
 }

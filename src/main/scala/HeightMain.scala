@@ -1,19 +1,12 @@
 package sygus
 
-import ast.{ASTNode, BoolLiteral, BoolVariable, Contains, IndexOf, IntAddition, IntEquals, IntITE, IntLessThanEq, IntLiteral, IntSubtraction, IntToString, IntVariable, PrefixOf, StringAt, StringConcat, StringITE, StringLength, StringLiteral, StringReplace, StringToInt, StringVariable, Substring, SuffixOf}
+import ast.{ASTNode, BVAdd, BVAnd, BVEquals, BVITE, BVMul, BVNeg, BVNot, BVOr, BVSDiv, BVSRem, BVShiftLeft, BVShrArithmetic, BVShrLogical, BVSub, BVUDiv, BVURem, BVVariable, BVXor, BoolLiteral, BoolVariable, Contains, IndexOf, IntAddition, IntEquals, IntITE, IntLessThanEq, IntLiteral, IntSubtraction, IntToString, IntVariable, LAnd, LNot, LOr, PrefixOf, StringAt, StringConcat, StringITE, StringLength, StringLiteral, StringReplace, StringToInt, StringVariable, Substring, SuffixOf}
 import enumeration.ProbUpdate
-import enumeration.{InputsValuesManager, ProgramRanking}
-import jline.console.ConsoleReader
-import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams, RecognitionException, Token}
-
-import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
+import enumeration.{InputsValuesManager}
 import util.control.Breaks._
 import scala.concurrent.duration._
 import trace.DebugPrints.{dprintln, iprintln}
 import pcShell.ConsolePrints._
-
-import scala.collection.mutable
 
 object HeightMain extends App {
   def runBenchmarks(filename: String,
@@ -21,33 +14,8 @@ object HeightMain extends App {
                    ): String = {
     var program: List[ASTNode] = null
     val t0 = System.currentTimeMillis()
-    ProbUpdate.priors = mutable.Map[Class[_], Int](
-      classOf[StringConcat] -> 10,
-      classOf[StringAt] -> 10,
-      classOf[IntAddition] -> 10,
-      classOf[IntSubtraction] -> 10,
-      classOf[IntLessThanEq] -> 10,
-      classOf[IntEquals] -> 10,
-      classOf[PrefixOf] -> 10,
-      classOf[SuffixOf] -> 10,
-      classOf[Contains] -> 10,
-      classOf[StringLiteral] -> 10,
-      classOf[IntLiteral] -> 10,
-      classOf[BoolLiteral] -> 10,
-      classOf[StringReplace] -> 10,
-      classOf[StringITE] -> 10,
-      classOf[IntITE] -> 10,
-      classOf[Substring] -> 10,
-      classOf[IndexOf] -> 10,
-      classOf[IntToString] -> 10,
-      classOf[StringToInt] -> 10,
-      classOf[StringLength] -> 10,
-      classOf[StringVariable] -> 10,
-      classOf[IntVariable] -> 10,
-      classOf[BoolVariable] -> 10,
-    )
+    ProbUpdate.resetPrior()
     program = synthesizeFullSols(filename)
-    //programs.foreach(pr => println((pr.program.code, pr.raenk)))
     val t1 = System.currentTimeMillis()
     if (!program.isEmpty) {
       println(filename + resultPrinter(program.head, t1 - t0, program.head.terms))
