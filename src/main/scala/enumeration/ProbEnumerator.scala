@@ -1,7 +1,8 @@
 package enumeration
 
-import ast.{ASTNode, VocabFactory, VocabMaker}
-import sygus.{SygusFileTask}
+import ast.{ASTNode, StringReplace, VocabFactory, VocabMaker}
+import enumeration.ProbUpdate.probMap
+import sygus.SygusFileTask
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -36,8 +37,10 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   var costLevel = 10
   ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
   ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
+  var timeout = 3 * probMap((classOf[StringReplace], None))
+
   //println(ProbUpdate.probMap)
-  //println(ProbUpdate.priors)
+  println(ProbUpdate.priors)
 
   resetEnumeration()
   var rootMaker: VocabMaker = currIter.next()
@@ -77,7 +80,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
     for (p <- currLevelProgs) updateBank(p)
     if (probBased) {
       fitsMap = ProbUpdate.update(fitsMap, currLevelProgs, task)
-      if (phaseCounter == 30) {
+      if (phaseCounter == timeout) {
         phaseCounter = 0
         if (!fitsMap.isEmpty) {
           ProbUpdate.updatePriors(ProbUpdate.probMap)

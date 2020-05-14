@@ -23,7 +23,7 @@ object Main extends App {
   //"src/test/benchmarks/modified_benchmarks/returns_garbage/compare-two-strings_1.sl"
   //"src/test/benchmarks/too-hard/strip-html-from-text-or-numbers.sl"
   //"src/test/benchmarks/too-hard/stackoverflow1.sl"
-  "src/test/benchmarks/euphony/38871714.sl"
+  "src/test/benchmarks/euphony/phone-5-long.sl"
   //"src/test/benchmarks/too-hard/44789427.sl"
   //"src/test/benchmarks/too-hard/43606446.sl"
   //"src/test/benchmarks/too-hard/count-total-words-in-a-cell.sl"

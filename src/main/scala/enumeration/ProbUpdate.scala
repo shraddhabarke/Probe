@@ -44,7 +44,7 @@ object ProbUpdate {
               probMap += (changedNode -> update)
             }
           }
-          //println(program.code, examplesPassed, program.cost)
+          println(program.code, examplesPassed, program.cost)
         }
       }
     }
