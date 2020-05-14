@@ -34,13 +34,12 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   //var fos = new FileOutputStream("check.txt", true)
   var phaseCounter : Int = 0
   var fitsMap = mutable.Map[(Class[_], Option[Any]), Double]()
-  var costLevel = 1
   ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
   ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
-  var timeout = 3 * probMap((classOf[StringReplace], None))
-
+  var timeout = 3 * ProbUpdate.priors((classOf[StringReplace], None))
+  var costLevel = ProbUpdate.priors((classOf[StringReplace], None))
   //println(ProbUpdate.probMap)
-  println(ProbUpdate.priors)
+  //println(ProbUpdate.priors)
 
   resetEnumeration()
   var rootMaker: VocabMaker = currIter.next()
