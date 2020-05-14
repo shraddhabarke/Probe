@@ -34,7 +34,11 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   var phaseCounter : Int = 0
   var fitsMap = mutable.Map[(Class[_], Option[Any]), Double]()
   var costLevel = 10
+  ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
   ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
+  //println(ProbUpdate.probMap)
+  //println(ProbUpdate.priors)
+
   resetEnumeration()
   var rootMaker: VocabMaker = currIter.next()
 
@@ -72,11 +76,11 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
     currIter = vocab.nonLeaves.toList.sortBy(_.rootCost).toIterator
     for (p <- currLevelProgs) updateBank(p)
     if (probBased) {
-      fitsMap = ProbUpdate.updateFit(fitsMap, currLevelProgs, task)
+      fitsMap = ProbUpdate.update(fitsMap, currLevelProgs, task)
       if (phaseCounter == 30) {
         phaseCounter = 0
         if (!fitsMap.isEmpty) {
-          ProbUpdate.updatePriors(fitsMap)
+          ProbUpdate.updatePriors(ProbUpdate.probMap)
           resetEnumeration()
           costLevel = 0
         }
