@@ -4,6 +4,7 @@ import java.io.{File, FileOutputStream}
 
 import ast._
 import sygus.SygusFileTask
+
 import scala.collection.mutable
 
 object ProbUpdate {
@@ -18,6 +19,7 @@ object ProbUpdate {
   var priors = mutable.Map[(Class[_], Option[Any]), Int]()
   val lnOf2 = scala.math.log(2) // natural log of 2
   def log2(x: Double): Double = scala.math.log(x) / lnOf2
+  def expo (i: Double, exp:Double):Double = scala.math.pow(i,exp)
 
   def getAllNodeTypes(program: ASTNode): Set[(Class[_], Option[Any])] = {
     val recurseValue = if (program.isInstanceOf[StringLiteral] || program.isInstanceOf[IntLiteral] || program.isInstanceOf[StringVariable]
@@ -39,12 +41,13 @@ object ProbUpdate {
           val changed: Set[(Class[_], Option[Any])] = getAllNodeTypes(program)
           for (changedNode <- changed) {
             if (!fitMap.contains(changedNode) || fitMap(changedNode) > (1 - fit)) {
-              val update = probMap(changedNode) + fit * 10
+              val update = expo(probMap(changedNode), (1- fit))
+              //val update = probMap(changedNode) + (fit * 10)
               fitMap += (changedNode -> update)
               probMap += (changedNode -> update)
             }
           }
-          println(program.code, examplesPassed, program.cost)
+          //println(program.code, examplesPassed, program.cost)
         }
       }
     }
@@ -54,12 +57,12 @@ object ProbUpdate {
   def updatePriors(probMap: mutable.Map[(Class[_], Option[Any]), Double]): Unit = {
     updateProb()
     probMap.foreach(d => priors += (d._1 -> roundValue(-log2(d._2))))
-    println(probMap)
+    //println(priors)
   }
 
   def updateProb(): Unit = {
     val probList = probMap.map(c => c._2)
-    probMap.foreach(c => probMap += (c._1 -> c._2.toFloat / probList.sum))
+    probMap.foreach(c => probMap += (c._1 -> (c._2.toFloat / probList.sum)))
   }
 
   def getRootPrior(node: ASTNode): Int = if (node.isInstanceOf[StringLiteral] || node.isInstanceOf[StringVariable] || node.isInstanceOf[IntVariable]
