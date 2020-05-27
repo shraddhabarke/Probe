@@ -37,7 +37,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
   ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
   var timeout = 3 * ProbUpdate.priors((classOf[StringReplace], None))
-  var costLevel = ProbUpdate.priors((classOf[StringReplace], None))
+  var costLevel = 10
   //println(ProbUpdate.probMap)
   //println(ProbUpdate.priors)
 
