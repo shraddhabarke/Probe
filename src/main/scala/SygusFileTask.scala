@@ -133,7 +133,7 @@ object SygusFileTask{
             override val arity: Int = 0
             override val childTypes: List[Types] = Nil
             override val returnType: Types = retType
-            override val head: String = lit.toString
+            override val head: String =  f"#x$lit%016x"
             override val nodeType: Class[_ <: ASTNode] = classOf[BVLiteral]
             override def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = new BVLiteral(lit, contexts.length)
           }

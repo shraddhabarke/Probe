@@ -1,6 +1,6 @@
 package enumeration
 
-import ast.{ASTNode, StringReplace, VocabFactory, VocabMaker}
+import ast.{ASTNode, BVAdd, StringReplace, VocabFactory, VocabMaker}
 import enumeration.ProbUpdate.probMap
 import sygus.SygusFileTask
 
@@ -36,7 +36,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   var fitsMap = mutable.Map[(Class[_], Option[Any]), Double]()
   ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
   ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
-  var timeout = 3 * ProbUpdate.priors((classOf[StringReplace], None))
+  var timeout = 3 * ProbUpdate.priors.head._2
   var costLevel = 10
   //println(ProbUpdate.probMap)
   //println(ProbUpdate.priors)

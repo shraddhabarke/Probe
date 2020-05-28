@@ -26,7 +26,7 @@ object Main extends App {
   //"src/test/benchmarks/euphony/phone-6-long.sl"
   //"src/test/benchmarks/euphony/extract-word-that-begins-with-specific-character.sl"
   //"src/test/benchmarks/too-hard/43606446.sl"
-  "src/test/benchmarks/euphony/38871714.sl"
+  "src/test/benchmarks/euphony/11604909.sl"
   //"src/test/benchmarks/too-hard/strip-html-from-text-or-numbers.sl"
   //"src/test/benchmarks/too-hard/bikes.sl"
   //"src/test/benchmarks/too-hard/exceljet2.sl"

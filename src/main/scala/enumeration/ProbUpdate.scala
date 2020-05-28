@@ -23,7 +23,8 @@ object ProbUpdate {
 
   def getAllNodeTypes(program: ASTNode): Set[(Class[_], Option[Any])] = {
     val recurseValue = if (program.isInstanceOf[StringLiteral] || program.isInstanceOf[IntLiteral] || program.isInstanceOf[StringVariable]
-    || program.isInstanceOf[IntVariable] || program.isInstanceOf[StringLiteral] || program.isInstanceOf[BoolLiteral] || program.isInstanceOf[BoolVariable])
+    || program.isInstanceOf[IntVariable] || program.isInstanceOf[StringLiteral] || program.isInstanceOf[BoolLiteral] || program.isInstanceOf[BoolVariable]
+    ||  program.isInstanceOf[BVLiteral] || program.isInstanceOf[BVVariable])
       (program.getClass -> Some(program.code)) else (program.getClass -> None)
       program.children.flatMap(c => getAllNodeTypes(c)).toSet + recurseValue
   }
@@ -66,7 +67,8 @@ object ProbUpdate {
   }
 
   def getRootPrior(node: ASTNode): Int = if (node.isInstanceOf[StringLiteral] || node.isInstanceOf[StringVariable] || node.isInstanceOf[IntVariable]
-                                              || node.isInstanceOf[IntLiteral] || node.isInstanceOf[BoolVariable] || node.isInstanceOf[BoolLiteral]) {
+                                              || node.isInstanceOf[IntLiteral] || node.isInstanceOf[BoolVariable] || node.isInstanceOf[BoolLiteral]
+                                              || node.isInstanceOf[BVVariable] || node.isInstanceOf[BVLiteral]) {
                                         priors((node.getClass,Some(node.code)))
                                         } else priors((node.getClass, None))
 
