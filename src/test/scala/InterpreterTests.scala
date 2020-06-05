@@ -14,6 +14,12 @@ class InterpreterTests extends JUnitSuite {
     assert(ast != null)
   }
 
+  object Solutions {
+
+    lazy val solutions = scala.io.Source.fromFile("src/test/benchmarks/solutions.txt").getLines().map(line =>
+      (line.substring(0,line.indexOf(' ')),line.substring(line.indexOf(' ') + 1))).toList.groupBy(_._1).toList.map(pair => (pair._1,pair._2.map(le => le._2))).toMap
+
+  }
   @Test def intProg(): Unit = {
     val progStr = "(str.indexof col2 (str.++ col1 col2) 0)"
     val task = new SygusFileTask(slFileContent)

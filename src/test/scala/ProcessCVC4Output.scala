@@ -1,3 +1,9 @@
+object Solutions {
+
+  lazy val solutions = scala.io.Source.fromFile("src/test/benchmarks/solutions.txt").getLines().map(line =>
+    (line.substring(0,line.indexOf(' ')),line.substring(line.indexOf(' ') + 1))).toList.groupBy(_._1).toList.map(pair => (pair._1,pair._2.map(le => le._2))).toMap
+}
+
 object ProcessCVC4Output extends App{
   val file = "src/test/benchmarks/modified_benchmarks/cvc4tests_time.out" //cvc4tests.out"
   val lines = scala.io.Source.fromFile(file).getLines().toList
