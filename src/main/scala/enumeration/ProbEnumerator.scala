@@ -31,15 +31,12 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   var childrenIterator: Iterator[List[ASTNode]] = null
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var bank = scala.collection.mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
-  //var fos = new FileOutputStream("check.txt", true)
   var phaseCounter : Int = 0
   var fitsMap = mutable.Map[(Class[_], Option[Any]), Double]()
   ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
   ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
   var timeout = 3 * ProbUpdate.priors.head._2
   var costLevel = 10
-  //println(ProbUpdate.probMap)
-  //println(ProbUpdate.priors)
 
   resetEnumeration()
   var rootMaker: VocabMaker = currIter.next()

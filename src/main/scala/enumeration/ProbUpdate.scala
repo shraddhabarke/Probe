@@ -1,17 +1,14 @@
 package enumeration
 
-import java.io.{File, FileOutputStream}
-
+import java.io.{FileOutputStream}
 import ast._
 import sygus.SygusFileTask
-
 import scala.collection.mutable
 
 object ProbUpdate {
   var fos = new FileOutputStream("example-all.txt", true)
   var phaseChange: Boolean = false
   var newPrior = 0.0
-  var fitSet = mutable.Map[Set[Any], List[ASTNode]]()
   var fitCost = mutable.Map[Set[Any], Double]()
   var fitProgs: mutable.ArrayBuffer[String] = mutable.ArrayBuffer()
   var fitMap = mutable.Map[(Class[_],Option[Any]), Double]()
@@ -43,7 +40,6 @@ object ProbUpdate {
           for (changedNode <- changed) {
             if (!fitMap.contains(changedNode) || fitMap(changedNode) > (1 - fit)) {
               val update = expo(probMap(changedNode), (1- fit))
-              //val update = probMap(changedNode) + (fit * 10)
               fitMap += (changedNode -> update)
               probMap += (changedNode -> update)
             }
@@ -58,7 +54,6 @@ object ProbUpdate {
   def updatePriors(probMap: mutable.Map[(Class[_], Option[Any]), Double]): Unit = {
     updateProb()
     probMap.foreach(d => priors += (d._1 -> roundValue(-log2(d._2))))
-    //println(priors)
   }
 
   def updateProb(): Unit = {

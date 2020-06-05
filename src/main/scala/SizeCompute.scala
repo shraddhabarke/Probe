@@ -1,11 +1,13 @@
 package sygus
 import ast.ASTNode
-import org.antlr.v4.runtime.{BailErrorStrategy, BufferedTokenStream, CharStreams, Token}
-import pcShell.ShellMain.{EOFExpectedException, args, task, taskFilename}
+import org.antlr.v4.runtime.{BailErrorStrategy, BufferedTokenStream, CharStreams, Parser, RecognitionException, Token}
 import sygus.{ASTGenerator, SyGuSLexer, SyGuSParser, SygusFileTask, ThrowingLexerErrorListener}
 //args(0) is the long version filename; args(1) is the string solution of the normal version.
 object SizeCompute extends App {
 
+  class EOFExpectedException(recognizer: Parser) extends RecognitionException(recognizer,recognizer.getInputStream(), recognizer.getContext) {
+    this.setOffendingToken(recognizer.getCurrentToken)
+  }
   def evalExpr(filename: String, s: String): ASTNode = {
     val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
     val lexer = new SyGuSLexer(CharStreams.fromString(s))
