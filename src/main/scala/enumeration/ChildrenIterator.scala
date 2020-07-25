@@ -2,8 +2,7 @@ package enumeration
 
 import ast.ASTNode
 import ast.Types.Types
-
-import scala.collection.parallel.CollectionConverters._
+import scala.collection._
 
 class ChildrenIterator(val childrenCandidates: List[ASTNode], val childTypes: List[Types], val currHeight: Int) extends Iterator[List[ASTNode]]{
   val childrenLists =
@@ -20,7 +19,7 @@ class ChildrenIterator(val childrenCandidates: List[ASTNode], val childTypes: Li
           next_child = Some(children)
       }
       else { //roll
-        val next = candidates.zipWithIndex.findLast{case (iter,idx) => iter.hasNext}
+        val next = candidates.zipWithIndex.filter{case (iter,_) => iter.hasNext}.lastOption
         if (next.isEmpty) return
         else {
           val (iter,idx) = next.get

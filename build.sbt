@@ -2,13 +2,10 @@ name := "probe"
 
 version := "0.1"
 
-scalaVersion := "2.13.1"
-
-libraryDependencies += "org.scala-lang.modules" %% "scala-parallel-collections" % "0.2.0"
+scalaVersion := "2.12.6"
 
 // https://mvnrepository.com/artifact/jline/jline
 libraryDependencies += "jline" % "jline" % "2.14.6"
-
 
 // https://mvnrepository.com/artifact/org.antlr/antlr4-runtime
 libraryDependencies += "org.antlr" % "antlr4-runtime" % "4.7.2"
@@ -21,9 +18,11 @@ libraryDependencies += "commons-io" % "commons-io" % "2.6"
 
 // https://mvnrepository.com/artifact/junit/junit
 libraryDependencies += "junit" % "junit" % "4.13-rc-1" % Test
+
 // https://mvnrepository.com/artifact/org.scalatest/scalatest
 //libraryDependencies += "org.scalactic" %% "scalactic" % "3.1.0"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.0" % Test
+
 // https://mvnrepository.com/artifact/org.scalatestplus/scalatestplus-junit
 libraryDependencies += "org.scalatestplus" %% "scalatestplus-junit" % "1.0.0-SNAP9"
 
@@ -31,6 +30,20 @@ libraryDependencies += "io.spray" %% "spray-json" % "1.3.5"
 
 // https://mvnrepository.com/artifact/commons-cli/commons-cli
 libraryDependencies += "commons-cli" % "commons-cli" % "1.4"
+
+resolvers ++= Seq(
+  Resolver.sonatypeRepo( "snapshots"),
+  Resolver.sonatypeRepo("releases")
+)
+
+//https://mvnrepository.com/artifact/org.bitbucket.franck44
+libraryDependencies ++= Seq(
+  "org.bitbucket.inkytonik.kiama" %% "kiama" % "2.3.0",
+  "org.bitbucket.inkytonik.kiama" %% "kiama" % "2.3.0" % "test" classifier ("tests"),
+  "org.bitbucket.inkytonik.kiama" %% "kiama-extras" % "2.3.0",
+  "org.bitbucket.inkytonik.kiama" %% "kiama-extras" % "2.3.0" % "test" classifier ("tests"),
+  "org.bitbucket.franck44.scalasmt" %% "scalasmt" % "2.2.3-SNAPSHOT",
+)
 
 //mainClass in (assembly) := Some("pcShell.ShellMain")
 Project.inConfig(Test)(baseAssemblySettings)
