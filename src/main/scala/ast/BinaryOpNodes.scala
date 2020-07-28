@@ -33,28 +33,28 @@ class StringAt(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNode[Strin
   override lazy val code: String = "(str.at " + lhs.code + " " + rhs.code + ")"
   }
 
-class IntAddition(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Int] with IntNode {
+case class IntAddition(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Int] with IntNode {
   override def doOp(l: Any, r: Any): Int = l.asInstanceOf[Int] + r.asInstanceOf[Int]
 
   override lazy val code: String = "(+ " + lhs.code + " " + rhs.code + ")"
 
 }
 
-class IntSubtraction(val lhs: IntNode, val rhs: IntNode)extends BinaryOpNode[Int] with IntNode {
+case class IntSubtraction(val lhs: IntNode, val rhs: IntNode)extends BinaryOpNode[Int] with IntNode {
   override def doOp(l: Any, r: Any): Int = l.asInstanceOf[Int] - r.asInstanceOf[Int]
 
   override lazy val code: String = "(- " + lhs.code + " " + rhs.code + ")"
 
 }
 
-class IntLessThanEq(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boolean] with BoolNode {
+case class IntLessThanEq(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boolean] with BoolNode {
   override def doOp(l: Any, r: Any): Boolean = l.asInstanceOf[Int] <= r.asInstanceOf[Int]
 
   override lazy val code: String = "(<= " + lhs.code + " " + rhs.code + ")"
 
 }
 
-class IntEquals(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boolean] with BoolNode {
+case class IntEquals(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boolean] with BoolNode {
   override def doOp(l: Any, r: Any): Boolean = l.asInstanceOf[Int] == r.asInstanceOf[Int]
 
   override lazy val code: String = "(= " + lhs.code + " " + rhs.code + ")"
@@ -76,14 +76,14 @@ class SuffixOf(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Bo
 
 }
 
-class Contains(val lhs: StringNode, val rhs: StringNode) extends  BinaryOpNode[Boolean] with BoolNode {
+case class Contains(val lhs: StringNode, val rhs: StringNode) extends  BinaryOpNode[Boolean] with BoolNode {
   override def doOp(l: Any, r: Any): Boolean = l.asInstanceOf[String].contains(r.asInstanceOf[String])
 
   override lazy val code: String = "(str.contains " + lhs.code + " " + rhs.code + ")"
 
 }
 
-class BVAnd(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+case class BVAnd(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
   override def doOp(l: Any, r: Any): Long = {
     val lhsNode = l.asInstanceOf[Long]
     val rhsNode = r.asInstanceOf[Long]
@@ -92,7 +92,7 @@ class BVAnd(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BV
   override lazy val code: String = "(bvand " + lhs.code + " " + rhs.code + ")"
 }
 
-class BVOr(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+case class BVOr(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
   override def doOp(l: Any, r: Any): Long = {
     val lhsNode = l.asInstanceOf[Long]
     val rhsNode = r.asInstanceOf[Long]
@@ -101,7 +101,7 @@ class BVOr(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVN
   override lazy val code: String = "(bvor " + lhs.code + " " + rhs.code + ")"
 }
 
-class BVXor(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+case class BVXor(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
   override def doOp(l: Any, r: Any): Long = {
     val lhsNode = l.asInstanceOf[Long]
     val rhsNode = r.asInstanceOf[Long]
@@ -110,7 +110,7 @@ class BVXor(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BV
   override lazy val code: String = "(bvxor " + lhs.code + " " + rhs.code + ")"
 }
 
-class BVShiftLeft(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+case class BVShiftLeft(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
   override def doOp(l: Any, r: Any): Long = {
     val lhsNode = l.asInstanceOf[Long]
     val rhsNode = r.asInstanceOf[Long]
@@ -120,7 +120,7 @@ class BVShiftLeft(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] w
   override lazy val code: String = "(bvshl " + lhs.code + " " + rhs.code + ")"
 }
 
-class BVAdd(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+case class BVAdd(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
   override def doOp(l: Any, r: Any): Long = {
     val lhsNode = l.asInstanceOf[Long]
     val rhsNode = r.asInstanceOf[Long]
@@ -129,7 +129,7 @@ class BVAdd(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BV
   override lazy val code: String = "(bvadd " + lhs.code + " " + rhs.code + ")"
 }
 
-class BVSub(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+case class BVSub(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
   override def doOp(l: Any, r: Any): Long = {
     val lhsNode = l.asInstanceOf[Long]
     val rhsNode = r.asInstanceOf[Long]
@@ -139,25 +139,25 @@ class BVSub(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BV
   override val code: String = "(bvsub " + lhs.code + " " + rhs.code + ")"
 }
 
-class BVSDiv(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+case class BVSDiv(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
   override def doOp(l: Any, r: Any): Long = l.asInstanceOf[Long] / r.asInstanceOf[Long]
 
   override val code: String = "(bvsdiv " + lhs.code + " " + rhs.code + ")"
 }
 
-class BVUDiv(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+case class BVUDiv(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
   override def doOp(l: Any, r: Any): Long = java.lang.Long.divideUnsigned(l.asInstanceOf[Long],r.asInstanceOf[Long])
 
   override val code: String = "(bvudiv " + lhs.code + " " + rhs.code + ")"
 }
 
-class BVMul(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+case class BVMul(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
   override def doOp(l: Any, r: Any): Long = l.asInstanceOf[Long] * r.asInstanceOf[Long]
 
   override val code: String = "(bvmul " + lhs.code + " " + rhs.code + ")"
 }
 
-class BVShrLogical(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+case class BVShrLogical(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
   override def doOp(l: Any, r: Any): Long = {
     val lhsNode = l.asInstanceOf[Long]
     val rhsNode = r.asInstanceOf[Long]
@@ -166,7 +166,7 @@ class BVShrLogical(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] 
   override lazy val code: String = "(bvlshr " + lhs.code + " " + rhs.code + ")"
 }
 
-class BVShrArithmetic(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+case class BVShrArithmetic(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
   override def doOp(l: Any, r: Any): Long = {
     val lhsNode = l.asInstanceOf[Long]
     val rhsNode = r.asInstanceOf[Long]
@@ -175,31 +175,31 @@ class BVShrArithmetic(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Lon
   override lazy val code: String = "(bvashr " + lhs.code + " " + rhs.code + ")"
 }
 
-class BVEquals(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Boolean] with BoolNode {
+case class BVEquals(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Boolean] with BoolNode {
   override def doOp(l: Any, r: Any): Boolean = l.asInstanceOf[Long] == r.asInstanceOf[Long]
 
   override val code: String = "(= " + lhs.code + " " + rhs.code + ")"
 }
 
-class LAnd(val lhs: BoolNode, val rhs: BoolNode) extends BinaryOpNode[Boolean] with BoolNode {
+case class LAnd(val lhs: BoolNode, val rhs: BoolNode) extends BinaryOpNode[Boolean] with BoolNode {
   override def doOp(l: Any, r: Any): Boolean = l.asInstanceOf[Boolean] && r.asInstanceOf[Boolean]
 
   override val code: String = "(and " + lhs.code + " " + rhs.code + ")"
 }
 
-class LOr(val lhs: BoolNode, val rhs: BoolNode) extends BinaryOpNode[Boolean] with BoolNode {
+case class LOr(val lhs: BoolNode, val rhs: BoolNode) extends BinaryOpNode[Boolean] with BoolNode {
   override def doOp(l: Any, r: Any): Boolean = l.asInstanceOf[Boolean] || r.asInstanceOf[Boolean]
 
   override val code: String = "(or " + lhs.code + " " + rhs.code + ")"
 }
 
-class BVSRem(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+case class BVSRem(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
   override def doOp(l: Any, r: Any): Long = l.asInstanceOf[Long] % r.asInstanceOf[Long]
 
   override val code: String = "(bvsrem " + lhs.code + " " + rhs.code + ")"
 }
 
-class BVURem(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+case class BVURem(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
   override def doOp(l: Any, r: Any): Long = java.lang.Long.remainderUnsigned(l.asInstanceOf[Long], r.asInstanceOf[Long])
 
   override val code: String = "(bvurem " + lhs.code + " " + rhs.code + ")"
