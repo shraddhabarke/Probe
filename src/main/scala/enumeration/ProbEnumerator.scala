@@ -1,22 +1,25 @@
 package enumeration
 
-import ast.{ASTNode, BVAdd, StringReplace, VocabFactory, VocabMaker}
-import enumeration.ProbUpdate.probMap
+import java.io.FileOutputStream
+
+import ast.{ASTNode, VocabFactory, VocabMaker}
 import sygus.SygusFileTask
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
-class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManager: OEValuesManager, val task: SygusFileTask, val probBased: Boolean) extends Iterator[ASTNode] {
+class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManager: OEValuesManager, val task: SygusFileTask, val contexts: List[Map[String,Any]], val probBased: Boolean) extends Iterator[ASTNode] {
   override def toString(): String = "enumeration.Enumerator"
 
   var nextProgram: Option[ASTNode] = None
 
-  override def hasNext: Boolean = if (!nextProgram.isEmpty) true
-  else {
-    nextProgram = getNextProgram()
-    !nextProgram.isEmpty
-  }
+  override def hasNext: Boolean =
+    if (nextProgram.isDefined) {
+      true
+    } else {
+      nextProgram = getNextProgram()
+      nextProgram.isDefined
+    }
 
   override def next(): ASTNode = {
     if (nextProgram.isEmpty) {
@@ -30,19 +33,21 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   var currIter: Iterator[VocabMaker] = null
   var childrenIterator: Iterator[List[ASTNode]] = null
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
-  var bank = scala.collection.mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
-  var phaseCounter : Int = 0
+  var bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
+  var phaseCounter: Int = 0
   var fitsMap = mutable.Map[(Class[_], Option[Any]), Double]()
+  var fos = new FileOutputStream("outpu.txt", true)
   ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
   ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
   var timeout = 3 * ProbUpdate.priors.head._2
-  var costLevel = 10
+  var costLevel = 0
 
   resetEnumeration()
-  var rootMaker: VocabMaker = currIter.next()
+  var rootMaker: Iterator[ASTNode] = currIter.next().probe_init(currLevelProgs.toList, vocab, costLevel, contexts, bank)
 
   def resetEnumeration():  Unit = {
     currIter = vocab.leaves().toList.sortBy(_.rootCost).toIterator
+    rootMaker = currIter.next().probe_init(currLevelProgs.toList, vocab, costLevel, contexts, bank)
     childrenIterator = Iterator.single(Nil)
     currLevelProgs.clear()
     oeManager.clear()
@@ -52,14 +57,11 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   }
 
   def advanceRoot(): Boolean = {
-    if (!currIter.hasNext) return false
-    rootMaker = currIter.next()
-    val rootCost = rootMaker.rootCost
-    if (rootMaker.arity == 0)
-      childrenIterator = Iterator.single(Nil)
-    else if (rootCost < costLevel) {
-      val childrenCost = costLevel - rootCost
-      childrenIterator = new ProbChildrenIterator(rootMaker.childTypes, childrenCost, bank)
+    rootMaker = null
+    while (rootMaker == null || !rootMaker.hasNext) {
+      if (!currIter.hasNext) return false
+      val next = currIter.next()
+      rootMaker = next.probe_init(currLevelProgs.toList, vocab, costLevel, contexts, bank)
     }
     true
   }
@@ -72,8 +74,13 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   }
 
   def changeLevel(): Boolean = {
-    currIter = vocab.nonLeaves.toList.sortBy(_.rootCost).toIterator
+    val sortedLeaves = vocab.leaves().toList.sortBy(_.rootCost)
+    currIter = if (sortedLeaves.last.rootCost <= costLevel)
+      vocab.nonLeaves.toList.sortBy(_.rootCost).toIterator else
+      sortedLeaves.toIterator
+
     for (p <- currLevelProgs) updateBank(p)
+
     if (probBased) {
       fitsMap = ProbUpdate.update(fitsMap, currLevelProgs, task)
       if (phaseCounter == timeout) {
@@ -94,21 +101,20 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   def getNextProgram(): Option[ASTNode] = {
     var res: Option[ASTNode] = None
     while (res.isEmpty) {
-      if (childrenIterator.hasNext) {
-        val children = childrenIterator.next()
-        if (rootMaker.canMake(children)) {
-          val prog = rootMaker(children, task.examples.map(_.input))
-          if (oeManager.isRepresentative(prog))
-            res = Some(prog)
+      if (rootMaker.hasNext) {
+        val prog = rootMaker.next
+
+        if (oeManager.isRepresentative(prog)) {
+          res = Some(prog)
         }
       }
       else if (currIter.hasNext) {
-        if (!advanceRoot())
-          return None
+        if (!advanceRoot()) {
+          if (!changeLevel()) changeLevel()
+        }
       }
-      else {
-        if (!changeLevel())
-          return None
+      else if (!changeLevel()) {
+        changeLevel()
       }
     }
     currLevelProgs += res.get

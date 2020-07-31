@@ -26,6 +26,7 @@ object ProbUpdate {
       program.children.flatMap(c => getAllNodeTypes(c)).toSet + recurseValue
   }
 
+
   def update(fitsMap: mutable.Map[(Class[_], Option[Any]), Double], currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask): mutable.Map[(Class[_], Option[Any]), Double] = {
     fitMap = fitsMap
     for (program <- currLevelProgs) {

@@ -11,8 +11,9 @@ import trace.DebugPrints.{iprintln}
 object Main extends App {
   val filename =
   //"src/test/benchmarks/euphony/extract-word-that-begins-with-specific-character.sl"
+  "src/test/benchmarks/euphony/exceljet1.sl"
   //"src/test/benchmarks/too-hard/43606446.sl"
-  "src/test/benchmarks/euphony/11604909.sl"
+  "src/test/benchmarks/euphony/36462127.sl"
 
   case class ExpectedEOFException() extends Exception
 
@@ -46,12 +47,13 @@ object Main extends App {
     }
   }
 
-  def synthesizeTask(filename: String, task: SygusFileTask, sizeBased: Boolean, probBased: Boolean, timeout: Int = 600): List[ASTNode] = {
+  def synthesizeTask(filename: String, task: SygusFileTask, sizeBased: Boolean, probBased: Boolean, timeout: Int = 300): List[ASTNode] = {
     val oeManager = new InputsValuesManager()
 
     val enumerator =  if (!sizeBased) new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input))
-    else new enumeration.ProbEnumerator(filename, task.vocab, oeManager, task, probBased)
-    val deadline = timeout.seconds.fromNow
+    else new enumeration.ProbEnumerator(filename, task.vocab, oeManager, task, task.examples.map(_.input), probBased)
+
+      val deadline = timeout.seconds.fromNow
     var p = List[ASTNode]()
     val t0 = System.currentTimeMillis / 1000
 
@@ -61,7 +63,7 @@ object Main extends App {
           val results = task.examples.zip(program.values).map(pair => pair._1.output == pair._2)
           if (results.forall(identity)) {
             p = List(program)
-            iprintln(program.code)
+            println(program.code, results)
             break
           }
         }
@@ -83,5 +85,6 @@ object Main extends App {
   }
 
   trace.DebugPrints.setInfo()
+  println(SMTSolving)
   synthesize(filename)
 }
