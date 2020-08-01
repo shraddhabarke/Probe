@@ -31,6 +31,8 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   }
 
   var currIter: Iterator[VocabMaker] = null
+  val totalLeaves = vocab.leaves().toList ++ vocab.nonLeaves().toList
+  val sortedLeaves = vocab.leaves().toList.sortBy(_.rootCost)
   var childrenIterator: Iterator[List[ASTNode]] = null
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
@@ -48,7 +50,6 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   def resetEnumeration():  Unit = {
     currIter = vocab.leaves().toList.sortBy(_.rootCost).toIterator
     rootMaker = currIter.next().probe_init(currLevelProgs.toList, vocab, costLevel, contexts, bank)
-    childrenIterator = Iterator.single(Nil)
     currLevelProgs.clear()
     oeManager.clear()
     bank.clear()
@@ -59,7 +60,8 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   def advanceRoot(): Boolean = {
     rootMaker = null
     while (rootMaker == null || !rootMaker.hasNext) {
-      if (!currIter.hasNext) return false
+      if (currIter.isEmpty) return false
+      else if (!currIter.hasNext) return false
       val next = currIter.next()
       rootMaker = next.probe_init(currLevelProgs.toList, vocab, costLevel, contexts, bank)
     }
@@ -74,14 +76,13 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   }
 
   def changeLevel(): Boolean = {
-    val sortedLeaves = vocab.leaves().toList.sortBy(_.rootCost)
-    currIter = if (sortedLeaves.last.rootCost <= costLevel)
-      vocab.nonLeaves.toList.sortBy(_.rootCost).toIterator else
-      sortedLeaves.toIterator
+    currIter = if (totalLeaves.filter(c => c.rootCost <= costLevel + 1).isEmpty) Iterator.empty
+      else if (sortedLeaves.last.rootCost < costLevel + 1) vocab.nonLeaves.toList.sortBy(_.rootCost).toIterator
+      else sortedLeaves.toIterator
 
     for (p <- currLevelProgs) updateBank(p)
 
-    if (probBased) {
+    if (false) {
       fitsMap = ProbUpdate.update(fitsMap, currLevelProgs, task)
       if (phaseCounter == timeout) {
         phaseCounter = 0
@@ -101,7 +102,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   def getNextProgram(): Option[ASTNode] = {
     var res: Option[ASTNode] = None
     while (res.isEmpty) {
-      if (rootMaker.hasNext) {
+      if (rootMaker!= null && rootMaker.hasNext) {
         val prog = rootMaker.next
 
         if (oeManager.isRepresentative(prog)) {
@@ -109,16 +110,15 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
         }
       }
       else if (currIter.hasNext) {
-        if (!advanceRoot()) {
-          if (!changeLevel()) changeLevel()
-        }
+        if (!advanceRoot())
+          changeLevel()
       }
       else if (!changeLevel()) {
         changeLevel()
       }
     }
     currLevelProgs += res.get
-    //Console.withOut(fos) { println(currLevelProgs.takeRight(1).map(c => (c.code, c.cost)).mkString(",")) }
+    Console.withOut(fos) { println(currLevelProgs.takeRight(1).map(c => (c.code, c.cost)).mkString(",")) }
     res
   }
 }
