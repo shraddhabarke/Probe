@@ -11,9 +11,9 @@ import trace.DebugPrints.{iprintln}
 object Main extends App {
   val filename =
   //"src/test/benchmarks/euphony/extract-word-that-begins-with-specific-character.sl"
-  "src/test/benchmarks/euphony/exceljet1.sl"
+  //"src/test/benchmarks/euphony/initials.sl"
   //"src/test/benchmarks/too-hard/43606446.sl"
-  "src/test/benchmarks/euphony/36462127.sl"
+  "src/test/benchmarks/euphony/count-total-words-in-a-cell.sl"
 
   case class ExpectedEOFException() extends Exception
 
@@ -47,7 +47,7 @@ object Main extends App {
     }
   }
 
-  def synthesizeTask(filename: String, task: SygusFileTask, sizeBased: Boolean, probBased: Boolean, timeout: Int = 300): List[ASTNode] = {
+  def synthesizeTask(filename: String, task: SygusFileTask, sizeBased: Boolean, probBased: Boolean, timeout: Int = 600): List[ASTNode] = {
     val oeManager = new InputsValuesManager()
 
     val enumerator =  if (!sizeBased) new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input))
@@ -85,6 +85,5 @@ object Main extends App {
   }
 
   trace.DebugPrints.setInfo()
-  println(SMTSolving)
   synthesize(filename)
 }
