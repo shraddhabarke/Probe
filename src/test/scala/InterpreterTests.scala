@@ -28,15 +28,6 @@ class InterpreterTests extends JUnitSuite {
     val ast = visitor.visit(parsed)
     assert(ast != null)
   }
-  
-  @Test def parseTooHard(): Unit = {
-    assert(!interpretBenchmarks("src/test/benchmarks/too-hard",identity))
-  }
-
-  @Test def correctTooHard(): Unit = {
-    assert(!interpretBenchmarks("src/test/benchmarks/too-hard",identity, true))
-  }
-
 
   val slFileContent = """(set-logic SLIA)
                         |(synth-fun f ((col1 String) (col2 String)) String

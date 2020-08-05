@@ -63,7 +63,7 @@ object Main extends App {
           val results = task.examples.zip(program.values).map(pair => pair._1.output == pair._2)
           if (results.forall(identity)) {
             p = List(program)
-            println(program.code, results)
+            //println(program.code, results)
             break
           }
         }
