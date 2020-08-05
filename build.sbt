@@ -2,7 +2,9 @@ name := "probe"
 
 version := "0.1"
 
-scalaVersion := "2.12.6"
+scalaVersion := "2.13.1"
+
+libraryDependencies += "org.scala-lang.modules" %% "scala-parallel-collections" % "0.2.0"
 
 // https://mvnrepository.com/artifact/jline/jline
 libraryDependencies += "jline" % "jline" % "2.14.6"
@@ -30,20 +32,6 @@ libraryDependencies += "io.spray" %% "spray-json" % "1.3.5"
 
 // https://mvnrepository.com/artifact/commons-cli/commons-cli
 libraryDependencies += "commons-cli" % "commons-cli" % "1.4"
-
-resolvers ++= Seq(
-  Resolver.sonatypeRepo( "snapshots"),
-  Resolver.sonatypeRepo("releases")
-)
-
-//https://mvnrepository.com/artifact/org.bitbucket.franck44
-libraryDependencies ++= Seq(
-  "org.bitbucket.inkytonik.kiama" %% "kiama" % "2.3.0",
-  "org.bitbucket.inkytonik.kiama" %% "kiama" % "2.3.0" % "test" classifier ("tests"),
-  "org.bitbucket.inkytonik.kiama" %% "kiama-extras" % "2.3.0",
-  "org.bitbucket.inkytonik.kiama" %% "kiama-extras" % "2.3.0" % "test" classifier ("tests"),
-  "org.bitbucket.franck44.scalasmt" %% "scalasmt" % "2.2.3-SNAPSHOT",
-)
 
 //mainClass in (assembly) := Some("pcShell.ShellMain")
 Project.inConfig(Test)(baseAssemblySettings)

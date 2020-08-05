@@ -32,7 +32,7 @@ class ProbChildrenIterator(val childTypes: List[Types], val childrenCost: Int, v
           return Some(children)
         }
         else { //roll
-          val next = candidates.zipWithIndex.filter { case (iter, idx) => iter.hasNext }.lastOption
+          val next = candidates.zipWithIndex.findLast { case (iter, idx) => iter.hasNext }
           if (next.isEmpty) return None
           else {
             val (iter, idx) = next.get

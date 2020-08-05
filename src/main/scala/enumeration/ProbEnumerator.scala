@@ -32,15 +32,14 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
 
   var currIter: Iterator[VocabMaker] = null
   val totalLeaves = vocab.leaves().toList ++ vocab.nonLeaves().toList
-  val sortedLeaves = vocab.leaves().toList.sortBy(_.rootCost)
   var childrenIterator: Iterator[List[ASTNode]] = null
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
   var phaseCounter: Int = 0
   var fitsMap = mutable.Map[(Class[_], Option[Any]), Double]()
-  var fos = new FileOutputStream("outpu.txt", true)
   ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
   ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
+  val sortedLeaves = vocab.leaves().toList.sortBy(_.rootCost)
   var timeout = 3 * ProbUpdate.priors.head._2
   var costLevel = 0
 
@@ -77,14 +76,13 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
 
   def changeLevel(): Boolean = {
     currIter = if (totalLeaves.filter(c => c.rootCost <= costLevel + 1).isEmpty) Iterator.empty
-      else if (sortedLeaves.last.rootCost < costLevel + 1) vocab.nonLeaves.toList.sortBy(_.rootCost).toIterator
-      else sortedLeaves.toIterator
+    else totalLeaves.sortBy(_.rootCost).toIterator
 
     for (p <- currLevelProgs) updateBank(p)
 
-    if (false) {
+    if (true) {
       fitsMap = ProbUpdate.update(fitsMap, currLevelProgs, task)
-      if (phaseCounter == timeout) {
+      if (phaseCounter == 2 * timeout) {
         phaseCounter = 0
         if (!fitsMap.isEmpty) {
           ProbUpdate.updatePriors(ProbUpdate.probMap)
