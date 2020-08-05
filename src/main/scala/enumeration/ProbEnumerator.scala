@@ -116,7 +116,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
       }
     }
     currLevelProgs += res.get
-    Console.withOut(fos) { println(currLevelProgs.takeRight(1).map(c => (c.code, c.cost)).mkString(",")) }
+    //Console.withOut(fos) { println(currLevelProgs.takeRight(1).map(c => (c.code, c.cost)).mkString(",")) }
     res
   }
 }
