@@ -8,10 +8,6 @@ import os
 import subprocess
 import time, csv
 
-string_test = [
-    "phone-5.sl", "phone-6.sl", "phone-7.sl", "initials.sl", "phone-"
-]
-
 accuracy_train = [
     "phone-5.sl", "phone-6.sl", "phone-7.sl", "initials.sl", "phone-9.sl", "phone-10.sl", "univ_4.sl",
     "univ_5.sl", "univ_6.sl"
@@ -28,7 +24,7 @@ sanity = ["stackoverflow1.sl", "stackoverflow3.sl", "stackoverflow8.sl", "stacko
 def run(args):
     times = args.timeout
     if args.cmd == "string":
-        files = [i for i in os.listdir("src/test/benchmarks/temp/") if i.endswith("sl")]
+        files = [i for i in os.listdir("src/test/benchmarks/string/") if i.endswith("sl")]
         if args.strategy == "probe":
             with Pool(1) as pool:
                 pool.map(run_probe, files)
@@ -141,9 +137,9 @@ def main():
     args = parse_args()
     if args.cmd in [ "string", "bitvec"] and args.strategy in [ "probe", "size", "height" ] and args.expt in ["perf"]:
         run(args)
-    elif args.expt in ["accuracy"]:
+    elif args.cmd in [ "string", "bitvec"] and args.strategy in [ "probe", "size", "height" ] and args.expt in ["accuracy"]:
         run_accuracy(args)
-    elif args.expt in ["sanity"]:
+    elif args.cmd in [ "string", "bitvec"] and args.strategy in [ "probe", "size", "height" ] and args.expt in ["sanity"]:
         run_sanity(args)
     else:
         print("Invalid Argument")
