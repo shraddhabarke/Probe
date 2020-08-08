@@ -6,6 +6,23 @@ import matplotlib.lines as mlines
 import matplotlib.transforms as mtransforms
 from collections import defaultdict
 
+def postprocess(filename):
+    with open(filename, 'r') as file :
+      filedata = file.read()
+    filedata = filedata.replace('""","""', '"",""')
+    with open(filename, 'w') as file:
+      file.write(filedata)
+
+def postprocess_cvc4(filename):
+    with open(filename, 'r') as file :
+      filedata = file.read()
+    filedata = filedata.replace('","', '"@"')
+    with open(filename, 'w') as file:
+      file.write(filedata)
+
+postprocess('results/probe.csv')
+postprocess_cvc4('results/cvc4.csv')
+
 ite_probe = defaultdict(list)
 ite_temp_probe = defaultdict(list)
 ite_cvc4 = defaultdict(list)
@@ -58,7 +75,7 @@ def process_ite(col, cols):
     return process_int
 
 cvc4 = process_ite('Ite',ite_cvc4)
-probe = process_ite('Ite',ite_cvc4)
+probe = process_ite('Ite',ite_probe)
 examples = process_ite('Examples',ite_cvc4)
 cvc4zip = list(zip(cvc4,examples))
 probezip = list(zip(probe,examples))

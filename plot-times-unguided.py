@@ -4,12 +4,22 @@ import matplotlib.pyplot as plt
 import matplotlib.path as mpath
 from collections import defaultdict
 
+def postprocess(filename):
+    with open(filename, 'r') as file :
+      filedata = file.read()
+    filedata = filedata.replace('""","""', '"",""')
+    with open(filename, 'w') as file:
+      file.write(filedata)
+
 def line_prepender(filename, line):
     with open(filename, 'r+') as f:
         content = f.read()
         f.seek(0, 0)
         f.write(line.rstrip('\r\n') + '\n' + content)
 
+postprocess('results/probe.csv')
+postprocess('results/size.csv')
+postprocess('results/height.csv')
 with open('results/probe.csv', 'r') as f:
     data = f.readlines()
     print(data[0])
@@ -25,7 +35,7 @@ with open('results/size.csv', 'r') as f:
 with open('results/height.csv', 'r') as f:
     data = f.readlines()
     print(data[0])
-    if data[0] != "Benchmark,Program,Time,Size,Ite\n":
+    if data[0] != "Benchmark,Program,Time,Size\n":
         line_prepender("results/height.csv", "Benchmark,Program,Time,Size\n")
 
 time_height = defaultdict(list)

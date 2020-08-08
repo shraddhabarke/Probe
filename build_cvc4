@@ -1,0 +1,11 @@
+#!/bin/bash
+
+unzip CVC4-1.8.zip
+cd CVC4-1.8
+./contrib/get-antlr-3.4  # download and build ANTLR
+./configure.sh   # use --prefix to specify a prefix (default: /usr/local)
+                 # use --name=<PATH> for custom build directory
+cd <build_dir>   # default is ./build
+make             # use -jN for parallel build with N threads
+make check       # to run default set of tests
+make install     # to install into the prefix specified above

@@ -1,0 +1,6 @@
+((str.substr (str.++ "Leads" _arg_0) (str.len _arg_0) 5),Set(loren))
+((str.substr _arg_0 (str.to.int (str.++ "4" "1")) 5),Set(loren))
+((str.substr _arg_0 (str.to.int (str.++ "4" "1")) 6),Set(loren))
+((str.substr _arg_0 (str.to.int (str.++ "4" "1")) 7),Set(loren))
+((str.substr _arg_0 (str.to.int (str.++ "4" "1")) 8),Set(loren))
+((str.substr _arg_0 (str.to.int (str.++ "4" "1")) 9),Set(loren))

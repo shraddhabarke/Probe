@@ -8,11 +8,6 @@ import os
 import subprocess
 import time, csv
 
-accuracy_train = [
-    "phone-5.sl", "phone-6.sl", "phone-7.sl", "initials.sl", "phone-9.sl", "phone-10.sl", "univ_4.sl",
-    "univ_5.sl", "univ_6.sl"
-]
-
 accuracy_test = [
     "phone-5-long.sl", "phone-6-long.sl", "phone-7-long.sl", "initials-long.sl", "phone-9-long.sl", 
     "phone-10-long.sl", "univ_4-long.sl", "univ_5-long.sl", "univ_6-long.sl"
@@ -44,55 +39,18 @@ def run(args):
                 pool.map(run_size, files)
         elif args.strategy == "height":
             with Pool(1) as pool:
-                pool.map(run_height, files)  
+                pool.map(run_height, files) 
 
-def run_size_compare(args):
+def run_larger(args):
+    times = args.timeout
     if args.cmd == "string":
-        files = [i for i in os.listdir("src/test/benchmarks/string/") if i.endswith("sl")]
-        if args.strategy == "euphony":
+        files = [i for i in os.listdir("src/test/benchmarks/larger-grammar/") if i.endswith("sl")]
+        if args.strategy == "probe":
             with Pool(1) as pool:
-                pool.map(run_euphony, files)
-        elif args.strategy == "cvc4":
+                pool.map(run_probe_larger, files)
+        elif args.strategy == "size":
             with Pool(1) as pool:
-                pool.map(run_cvc4, files)
-
-def run_cvc4(filename):
-    with open('results/cvc4.csv') as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        result = dict((rows[0],rows[2]) for rows in reader)
-        key = "string/{}".format(filename)
-    try:
-        print("src/test/benchmarks/string/{}".format(filename))
-        cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/SizeCompute', "src/test/benchmarks/string/{}".format(filename), "{}".format(result[key])]
-        output, err  = subprocess.Popen(cmd).communicate()
-        print(err)
-        output_str = output.decode("utf-8")  
-        if (output_str != "" and "memory" not in output_str):
-            with open('results/cvc4-size.csv', 'a', newline='') as csvfile:
-                csvwriter = csv.writer(csvfile, delimiter=',', quotechar='"', skipinitialspace=True)
-                output = map(lambda x: x.rstrip('\n'),output_str.split(','))
-                csvwriter.writerow(output)
-    except KeyError:
-        pass
-
-def run_euphony(filename):
-    with open('results/euphony.csv') as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        result = dict(reader)
-    print('Parent process:', os.getppid(), filename)
-    print('Process id:', os.getpid())
-    key = filename.replace("/home/shraddha/partialcorrectness/src/test/benchmarks/euphony",'')
-    try:
-        cmd = [ 'java', '-cp','target/scala-2.13/probe-assembly-0.1.jar', 'sygus/SizeCompute', "/home/shraddha/partialcorrectness/src/test/benchmarks/euphony/{}".format(filename), "{}".format(result[key].replace('@',','))]
-        output, err  = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-        output_str = output.decode("utf-8")
-        if (output_str != "" and "memory" not in output_str):
-            with open('results/euphony-size.csv', 'a', newline='') as csvfile:
-                csvwriter = csv.writer(csvfile, delimiter=',', quotechar='"', skipinitialspace=True)
-                output = map(lambda x: x.rstrip('\n'),output_str.split(','))
-                csvwriter.writerow(output)
-    except KeyError:
-        pass
+                pool.map(run_size_larger, files)
 
 def run_accuracy(args):
     times = args.timeout
@@ -100,7 +58,10 @@ def run_accuracy(args):
         files = [i for i in os.listdir("src/test/benchmarks/accuracy-expt/") if i.endswith("sl") and i in accuracy_test]
         if args.strategy == "probe":
             with Pool(1) as pool:
-                pool.map(run_acc, files)
+                pool.map(run_acc_probe, files)
+        elif args.strategy == "cvc4":
+            with Pool(1) as pool:
+                pool.map(run_acc_cvc, files)        
 
 def run_sanity(args):
     times = args.timeout
@@ -110,8 +71,8 @@ def run_sanity(args):
             with Pool(1) as pool:
                 pool.map(run_san, files)
 
-def run_acc(filename):
-    with open('results/probe-string.csv') as f:
+def run_acc_probe(filename):
+    with open('results/probe-train.csv') as f:
         reader = csv.reader(f, skipinitialspace=True)
         result = dict(reader)
         print(result)
@@ -119,11 +80,29 @@ def run_acc(filename):
     try:
         cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/AccuracyMain', "src/test/benchmarks/accuracy-expt/{}".format(filename), "{}".format(result[key])]
         output, err  = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-        print(err)
         output_str = output.decode("utf-8")
         print(output_str)
         if (output_str != "" and "memory" not in output_str):
             with open('results/probe-accuracy.csv', 'a', newline='') as csvfile:
+                csvwriter = csv.writer(csvfile, delimiter=',', quotechar='"', skipinitialspace=True)
+                output = map(lambda x: x.rstrip('\n'),output_str.split(','))
+                csvwriter.writerow(output)
+    except KeyError:
+        pass
+
+def run_acc_cvc(filename):
+    with open('results/cvc4-train.csv') as f:
+        reader = csv.reader(f, skipinitialspace=True)
+        result = dict(reader)
+        print(result)
+    key = filename.replace('-long','')
+    try:
+        cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/AccuracyMain', "src/test/benchmarks/accuracy-expt/{}".format(filename), "{}".format(result[key])]
+        output, err  = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+        output_str = output.decode("utf-8")
+        print(output_str)
+        if (output_str != "" and "memory" not in output_str):
+            with open('results/cvc4-accuracy.csv', 'a', newline='') as csvfile:
                 csvwriter = csv.writer(csvfile, delimiter=',', quotechar='"', skipinitialspace=True)
                 output = map(lambda x: x.rstrip('\n'),output_str.split(','))
                 csvwriter.writerow(output)
@@ -133,6 +112,10 @@ def run_acc(filename):
 def run_size(filename):
     cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/string/%s" % (filename) ]
     run_main('results/size.csv', filename, cmd)
+
+def run_size_larger(filename):
+    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/larger-grammar/%s" % (filename) ]
+    run_main('results/size-larger.csv', filename, cmd)
 
 def run_height(filename):
     cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/string/%s" % (filename) ]
@@ -146,7 +129,7 @@ def run_main(resultfile, filename, cmd):
         print(output_str)
         if (output_str != "" and "memory" not in output_str):
             with open(resultfile, 'a', newline='') as csvfile:
-                csvwriter = csv.writer(csvfile, delimiter=',', quotechar='"')
+                csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
                 output = map(lambda x: x.rstrip('\n'),output_str.split(','))
                 csvwriter.writerow(output)
     except MemoryError:
@@ -157,6 +140,10 @@ def run_main(resultfile, filename, cmd):
 def run_probe(filename):
     cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/string/%s" % (filename) ]
     run_main('results/probe.csv', filename, cmd)
+
+def run_probe_larger(filename):
+    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/larger-grammar/%s" % (filename) ]
+    run_main('results/probe-larger.csv', filename, cmd)
 
 def run_san(filename):
     cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/string/%s" % (filename) ]
@@ -183,12 +170,12 @@ def main():
     args = parse_args()
     if args.cmd in [ "string", "bitvec"] and args.strategy in [ "probe", "size", "height" ] and args.expt in ["perf"]:
         run(args)
-    elif args.cmd in [ "string", "bitvec"] and args.strategy in [ "probe", "size", "height" ] and args.expt in ["accuracy"]:
+    elif args.cmd in [ "string", "bitvec"] and args.strategy in [ "probe", "cvc4" ] and args.expt in ["accuracy"]:
         run_accuracy(args)
     elif args.cmd in [ "string", "bitvec"] and args.strategy in [ "probe", "size", "height" ] and args.expt in ["sanity"]:
-        run_sanity(args)
-    elif args.cmd in [ "string", "bitvec"] and args.strategy in [ "euphony", "cvc4" ] and args.expt in ["size-compare"]:
-        run_size_compare(args)    
+        run_sanity(args) 
+    elif args.cmd in [ "string"] and args.strategy in [ "probe", "size" ] and args.expt in ["extgrammar"]:
+        run_larger(args)     
     else:
         print("Invalid Argument")
 
@@ -198,15 +185,17 @@ if __name__ == "__main__":
     elif os.path.exists('results/size.csv') and args.expt in ["perf"] and args.strategy in ["size"]:
         os.remove('results/size.csv') 
     elif os.path.exists('results/height.csv') and args.expt in ["perf"] and args.strategy in ["height"]:
-        os.remove('results/height.csv')   
-    elif os.path.exists('results/probe-accuracy.csv') and args.expt in ["accuracy"]:
+        os.remove('results/height.csv')
+    elif os.path.exists('results/size-larger.csv') and args.expt in ["extgrammar"] and args.strategy in ["size"]:
+        os.remove('results/size-larger.csv')
+    elif os.path.exists('results/probe-larger.csv') and args.expt in ["extgrammar"] and args.strategy in ["probe"]:
+        os.remove('results/probe-larger.csv')              
+    elif os.path.exists('results/probe-accuracy.csv') and args.expt in ["accuracy"] and args.strategy in ["probe"]:
         os.remove('results/probe-accuracy.csv')  
+    elif os.path.exists('results/cvc4-accuracy.csv') and args.expt in ["accuracy"] and args.strategy in ["cvc4"]:
+        os.remove('results/cvc4-accuracy.csv')      
     elif os.path.exists('results/sanity.csv') and args.expt in ["sanity"]:
-        os.remove('results/sanity.csv')      
-    elif os.path.exists('results/euphony-size.csv') and args.strategy in ["euphony"] and args.expt in ["size-compare"]:
-        os.remove('results/euphony-size.csv')    
-    elif os.path.exists('results/cvc4-size.csv') and args.strategy in ["cvc4"] and args.expt in ["size-compare"]:
-        os.remove('results/cvc4-size.csv')           
+        os.remove('results/sanity.csv')               
     else:
         pass  
     main() 

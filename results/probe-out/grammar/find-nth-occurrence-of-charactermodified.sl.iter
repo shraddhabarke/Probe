@@ -1,0 +1,3 @@
+((str.len "strawberries"),Set(12))
+((+ 9 9),Set(18))
+((- (str.len _arg_0) 4),Set(33))

@@ -1,0 +1,5 @@
+initials.sl,(str.++ (str.++ (str.at name 0) (str.++ "." (str.at name (str.indexof (str.++ "." name) " " 0)))) ".")
+phone-10.sl,(str.replace (str.replace name " " (str.++ " " "(")) "-" (str.++ ")" " "))
+phone-5.sl,(str.substr name 1 (- (str.indexof name " " 2) 1))
+phone-6.sl,(str.substr name (- (str.indexof name "-" 3) 3) 3)
+phone-7.sl,(str.substr name (- (str.len name) (+ 3 4)) 3)
