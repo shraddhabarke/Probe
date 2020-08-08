@@ -1,8 +1,0 @@
-((str.substr _arg_0 3 7),Set( apples))
-((str.substr _arg_0 3 8),Set( apples))
-((str.substr _arg_0 3 9),Set( apples))
-((str.substr _arg_0 5 (str.len _arg_0)),Set( jim mcdonald))
-((str.++ " " (str.substr _arg_0 0 9)),Set( price is ))
-Restarting Enumeration!
-((str.substr _arg_0 3 (str.len _arg_0)),Set( apples))
-((str.++ " " (str.++ (str.substr _arg_0 0 8) " ")),Set( price is ))

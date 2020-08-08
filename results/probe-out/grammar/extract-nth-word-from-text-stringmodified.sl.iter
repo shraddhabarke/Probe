@@ -1,5 +1,0 @@
-((str.substr _arg_0 4 3),Set(can))
-((str.substr _arg_0 8 2),Set(do))
-((str.substr _arg_0 0 3),Set(you))
-((str.substr _arg_0 (str.len "Corporation") 8),Set(anything))
-Restarting Enumeration!

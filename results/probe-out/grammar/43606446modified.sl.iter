@@ -1,3 +1,0 @@
-((str.substr _arg_0 4 3),Set(EUR))
-((str.substr _arg_0 0 3),Set(USD))
-Restarting Enumeration!
