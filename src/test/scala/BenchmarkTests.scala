@@ -9,7 +9,7 @@ object BenchmarksTests extends App {
     var program: List[ASTNode] = null
     val t0 = System.currentTimeMillis()
     ProbUpdate.resetPrior()
-    program = Main.synthesize(file.getAbsolutePath)
+    program = Main.synthesize(file.getAbsolutePath, true, true)
     val t1 = System.currentTimeMillis()
     if (!program.isEmpty) {
       println(file.getName + resultPrinter(program.head, t1 - t0))
