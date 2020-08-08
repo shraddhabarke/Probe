@@ -75,7 +75,6 @@ def run_acc_probe(filename):
     with open('results/probe-train.csv') as f:
         reader = csv.reader(f, skipinitialspace=True)
         result = dict(reader)
-        print(result)
     key = filename.replace('-long','')
     try:
         cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/AccuracyMain', "src/test/benchmarks/accuracy-expt/{}".format(filename), "{}".format(result[key])]
@@ -94,7 +93,6 @@ def run_acc_cvc(filename):
     with open('results/cvc4-train.csv') as f:
         reader = csv.reader(f, skipinitialspace=True)
         result = dict(reader)
-        print(result)
     key = filename.replace('-long','')
     try:
         cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/AccuracyMain', "src/test/benchmarks/accuracy-expt/{}".format(filename), "{}".format(result[key])]
