@@ -74,16 +74,17 @@ object Main extends App {
       }
     }
     val t1 = System.currentTimeMillis / 1000
-    iprintln(s"${t1 - t0}s")
+    //iprintln(s"${t1 - t0}s")
     p
   }
 
-  def synthesize(filename: String, sizeBased: Boolean = true, probBased: Boolean = true) = {
+  //trace.DebugPrints.setInfo()
+
+  def synthesize(filename: String, sizeBased: Boolean, probBased: Boolean) = {
     val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
     assert(task.isPBE)
     synthesizeTask(filename, task, sizeBased, probBased)
   }
 
-  trace.DebugPrints.setInfo()
-  synthesize(filename)
+  synthesize(filename, true, true)
 }

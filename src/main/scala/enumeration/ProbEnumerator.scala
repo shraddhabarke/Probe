@@ -4,9 +4,9 @@ import java.io.FileOutputStream
 
 import ast.{ASTNode, VocabFactory, VocabMaker}
 import sygus.SygusFileTask
-
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
+import trace.DebugPrints.iprintln
 
 class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManager: OEValuesManager, val task: SygusFileTask, val contexts: List[Map[String,Any]], val probBased: Boolean) extends Iterator[ASTNode] {
   override def toString(): String = "enumeration.Enumerator"
@@ -30,8 +30,8 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
     res
   }
 
+  var fos = new FileOutputStream("results/probe-out/" + filename.drop(27) + ".iter", true)
   var currIter: Iterator[VocabMaker] = null
-  var fos = new FileOutputStream("check1.txt", true)
   val totalLeaves = vocab.leaves().toList ++ vocab.nonLeaves().toList
   var childrenIterator: Iterator[List[ASTNode]] = null
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
@@ -83,12 +83,12 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
     for (p <- currLevelProgs) updateBank(p)
 
     if (probBased) {
-      fitsMap = ProbUpdate.update(fitsMap, currLevelProgs, task)
+      fitsMap = ProbUpdate.update(fitsMap, currLevelProgs, task, fos)
       if (phaseCounter == 2 * timeout) {
         phaseCounter = 0
         if (!fitsMap.isEmpty) {
           //reset = true
-          ProbUpdate.updatePriors(ProbUpdate.probMap)
+          ProbUpdate.updatePriors(ProbUpdate.probMap, fos)
           resetEnumeration()
           costLevel = 0
         }

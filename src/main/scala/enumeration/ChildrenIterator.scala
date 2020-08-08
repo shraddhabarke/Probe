@@ -19,7 +19,7 @@ class ChildrenIterator(val childrenCandidates: List[ASTNode], val childTypes: Li
           next_child = Some(children)
       }
       else { //roll
-        val next = candidates.zipWithIndex.findLast{case (iter,_) => iter.hasNext}
+        val next = candidates.zipWithIndex.filter{case (iter,_) => iter.hasNext}.lastOption
         if (next.isEmpty) return
         else {
           val (iter,idx) = next.get

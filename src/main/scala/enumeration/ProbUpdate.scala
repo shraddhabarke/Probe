@@ -4,9 +4,11 @@ import java.io.{FileOutputStream}
 import ast._
 import sygus.SygusFileTask
 import scala.collection.mutable
+import trace.DebugPrints.iprintln
 
 object ProbUpdate {
-  var fos = new FileOutputStream("example-all.txt", true)
+
+  trace.DebugPrints.setInfo()
   var phaseChange: Boolean = false
   var newPrior = 0.0
   var fitCost = mutable.Map[Set[Any], Double]()
@@ -27,7 +29,7 @@ object ProbUpdate {
   }
 
 
-  def update(fitsMap: mutable.Map[(Class[_], Option[Any]), Double], currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask): mutable.Map[(Class[_], Option[Any]), Double] = {
+  def update(fitsMap: mutable.Map[(Class[_], Option[Any]), Double], currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask, fos: FileOutputStream): mutable.Map[(Class[_], Option[Any]), Double] = {
     fitMap = fitsMap
     for (program <- currLevelProgs) {
       val exampleFit = task.fit(program)
@@ -45,14 +47,15 @@ object ProbUpdate {
               probMap += (changedNode -> update)
             }
           }
-          //println(program.code, examplesPassed, program.cost)
+          Console.withOut(fos) { iprintln(program.code, examplesPassed) }
         }
       }
     }
     fitMap
   }
 
-  def updatePriors(probMap: mutable.Map[(Class[_], Option[Any]), Double]): Unit = {
+  def updatePriors(probMap: mutable.Map[(Class[_], Option[Any]), Double], fos: FileOutputStream): Unit = {
+    Console.withOut(fos) { iprintln("Restarting Enumeration!") }
     updateProb()
     probMap.foreach(d => priors += (d._1 -> roundValue(-log2(d._2))))
   }
