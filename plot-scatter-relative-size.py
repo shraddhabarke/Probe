@@ -14,7 +14,6 @@ def postprocess(filename):
       file.write(filedata)
 
 postprocess('results/probe.csv')
-postprocess_cvc4('results/size.csv')
 
 def line_prepender(filename, line):
     with open(filename, 'r+') as f:
