@@ -19,7 +19,7 @@ with open('results/probe.csv', 'r') as f:
 
 with open('results/size.csv', 'r') as f:
     data = f.readlines()
-    if data[0] != "Benchmark,Program,Time,Sizee\n":
+    if data[0] != "Benchmark,Program,Time,Size\n":
         line_prepender("results/size.csv", "Benchmark,Program,Time,Size\n") 
 
 size_temp_probe = defaultdict(list)
@@ -72,7 +72,7 @@ sizebench = process_benchmark('Benchmark',size_size)
 
 fig, ax = plt.subplots(figsize=(7, 6))
 
-ax.scatter(probe, size, c='red', marker='*')
+ax.scatter(probe, size, c='black', marker='*')
 lims = [
     np.min([1, 1]),  # min of both axes
     np.max([1000, 1000]),  # max of both axes

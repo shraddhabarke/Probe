@@ -73,7 +73,7 @@ fig, ax = plt.subplots(figsize=(7, 6))
 #transform = ax.transAxes
 #line.set_transform(transform)
 
-ax.scatter(probe, euphony, c='red', marker='*')
+ax.scatter(probe, euphony, c='black', marker='*')
 lims = [
     np.min([1, 1]),  # min of both axes
     np.max([1000, 1000]),  # max of both axes

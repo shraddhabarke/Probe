@@ -87,7 +87,7 @@ print(probebench[-14], probe[-14], cvc4[-14])
 
 fig, ax = plt.subplots(figsize=(7, 6))
 
-ax.scatter(probe, cvc4, c='red', marker='*')
+ax.scatter(probe, cvc4, c='black', marker='*')
 lims = [
     np.min([1, 1]),  # min of both axes
     np.max([1000, 1000]),  # max of both axes
