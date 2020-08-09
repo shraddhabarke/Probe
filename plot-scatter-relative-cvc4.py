@@ -83,8 +83,6 @@ print(sum(probe)/len(probe))
 probebench = process_benchmark('Benchmark',size_probe)
 sizebench = process_benchmark('Benchmark',size_cvc4)
 
-print(probebench[-14], probe[-14], cvc4[-14])
-
 fig, ax = plt.subplots(figsize=(7, 6))
 
 ax.scatter(probe, cvc4, c='black', marker='*')

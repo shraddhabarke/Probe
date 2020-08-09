@@ -23,19 +23,16 @@ postprocess('results/height.csv')
 
 with open('results/probe.csv', 'r') as f:
     data = f.readlines()
-    print(data[0])
     if data[0] != "Benchmark,Program,Time,Size,Ite\n":
         line_prepender("results/probe.csv", "Benchmark,Program,Time,Size,Ite\n")       
 
 with open('results/size.csv', 'r') as f:
     data = f.readlines()
-    print(data[0])
     if data[0] != "Benchmark,Program,Time,Size\n":
         line_prepender("results/size.csv", "Benchmark,Program,Time,Size\n")
 
 with open('results/height.csv', 'r') as f:
     data = f.readlines()
-    print(data[0])
     if data[0] != "Benchmark,Program,Time,Size\n":
         line_prepender("results/height.csv", "Benchmark,Program,Time,Size\n")
 

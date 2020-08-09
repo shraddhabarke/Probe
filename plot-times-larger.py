@@ -28,13 +28,11 @@ postprocess('results/size-larger.csv')
 
 with open('results/probe-larger.csv', 'r') as f:
     data = f.readlines()
-    print(data[0])
     if data[0] != "Benchmark,Program,Time,Size,Ite\n":
         line_prepender("results/probe-larger.csv", "Benchmark,Program,Time,Size,Ite\n")       
 
 with open('results/size-larger.csv', 'r') as f:
     data = f.readlines()
-    print(data[0])
     if data[0] != "Benchmark,Program,Time,Size\n":
         line_prepender("results/size-larger.csv", "Benchmark,Program,Time,Size\n")
 
