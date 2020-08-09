@@ -33,7 +33,7 @@ def run(args):
         files = [i for i in os.listdir("src/test/benchmarks/bitvec/") if i.endswith("sl")]
         if args.strategy == "probe":
             with Pool(1) as pool:
-                pool.map(run_probe, files)
+                pool.map(run_probe_bitvec, files)
         elif args.strategy == "size":
             with Pool(1) as pool:
                 pool.map(run_size, files)
@@ -111,6 +111,10 @@ def run_size(filename):
     cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/string/%s" % (filename) ]
     run_main('results/size.csv', filename, cmd)
 
+def run_size_bitvec(filename):
+    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/bitvec/%s" % (filename) ]
+    run_main('results/size-bitvec.csv', filename, cmd)
+
 def run_size_larger(filename):
     cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/larger-grammar/%s" % (filename) ]
     run_main('results/size-larger.csv', filename, cmd)
@@ -118,6 +122,10 @@ def run_size_larger(filename):
 def run_height(filename):
     cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/string/%s" % (filename) ]
     run_main('results/height.csv', filename, cmd)
+
+def run_height_bitvec(filename):
+    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/bitvec/%s" % (filename) ]
+    run_main('results/height-bitvec.csv', filename, cmd)
 
 def run_main(resultfile, filename, cmd):
     try:
@@ -139,6 +147,10 @@ def run_probe(filename):
     cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/string/%s" % (filename) ]
     run_main('results/probe.csv', filename, cmd)
 
+def run_probe_bitvec(filename):
+    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/bitvec/%s" % (filename) ]
+    run_main('results/probe-bitvec.csv', filename, cmd)
+
 def run_probe_larger(filename):
     cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/larger-grammar/%s" % (filename) ]
     run_main('results/probe-larger.csv', filename, cmd)
@@ -159,6 +171,7 @@ def parse_args():
     subparser.add_argument("--timeout", type = int, default = 600)
     subparser.add_argument("--memory", type = int, default = 16)
     subparser.add_argument("--strategy", type = str, default = "probe")
+    subparser.add_argument("--expt", type=str, default="perf")
     return parser.parse_args()
 
 args = parse_args()
