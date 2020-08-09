@@ -6,6 +6,16 @@ import matplotlib.lines as mlines
 import matplotlib.transforms as mtransforms
 from collections import defaultdict
 
+def postprocess(filename):
+    with open(filename, 'r') as file :
+      filedata = file.read()
+    filedata = filedata.replace('""","""', '"",""')
+    with open(filename, 'w') as file:
+      file.write(filedata)
+
+postprocess('results/probe.csv')
+postprocess_cvc4('results/size.csv')
+
 def line_prepender(filename, line):
     with open(filename, 'r+') as f:
         content = f.read()

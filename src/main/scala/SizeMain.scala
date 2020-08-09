@@ -13,8 +13,8 @@ object SizeMain extends App {
     program = Main.synthesize(filename, true, false)
     val t1 = System.currentTimeMillis()
     if (!program.isEmpty) {
-      println(filename + resultPrinter(program.head, t1 - t0, program.head.terms))
-      filename + resultPrinter(program.head, t1 - t0, program.head.terms)
+      println(filename.drop(20) + resultPrinter(program.head, t1 - t0, program.head.terms))
+      filename.drop(20) + resultPrinter(program.head, t1 - t0, program.head.terms)
     }
     else {
       println(filename + ",None" + ",Timeout" + "None")

@@ -19,6 +19,17 @@ def postprocess(filename):
 
 postprocess('results/probe.csv')
 
+def line_prepender(filename, line):
+    with open(filename, 'r+') as f:
+        content = f.read()
+        f.seek(0, 0)
+        f.write(line.rstrip('\r\n') + '\n' + content)
+
+with open('results/probe.csv', 'r') as f:
+    data = f.readlines()
+    if data[0] != "Benchmark,Program,Time,Size,Ite\n":
+        line_prepender("results/probe.csv", "Benchmark,Program,Time,Size,Ite\n")  
+
 with open('results/probe.csv') as f:
     reader = csv.DictReader(f) 
     for row in reader:
