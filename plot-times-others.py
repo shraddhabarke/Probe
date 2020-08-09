@@ -5,6 +5,23 @@ import matplotlib.path as mpath
 from collections import defaultdict
 import statistics as stat
 
+def postprocess(filename):
+    with open(filename, 'r') as file :
+      filedata = file.read()
+    filedata = filedata.replace('""","""', '"",""')
+    with open(filename, 'w') as file:
+      file.write(filedata)
+
+def postprocess_cvc4(filename):
+    with open(filename, 'r') as file :
+      filedata = file.read()
+    filedata = filedata.replace('","', '"@"')
+    with open(filename, 'w') as file:
+      file.write(filedata)
+
+postprocess('results/probe.csv')
+postprocess_cvc4('results/cvc4.csv')
+
 def line_prepender(filename, line):
     with open(filename, 'r+') as f:
         content = f.read()
@@ -13,7 +30,6 @@ def line_prepender(filename, line):
 
 with open('results/probe.csv', 'r') as f:
     data = f.readlines()
-    print(data[0])
     if data[0] != "Benchmark,Program,Time,Size,Ite\n":
         line_prepender("results/probe.csv", "Benchmark,Program,Time,Size,Ite\n")       
 

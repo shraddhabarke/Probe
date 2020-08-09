@@ -20,6 +20,7 @@ def line_prepender(filename, line):
 postprocess('results/probe.csv')
 postprocess('results/size.csv')
 postprocess('results/height.csv')
+
 with open('results/probe.csv', 'r') as f:
     data = f.readlines()
     print(data[0])
