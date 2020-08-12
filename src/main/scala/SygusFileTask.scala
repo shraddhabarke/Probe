@@ -8,6 +8,7 @@ import sygus.SyGuSParser.TermContext
 import ast._
 import ast.Types.Types
 import jdk.nashorn.internal.runtime.BitVector
+
 import scala.collection.BitSet
 
 

@@ -78,7 +78,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
 
   def changeLevel(): Boolean = {
     currIter = if (totalLeaves.filter(c => c.rootCost <= costLevel + 1).isEmpty) Iterator.empty
-      else totalLeaves.toList.sortBy(_.rootCost).toIterator
+      else totalLeaves.sortBy(_.rootCost).toIterator
 
     for (p <- currLevelProgs) updateBank(p)
 
@@ -95,7 +95,6 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
       }
     }
 
-    //val increment = if (reset) 1 else ProbUpdate.priors.head._2
     costLevel += 1
     phaseCounter += 1
     currLevelProgs.clear()
