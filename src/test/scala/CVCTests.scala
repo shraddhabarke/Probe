@@ -1,6 +1,5 @@
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
-import sygus.SygusFileTask
-import org.junit.Assert._
+import sygus.Example
 
 class CVCTests extends FunSuite with BeforeAndAfterAll {
 
@@ -22,15 +21,18 @@ class CVCTests extends FunSuite with BeforeAndAfterAll {
         |(declare-var x (BitVec 64))
         |(declare-var y (BitVec 64))
         |(constraint (= (hd14 x y) (f x y)))
-        |(check-synth)""".stripMargin)
-    val synthRes = SMTProcess.invokeCVC(synthConvert.stripMargin, SMTProcess.cvc4_Smt)
-    assert(synthRes == List("sat", "((x (_ bv18446744073709551615 64)) (y (_ bv18446744073709551615 64)))"))
+        |(check-synth)""".stripMargin, "(bvadd (bvand x y) (bvlshr (bvor x y) #x0000000000000001))")
+    val synthRes = SMTProcess.invokeCVC(synthConvert._1.stripMargin, SMTProcess.cvc4_Smt)
+    assert(synthRes == List("sat", "((x #b1111111111110111111111111011111100001000000011000001000001101000) (y #b1111111111110111111111111011111100001100000000000001000001100000))"))
+    assert(synthConvert._2 == List("x", "y"))
+    assert(synthConvert._3 == "(bvadd (bvand x y) (bvlshr (bvxor x y) #x0000000000000001))")
   }
 
   test("Getting cex from query output") {
-    val synthRes = SMTProcess.getCEx(List("x", "y"),
-      List("sat", "((x (_ bv18446744073709551615 64)) (y (_ bv18446744073709551615 64)))"))
-    assert(synthRes == List(Map("x" -> "18446744073709551615", "y" -> "18446744073709551615")))
+    val synthRes = SMTProcess.getCEx("src/test/benchmarks/hackers_del/hd-14-d0-prog.sl", List("x", "y"),
+      List("sat", "((x #b1111111111110111111111111011111100001000000011000001000001101000) (y #b1111111111110111111111111011111100001100000000000001000001100000))"),
+      "(bvadd (bvand x y) (bvlshr (bvxor x y) #x0000000000000001))")
+      assert(synthRes == Example(Map("x" -> -2252078851551128L, "y" -> -2252078785228704L),-2252078818389916L))
   }
 
   test("Parsing SMT2 format LIA") {
@@ -47,7 +49,7 @@ class CVCTests extends FunSuite with BeforeAndAfterAll {
     assert(synthRes == List("sat", "(model", "(define-fun x () Int (- 1))", "(define-fun y () Int 0)", ")"))
   }
 
-  test("Parsing SMT2 format BV") {
+  test("Checking unsat") {
     val synthRes = SMTProcess.invokeCVC(
       """(set-option :print-success false)
         |(set-option :produce-models true)
@@ -55,10 +57,9 @@ class CVCTests extends FunSuite with BeforeAndAfterAll {
         |(declare-const x (_ BitVec 64))
         |(declare-const y (_ BitVec 64))
         |(declare-fun f ((_ BitVec 64) (_ BitVec 64)) (_ BitVec 64))
-        |(assert (not (= (bvadd (bvand x y) (bvlshr (bvxor x y) #x0000000000000001)) (f x y))))
-        |(check-sat)
-        |(get-value (x y))""".stripMargin, SMTProcess.cvc4_Smt)
-    assert(synthRes == List("sat", "((x (_ bv18446744073709551615 64)) (y (_ bv18446744073709551615 64)))"))
+        |(assert (not (= (bvadd (bvand x y) (bvlshr (bvxor x y) #x0000000000000001)) (bvadd (bvand x y) (bvlshr (bvxor x y) #x0000000000000001)))))
+        |(check-sat)""".stripMargin, SMTProcess.cvc4_Smt)
+    assert(synthRes == List("unsat"))
   }
 
   test("Parsing a synthesis fail") {
