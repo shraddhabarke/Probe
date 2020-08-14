@@ -7,13 +7,14 @@ import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams, RecognitionExcept
 import util.control.Breaks._
 import scala.concurrent.duration._
 import trace.DebugPrints.{iprintln}
-
+import sygus.SMTProcess
 object Main extends App {
   val filename =
   //"src/test/benchmarks/euphony/extract-word-that-begins-with-specific-character.sl"
   //"src/test/benchmarks/euphony/initials.sl"
   //"src/test/benchmarks/too-hard/43606446.sl"
-  "src/test/benchmarks/euphony/count-total-words-in-a-cell.sl"
+  //"src/test/benchmarks/euphony/count-total-words-in-a-cell.sl"
+    "src/test/benchmarks/hackers_del/hd-01-d0-prog.sl"
 
   case class ExpectedEOFException() extends Exception
 
@@ -67,7 +68,6 @@ object Main extends App {
             break
           }
         }
-
         if (!deadline.hasTimeLeft) {
           break
         }
@@ -78,13 +78,67 @@ object Main extends App {
     p
   }
 
+  def cegisTask(filename: String, task: SygusFileTask, sizeBased: Boolean, probBased: Boolean, timeout: Int = 6000): List[ASTNode] = {
+    val oeManager = new InputsValuesManager()
+    val source = scala.io.Source.fromFile(filename)
+    val enumerator = if (!sizeBased) new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input))
+    else new enumeration.ProbEnumerator(filename, task.vocab, oeManager, task, task.examples.map(_.input), probBased)
+
+    val deadline = timeout.seconds.fromNow
+    var p = List[ASTNode]()
+    val t0 = System.currentTimeMillis / 1000
+
+    /**
+     * CEGIS Loop - If the current program satisfies the list of examples, CVC4 is invoked after converting
+     * SyGuS to SMTLib format. If the solver outputs sat, the counterexample returned is added to the list
+     * of examples and synthesis continues
+     * If the solver returns unsat, the program is verified and returned as the solution.
+     */
+    breakable {
+      for ((program, i) <- enumerator.zipWithIndex) {
+        if (program.nodeType == task.functionReturnType) {
+          if (!task.examples.isEmpty) {
+            val results = task.examples.zip(program.values).map(pair => pair._1.output == pair._2)
+            if (!results.isEmpty && results.forall(identity)) {
+              val smtOut = SMTProcess.toSMT(source.mkString, program.code)
+              val solverOut = SMTProcess.invokeCVC(smtOut._1.stripMargin, SMTProcess.cvc4_Smt)
+              if (solverOut.head == "sat") { // verified!
+                val cex = SMTProcess.getCEx(task, smtOut._2, solverOut, smtOut._3)
+                task.examples = task.examples :+ cex
+              } else if (solverOut.head == "unsat") {
+                p = List(program)
+                break
+              }
+            }
+          }
+          else if (task.examples.isEmpty) {
+            val smtOut = SMTProcess.toSMT(source.mkString, program.code)
+            val solverOut = SMTProcess.invokeCVC(smtOut._1.stripMargin, SMTProcess.cvc4_Smt)
+            if (solverOut.head == "sat") { // verified!
+              val cex = SMTProcess.getCEx(task, smtOut._2, solverOut, smtOut._3)
+              task.examples = task.examples :+ cex
+            } else if (solverOut.head == "unsat") {
+              p = List(program)
+              break
+            }
+          }
+        }
+        if (!deadline.hasTimeLeft) {
+          break
+        }
+      }
+    }
+    val t1 = System.currentTimeMillis / 1000
+    p
+  }
+
   //trace.DebugPrints.setInfo()
 
   def synthesize(filename: String, sizeBased: Boolean, probBased: Boolean) = {
     val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
-    assert(task.isPBE)
-    synthesizeTask(filename, task, sizeBased, probBased)
+    if (task.isPBE) synthesizeTask(filename, task, sizeBased, probBased)
+    else cegisTask(filename, task, sizeBased, probBased)
   }
 
-  synthesize(filename, true, true)
+  synthesize(filename, true, false)
 }

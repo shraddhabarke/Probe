@@ -1,7 +1,6 @@
 package sygus
 
 import org.antlr.v4.runtime.{BailErrorStrategy, BufferedTokenStream, CharStreams, Token}
-import sygus.{ASTGenerator, Example, SyGuSLexer, SyGuSParser, SygusFileTask, ThrowingLexerErrorListener}
 
 import collection.JavaConverters._
 import ast._
@@ -56,11 +55,11 @@ object SMTProcess {
 
   def checkSat(solverOut: List[String]): Boolean = if (solverOut.head == "sat") true else false
 
-  def getCEx(content: String, query: List[String], solverOut: List[String], solution: String): Example = {
+  def getCEx(origTask: SygusFileTask, query: List[String], solverOut: List[String], solution: String): Example = {
     val model = solverOut.last.split("\\) \\(").toList.map(c => {java.lang.Long.parseUnsignedLong(c.substring(c.indexOf("#b") + 2)
       .replaceAll("\\)", ""), 2).asInstanceOf[AnyRef]})
     val inputsList = Iterable((query zip model).toMap)
-    val origTask = new SygusFileTask(content)   //TODO: Fix circular dependency
+    //val origTask = new SygusFileTask(content)   //TODO: Fix circular dependency
     val task = origTask.enhance(inputsList)
     val lexer = new SyGuSLexer(CharStreams.fromString(solution))
     lexer.removeErrorListeners()
@@ -75,4 +74,5 @@ object SMTProcess {
     val ast = visitor.visit(parsed)
     Example((query zip model).toMap, ast.values.head)
   }
+
 }
