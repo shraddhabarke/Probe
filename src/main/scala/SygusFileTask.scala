@@ -7,10 +7,8 @@ import Logic.Logic
 import sygus.SyGuSParser.TermContext
 import ast._
 import ast.Types.Types
-import jdk.nashorn.internal.runtime.BitVector
 
-import scala.collection.BitSet
-
+import scala.collection.mutable.ListBuffer
 
 object Logic extends Enumeration{
   type Logic = Value
@@ -21,11 +19,6 @@ object Logic extends Enumeration{
 class SygusFileTask(content: String) extends Cloneable{
   def enhance(variables: Iterable[Map[String, Any]]) = {
     val c = this.clone().asInstanceOf[SygusFileTask]
-    c.vocab = new VocabFactory(c.vocab.leavesMakers ++  variables.head.map{ case (name,value) => SygusFileTask.variableVocabMaker(value match {
-      case _:Boolean => Types.Bool
-      case _:Int => Types.Int
-      case _:String => Types.String
-      },name)} ,c.vocab.nodeMakers)
     c.examples = variables.map(vars => Example(vars.map(kv => kv._1 -> kv._2.asInstanceOf[AnyRef]),null)).toList
     c
   }
@@ -48,7 +41,7 @@ class SygusFileTask(content: String) extends Cloneable{
   }
   var examples: List[Example] = {
     val constraints = parsed.cmd().asScala.filter(cmd => cmd.getChild(1) != null && cmd.getChild(1).getText == "constraint").map(_.term())
-    constraints.map(constraint => SygusFileTask.exampleFromConstraint(constraint,functionName,functionReturnType,functionParameters)).toList.distinct
+    constraints.map(constraint => SygusFileTask.exampleFromConstraint(content, constraint, functionName,functionReturnType,functionParameters)).toList.distinct
   }
 
   var vocab: VocabFactory = {
@@ -62,14 +55,6 @@ class SygusFileTask(content: String) extends Cloneable{
         !nonTerminals.contains(vocabElem.bfTerm().identifier().Symbol().getText)
       ).map { vocabElem =>
         SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().getText.replaceAllLiterally("(","").replaceAllLiterally(")","")),nonTerminals)
-//        if (!) //operator or func name
-//              SygusFileTask.makeVocabMaker(
-//                  ,
-//                  ,
-//                  nonTerminal.sort().getText,
-//                  vocabElem.bfTerm().bfTerm().asScala.map(child => nonTerminals(child.identifier().Symbol().getText))
-//              ).mkString("|")
-
       }
     }.sortBy(maker => if (maker.arity > 0 && maker.returnType.toString == functionReturnType.toString) -1 else 0)
     VocabFactory(makers.toList)
@@ -582,18 +567,21 @@ object SygusFileTask{
     else java.lang.Long.parseUnsignedLong(literal.BinConst().getText.drop(2),2)
   }
 
-  def exampleFromConstraint(constraint: TermContext, functionName: String, retType: Types, parameters: Seq[(String,Types)]): Example = {
+  def exampleFromConstraint(content: String, constraint: TermContext, functionName: String, retType: Types, parameters: Seq[(String,Types)]): Example = {
     val lhs = constraint.term(0)
     val rhs = constraint.term(1)
+    val smtOut = SMTProcess.toSMT(content, "x")
+    val solverOut = SMTProcess.invokeCVC(smtOut._1.stripMargin, SMTProcess.cvc4_Smt)
     if (isFuncApp(lhs,functionName) && rhs.literal() != null)
       Example(parameters.zip(lhs.term.asScala).map(kv => kv._1._1 -> literalToAny(kv._2.literal(),kv._1._2).asInstanceOf[AnyRef]).toMap,literalToAny(rhs.literal(),retType))
     else if (lhs.literal != null && isFuncApp(rhs,functionName))
       Example(parameters.zip(rhs.term.asScala).map(kv => kv._1._1 -> literalToAny(kv._2.literal(),kv._1._2).asInstanceOf[AnyRef]).toMap,literalToAny(lhs.literal(),retType))
-    else ???
+    else SMTProcess.getCEx(content, smtOut._2, solverOut, smtOut._3)
   }
   def isFuncApp(context: SyGuSParser.TermContext,functionName: String): Boolean = {
     context.identifier() != null && context.identifier().Symbol().getText == functionName
   }
+
   def isExample(constraint: TermContext,functionName: String): Boolean = {
     if (constraint.identifier() != null && constraint.identifier().getText != "=") false
     else {

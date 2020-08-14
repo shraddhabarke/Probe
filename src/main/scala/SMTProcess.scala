@@ -60,7 +60,7 @@ object SMTProcess {
     val model = solverOut.last.split("\\) \\(").toList.map(c => {java.lang.Long.parseUnsignedLong(c.substring(c.indexOf("#b") + 2)
       .replaceAll("\\)", ""), 2).asInstanceOf[AnyRef]})
     val inputsList = Iterable((query zip model).toMap)
-    val origTask = new SygusFileTask(content)
+    val origTask = new SygusFileTask(content)   //TODO: Fix circular dependency
     val task = origTask.enhance(inputsList)
     val lexer = new SyGuSLexer(CharStreams.fromString(solution))
     lexer.removeErrorListeners()
