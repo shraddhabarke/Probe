@@ -1,5 +1,6 @@
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 import sygus.Example
+import sygus.SMTProcess
 
 class CVCTests extends FunSuite with BeforeAndAfterAll {
 
@@ -29,7 +30,21 @@ class CVCTests extends FunSuite with BeforeAndAfterAll {
   }
 
   test("Getting cex from query output") {
-    val synthRes = SMTProcess.getCEx("src/test/benchmarks/hackers_del/hd-14-d0-prog.sl", List("x", "y"),
+    val synthRes = SMTProcess.getCEx("""(set-logic BV)
+      |(define-fun hd14 ((x (BitVec 64)) (y (BitVec 64))) (BitVec 64) (bvadd (bvand x y) (bvlshr (bvxor x y) #x0000000000000001)))
+      |(synth-fun f ((x (BitVec 64)) (y (BitVec 64))) (BitVec 64)
+      |((Start (BitVec 64) ((bvlshr Start Start)
+		  |(bvxor Start Start)
+		  |(bvadd Start Start)
+			|(bvand Start Start)
+			|x
+			|y
+		  |#x0000000000000001))))
+      |
+      |(declare-var x (BitVec 64))
+      |(declare-var y (BitVec 64))
+      |(constraint (= (hd14 x y) (f x y)))
+       |(check-synth)""".stripMargin, List("x", "y"),
       List("sat", "((x #b1111111111110111111111111011111100001000000011000001000001101000) (y #b1111111111110111111111111011111100001100000000000001000001100000))"),
       "(bvadd (bvand x y) (bvlshr (bvxor x y) #x0000000000000001))")
       assert(synthRes == Example(Map("x" -> -2252078851551128L, "y" -> -2252078785228704L),-2252078818389916L))
