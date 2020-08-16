@@ -1,14 +1,12 @@
 package enumeration
 
-import java.io.FileOutputStream
-
 import ast.{ASTNode, VocabFactory, VocabMaker}
-import sygus.SygusFileTask
-import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
-import trace.DebugPrints.iprintln
+import sygus.{SMTProcess, SygusFileTask}
 
-class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManager: OEValuesManager, val task: SygusFileTask, val contexts: List[Map[String,Any]], val probBased: Boolean) extends Iterator[ASTNode] {
+import scala.collection.mutable
+import scala.collection.mutable.{ArrayBuffer, ListBuffer}
+
+class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManager: OEValuesManager, var task: SygusFileTask, var contexts: List[Map[String,Any]], val probBased: Boolean) extends Iterator[ASTNode] {
   override def toString(): String = "enumeration.Enumerator"
 
   var nextProgram: Option[ASTNode] = None
@@ -30,8 +28,8 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
     res
   }
 
-  var fos = new FileOutputStream("results/probe-out/" + filename.drop(27) + ".iter", true)
   var currIter: Iterator[VocabMaker] = null
+  var source = scala.io.Source.fromFile(filename)
   val totalLeaves = vocab.leaves().toList ++ vocab.nonLeaves().toList
   var childrenIterator: Iterator[List[ASTNode]] = null
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
@@ -40,22 +38,23 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   var fitsMap = mutable.Map[(Class[_], Option[Any]), Double]()
   ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
   ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
-  val sortedLeaves = vocab.leaves().toList.sortBy(_.rootCost)
   var timeout = 3 * ProbUpdate.priors.head._2
   var costLevel = 0
-  //var reset = false
 
   resetEnumeration()
   var rootMaker: Iterator[ASTNode] = currIter.next().probe_init(currLevelProgs.toList, vocab, costLevel, contexts, bank)
 
-  def resetEnumeration():  Unit = {
+  def resetEnumeration(): Unit = {
+    source = scala.io.Source.fromFile(filename)
     currIter = vocab.leaves().toList.sortBy(_.rootCost).toIterator
+    contexts = task.examples.map(_.input).toList
     rootMaker = currIter.next().probe_init(currLevelProgs.toList, vocab, costLevel, contexts, bank)
     currLevelProgs.clear()
     oeManager.clear()
     bank.clear()
     fitsMap.clear
     phaseCounter = 0
+    costLevel = 0
   }
 
   def advanceRoot(): Boolean = {
@@ -77,18 +76,16 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   }
 
   def changeLevel(): Boolean = {
-    currIter = if (totalLeaves.filter(c => c.rootCost <= costLevel + 1).isEmpty) Iterator.empty
-      else totalLeaves.sortBy(_.rootCost).toIterator
+    currIter = totalLeaves.sortBy(_.rootCost).toIterator
 
     for (p <- currLevelProgs) updateBank(p)
 
     if (probBased) {
-      fitsMap = ProbUpdate.update(fitsMap, currLevelProgs, task, fos)
+      fitsMap = ProbUpdate.update(fitsMap, currLevelProgs, task)
       if (phaseCounter == 2 * timeout) {
         phaseCounter = 0
         if (!fitsMap.isEmpty) {
-          //reset = true
-          ProbUpdate.updatePriors(ProbUpdate.probMap, fos)
+          ProbUpdate.updatePriors(ProbUpdate.probMap)
           resetEnumeration()
           costLevel = 0
         }
@@ -120,6 +117,22 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
       }
     }
     currLevelProgs += res.get
+    /** CEGIS Loop - If the current program satisfies the list of examples, CVC4 is invoked after converting
+      * SyGuS to SMTLib format. If the solver outputs sat, the counterexample returned is added to the list
+      * of examples and synthesis restarts.
+      ***/
+    if (task.examples.isEmpty || (!task.examples.isEmpty && task.examples.zip(res.get.values).map(pair => pair._1.output == pair._2).forall(identity))) {
+      //Solver is invoked if either the set of examples is empty or the program satisfies all current examples.
+      val smtOut = SMTProcess.toSMT(source.mkString, res.get.code)
+      val solverOut = SMTProcess.invokeCVC(smtOut._1.stripMargin, SMTProcess.cvc4_Smt)
+      if (solverOut.head == "sat") { // counterexample added!
+        val cex = SMTProcess.getCEx(task, smtOut._2, solverOut, smtOut._3)
+        task = task.updateContext(cex)
+        resetEnumeration() //restart synthesis
+      } else if (solverOut.head == "unsat")
+          res.get.unsat = true
+    }
+
     //Console.withOut(fos) { println(currLevelProgs.takeRight(1).map(c => (c.code, c.cost)).mkString(",")) }
     res
   }

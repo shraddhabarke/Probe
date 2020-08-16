@@ -20,7 +20,7 @@ class ASTGenerator(task: SygusFileTask) extends SyGuSBaseVisitor[ASTNode] {
       val contexts = task.examples.map(_.input)
       task.vocab.nodeMakers.foreach(m => {
         if (m.head == ctx.getChild(1).getText && m.canMake(childASTs)) {
-          return m.apply(childASTs, contexts)
+          return m.apply(childASTs, contexts.toList)
         }
       })
       throw ResolutionException(ctx)
@@ -35,7 +35,7 @@ class ASTGenerator(task: SygusFileTask) extends SyGuSBaseVisitor[ASTNode] {
     val contexts = task.examples.map(_.input)
     task.vocab.leavesMakers.foreach(m => {
       if (m.head == ctx.getText) {
-        return m.apply(Nil, contexts)
+        return m.apply(Nil, contexts.toList)
       }
     })
     throw ResolutionException(ctx)

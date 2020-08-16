@@ -5,8 +5,7 @@ abstract class VariableNode[T](contexts: List[Map[String,Any]]) extends ASTNode 
   val terms = 1
   val name: String
   val values: List[T] = contexts.map{ context =>
-    context(name).asInstanceOf[T]
-  }
+    context(name).asInstanceOf[T]}.toList
   override lazy val code: String = name
   override val children: Iterable[ASTNode] = Iterable.empty
 

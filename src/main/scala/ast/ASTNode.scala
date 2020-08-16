@@ -1,8 +1,6 @@
 package ast
 
 import enumeration.ProbUpdate
-import jdk.nashorn.internal.runtime.BitVector
-import scala.collection.BitSet
 
 trait ASTNode {
   val nodeType: Types.Types
@@ -11,6 +9,7 @@ trait ASTNode {
   val height: Int
   val terms: Int
   val children: Iterable[ASTNode]
+  var unsat: Boolean = false
   def includes(varName: String): Boolean
   private var _cost : Option[Int] = None
   def cost: Int = {

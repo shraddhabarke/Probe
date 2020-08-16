@@ -6,6 +6,7 @@ import org.junit.Assert._
 import org.scalatestplus.junit.JUnitSuite
 
 class VocabTests  extends JUnitSuite{
+
   def readVocabElem(elemLine: String) = {
     val parser = new SyGuSParser(new BufferedTokenStream(new SyGuSLexer(CharStreams.fromString(elemLine))))
     val ruleList = parser.groupedRuleList()
@@ -576,4 +577,5 @@ class VocabTests  extends JUnitSuite{
     assertEquals(List(2L),node.values)
     assertEquals(Types.BitVec64,node.nodeType)
   }
+
 }

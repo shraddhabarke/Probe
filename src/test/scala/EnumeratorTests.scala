@@ -179,4 +179,5 @@ class EnumeratorTests  extends JUnitSuite{
     assertEquals("(<= 1 1)", enumerator.next.code)
     assertEquals("(= 0 0)", enumerator.next.code)
   }
+
 }

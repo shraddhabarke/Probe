@@ -28,7 +28,6 @@ class SygusGrammarTests extends JUnitSuite{
 //    }
 //
 //  }
-
   @Test def runParser1(): Unit = {
     val slFileContent = """(set-logic SLIA)
                           |(declare-var name String)
@@ -143,7 +142,7 @@ class SygusGrammarTests extends JUnitSuite{
     assertEquals(Example(Map("name" -> "Jan Kotas"), "J.K."),task.examples(2))
     assertEquals(8, task.vocab.leaves.length)
     assertEquals(10, task.vocab.nonLeaves.length)
-    assertEquals(List("name","\" \"","\".\"","0","1","2","true","false"),task.vocab.leaves.map(_.apply(Nil,task.examples.map(_.input)).code).toList)
+    assertEquals(List("name","\" \"","\".\"","0","1","2","true","false"),task.vocab.leaves.map(_.apply(Nil,task.examples.map(_.input).toList).code).toList)
   }
 
   @Test def equalityTest = {

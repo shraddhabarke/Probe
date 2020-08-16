@@ -1,20 +1,22 @@
 package sygus
 
 import ast.ASTNode
-import enumeration.{InputsValuesManager}
+import enumeration.InputsValuesManager
 import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams, RecognitionException, Token}
 
 import util.control.Breaks._
 import scala.concurrent.duration._
-import trace.DebugPrints.{iprintln}
+import trace.DebugPrints.iprintln
 import sygus.SMTProcess
+
+import scala.collection.mutable.ListBuffer
 object Main extends App {
   val filename =
   //"src/test/benchmarks/euphony/extract-word-that-begins-with-specific-character.sl"
-  //"src/test/benchmarks/euphony/initials.sl"
+  //"src/test/benchmarks/string/exceljet1.sl"
   //"src/test/benchmarks/too-hard/43606446.sl"
   //"src/test/benchmarks/euphony/count-total-words-in-a-cell.sl"
-    "src/test/benchmarks/hackers_del/hd-01-d0-prog.sl"
+  "src/test/benchmarks/hackers_del/hd-01-d0-prog.sl"
 
   case class ExpectedEOFException() extends Exception
 
@@ -29,10 +31,10 @@ object Main extends App {
     ast
   }
 
-  def interpret(filename: String, str: String): Option[(ASTNode, List[Any])] = try {
+  def interpret(filename: String, str: String): Option[(ASTNode, ListBuffer[Any])] = try {
     val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
     val ast = interpret(task, str)
-    Some(ast, task.examples.map(_.output))
+    Some(ast, task.examples.map(_.output).to(ListBuffer))
   } catch {
     case e: RecognitionException => {
       iprintln(s"Cannot parse program: ${e.getMessage}")
@@ -51,10 +53,10 @@ object Main extends App {
   def synthesizeTask(filename: String, task: SygusFileTask, sizeBased: Boolean, probBased: Boolean, timeout: Int = 600): List[ASTNode] = {
     val oeManager = new InputsValuesManager()
 
-    val enumerator =  if (!sizeBased) new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input))
-    else new enumeration.ProbEnumerator(filename, task.vocab, oeManager, task, task.examples.map(_.input), probBased)
+    val enumerator =  if (!sizeBased) new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input).toList)
+    else new enumeration.ProbEnumerator(filename, task.vocab, oeManager, task, task.examples.map(_.input).toList, probBased)
 
-      val deadline = timeout.seconds.fromNow
+    val deadline = timeout.seconds.fromNow
     var p = List[ASTNode]()
     val t0 = System.currentTimeMillis / 1000
 
@@ -64,7 +66,6 @@ object Main extends App {
           val results = task.examples.zip(program.values).map(pair => pair._1.output == pair._2)
           if (results.forall(identity)) {
             p = List(program)
-            //println(program.code, results)
             break
           }
         }
@@ -78,49 +79,26 @@ object Main extends App {
     p
   }
 
-  def cegisTask(filename: String, task: SygusFileTask, sizeBased: Boolean, probBased: Boolean, timeout: Int = 6000): List[ASTNode] = {
+  def cegisTask(filename: String, sizeBased: Boolean, probBased: Boolean, timeout: Int = 6000): List[ASTNode] = {
+    val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
     val oeManager = new InputsValuesManager()
-    val source = scala.io.Source.fromFile(filename)
-    val enumerator = if (!sizeBased) new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input))
-    else new enumeration.ProbEnumerator(filename, task.vocab, oeManager, task, task.examples.map(_.input), probBased)
+    val enumerator = if (!sizeBased) new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input).toList)
+    else new enumeration.ProbEnumerator(filename, task.vocab, oeManager, task, task.examples.map(_.input).toList, probBased)
 
     val deadline = timeout.seconds.fromNow
     var p = List[ASTNode]()
     val t0 = System.currentTimeMillis / 1000
 
     /**
-     * CEGIS Loop - If the current program satisfies the list of examples, CVC4 is invoked after converting
-     * SyGuS to SMTLib format. If the solver outputs sat, the counterexample returned is added to the list
-     * of examples and synthesis continues
      * If the solver returns unsat, the program is verified and returned as the solution.
      */
     breakable {
       for ((program, i) <- enumerator.zipWithIndex) {
         if (program.nodeType == task.functionReturnType) {
-          if (!task.examples.isEmpty) {
-            val results = task.examples.zip(program.values).map(pair => pair._1.output == pair._2)
-            if (!results.isEmpty && results.forall(identity)) {
-              val smtOut = SMTProcess.toSMT(source.mkString, program.code)
-              val solverOut = SMTProcess.invokeCVC(smtOut._1.stripMargin, SMTProcess.cvc4_Smt)
-              if (solverOut.head == "sat") { // verified!
-                val cex = SMTProcess.getCEx(task, smtOut._2, solverOut, smtOut._3)
-                task.examples = task.examples :+ cex
-              } else if (solverOut.head == "unsat") {
-                p = List(program)
-                break
-              }
-            }
-          }
-          else if (task.examples.isEmpty) {
-            val smtOut = SMTProcess.toSMT(source.mkString, program.code)
-            val solverOut = SMTProcess.invokeCVC(smtOut._1.stripMargin, SMTProcess.cvc4_Smt)
-            if (solverOut.head == "sat") { // verified!
-              val cex = SMTProcess.getCEx(task, smtOut._2, solverOut, smtOut._3)
-              task.examples = task.examples :+ cex
-            } else if (solverOut.head == "unsat") {
-              p = List(program)
-              break
-            }
+          if (program.unsat == true) {
+            p = List(program)
+            println(p.head.code)
+            break
           }
         }
         if (!deadline.hasTimeLeft) {
@@ -132,12 +110,10 @@ object Main extends App {
     p
   }
 
-  //trace.DebugPrints.setInfo()
-
   def synthesize(filename: String, sizeBased: Boolean, probBased: Boolean) = {
     val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
     if (task.isPBE) synthesizeTask(filename, task, sizeBased, probBased)
-    else cegisTask(filename, task, sizeBased, probBased)
+    else cegisTask(filename, sizeBased, probBased)
   }
 
   synthesize(filename, true, false)

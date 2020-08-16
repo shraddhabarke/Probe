@@ -4,6 +4,7 @@ import org.junit.Assert._
 import org.scalatestplus.junit.JUnitSuite
 
 class TestTest extends JUnitSuite{
+
   @Test def doTest: Unit = {
     //(str.replace _arg_0 (str.replace _arg_0 _arg_2 _arg_0) _arg_1)
     val inputs = Map("_arg_0" -> "I love apples", "_arg_1" -> "I hate bananas", "_arg_2" -> "banana") ::

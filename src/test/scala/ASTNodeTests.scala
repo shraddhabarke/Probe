@@ -1,10 +1,8 @@
 import ast._
-import jdk.nashorn.internal.runtime.BitVector
 import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
 import org.junit.Assert._
 
-import scala.collection.BitSet
 
 class ASTNodeTests extends JUnitSuite{
   @Test def stringLiteralNode(): Unit = {
@@ -573,4 +571,5 @@ class ASTNodeTests extends JUnitSuite{
     assertTrue(new IntToString(variable).includes("x"))
     assertFalse(new IntToString(variable).includes("a"))
   }
+
 }
