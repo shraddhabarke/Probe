@@ -517,6 +517,48 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(false, divnode2.values.head)
   }
 
+  @Test def bvUlt: Unit = {
+    val divnode = new BVUlt(new BVLiteral(-8,1),new BVLiteral(4,1))
+    val divnode1 = new BVUlt(new BVLiteral(12,1),new BVLiteral(-12,1))
+    val divnode2 = new BVUlt(new BVLiteral(8,1),new BVLiteral(4,1))
+    assertEquals(1,divnode.height)
+    assertEquals(3,divnode.terms)
+    assertEquals("(bvult #xfffffffffffffff8 #x0000000000000004)", divnode.code)
+    assertEquals("(bvult #x000000000000000c #xfffffffffffffff4)", divnode1.code)
+    assertEquals("(bvult #x0000000000000008 #x0000000000000004)", divnode2.code)
+    assertEquals(false, divnode.values.head)
+    assertEquals(true, divnode1.values.head)
+    assertEquals(false, divnode2.values.head)
+  }
+
+  @Test def bvUle: Unit = {
+    val divnode = new BVUle(new BVLiteral(-8,1),new BVLiteral(-8,1))
+    val divnode1 = new BVUle(new BVLiteral(12,1),new BVLiteral(-12,1))
+    val divnode2 = new BVUle(new BVLiteral(8,1),new BVLiteral(4,1))
+    assertEquals(1,divnode.height)
+    assertEquals(3,divnode.terms)
+    assertEquals("(bvule #xfffffffffffffff8 #xfffffffffffffff8)", divnode.code)
+    assertEquals("(bvule #x000000000000000c #xfffffffffffffff4)", divnode1.code)
+    assertEquals("(bvule #x0000000000000008 #x0000000000000004)", divnode2.code)
+    assertEquals(true, divnode.values.head)
+    assertEquals(true, divnode1.values.head)
+    assertEquals(false, divnode2.values.head)
+  }
+
+  @Test def bvUgt: Unit = {
+    val divnode = new BVUgt(new BVLiteral(-8,1),new BVLiteral(-8,1))
+    val divnode1 = new BVUgt(new BVLiteral(12,1),new BVLiteral(-12,1))
+    val divnode2 = new BVUgt(new BVLiteral(8,1),new BVLiteral(4,1))
+    assertEquals(1,divnode.height)
+    assertEquals(3,divnode.terms)
+    assertEquals("(bvugt #xfffffffffffffff8 #xfffffffffffffff8)", divnode.code)
+    assertEquals("(bvugt #x000000000000000c #xfffffffffffffff4)", divnode1.code)
+    assertEquals("(bvugt #x0000000000000008 #x0000000000000004)", divnode2.code)
+    assertEquals(false, divnode.values.head)
+    assertEquals(false, divnode1.values.head)
+    assertEquals(true, divnode2.values.head)
+  }
+
   @Test def logicalAnd: Unit = {
     val ctx = List(Map("x" -> true, "y" -> false), Map("x" -> true, "y" -> true), Map("x" -> false, "y" -> false))
     val land = new LAnd(new BoolVariable("x",ctx), new BoolVariable("y",ctx))

@@ -193,6 +193,27 @@ class BVSle(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Boolean] with
   override val code: String = "(bvsle " + lhs.code + " " + rhs.code + ")"
 }
 
+class BVUlt(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Boolean] with BoolNode {
+  override def doOp(l: Any, r: Any): Boolean
+  = java.lang.Long.compareUnsigned(l.asInstanceOf[Long], r.asInstanceOf[Long]) < 0
+
+  override val code: String = "(bvult " + lhs.code + " " + rhs.code + ")"
+}
+
+class BVUle(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Boolean] with BoolNode {
+  override def doOp(l: Any, r: Any): Boolean
+    = java.lang.Long.compareUnsigned(l.asInstanceOf[Long], r.asInstanceOf[Long]) <= 0
+
+    override val code: String = "(bvule " + lhs.code + " " + rhs.code + ")"
+}
+
+class BVUgt(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Boolean] with BoolNode {
+  override def doOp(l: Any, r: Any): Boolean
+  = java.lang.Long.compareUnsigned(l.asInstanceOf[Long], r.asInstanceOf[Long]) > 0
+
+  override val code: String = "(bvugt " + lhs.code + " " + rhs.code + ")"
+}
+
 class LAnd(val lhs: BoolNode, val rhs: BoolNode) extends BinaryOpNode[Boolean] with BoolNode {
   override def doOp(l: Any, r: Any): Boolean = l.asInstanceOf[Boolean] && r.asInstanceOf[Boolean]
 
