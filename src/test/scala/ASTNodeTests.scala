@@ -456,14 +456,14 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals("(bvsub x y)",sub.code)
     assertEquals(List(0,-9223372036854775807L,9223372036854775807L),sub.values)
   }
-  @Test def bvSDiv: Unit = {
+  @Test def bvUDiv: Unit = {
     val divnode = new BVUDiv(new BVLiteral(-8,1),new BVLiteral(4,1))
     assertEquals(1,divnode.height)
     assertEquals(3,divnode.terms)
     assertEquals("(bvudiv #xfffffffffffffff8 #x0000000000000004)", divnode.code)
     assertEquals(List(0x3ffffffffffffffeL),divnode.values)
   }
-  @Test def bvUDiv: Unit = {
+  @Test def bvSDiv: Unit = {
     val divnode = new BVSDiv(new BVLiteral(-8,1),new BVLiteral(4,1))
     assertEquals(1,divnode.height)
     assertEquals(3,divnode.terms)
@@ -487,6 +487,34 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(Types.Bool,eq.nodeType)
     assertEquals("(= #x0000000000000004 v)",eq.code)
     assertEquals(List(true,false), eq.values)
+  }
+
+  @Test def bvSlt: Unit = {
+    val divnode = new BVSlt(new BVLiteral(-8,1),new BVLiteral(4,1))
+    val divnode1 = new BVSlt(new BVLiteral(-8,1),new BVLiteral(-12,1))
+    val divnode2 = new BVSlt(new BVLiteral(8,1),new BVLiteral(4,1))
+    assertEquals(1,divnode.height)
+    assertEquals(3,divnode.terms)
+    assertEquals("(bvslt #xfffffffffffffff8 #x0000000000000004)", divnode.code)
+    assertEquals("(bvslt #xfffffffffffffff8 #xfffffffffffffff4)", divnode1.code)
+    assertEquals("(bvslt #x0000000000000008 #x0000000000000004)", divnode2.code)
+    assertEquals(true, divnode.values.head)
+    assertEquals(false, divnode1.values.head)
+    assertEquals(false, divnode2.values.head)
+  }
+
+  @Test def bvSle: Unit = {
+    val divnode = new BVSle(new BVLiteral(-8,1),new BVLiteral(4,1))
+    val divnode1 = new BVSle(new BVLiteral(-8,1),new BVLiteral(-8,1))
+    val divnode2 = new BVSle(new BVLiteral(8,1),new BVLiteral(4,1))
+    assertEquals(1,divnode.height)
+    assertEquals(3,divnode.terms)
+    assertEquals("(bvsle #xfffffffffffffff8 #x0000000000000004)", divnode.code)
+    assertEquals("(bvsle #xfffffffffffffff8 #xfffffffffffffff8)", divnode1.code)
+    assertEquals("(bvsle #x0000000000000008 #x0000000000000004)", divnode2.code)
+    assertEquals(true, divnode.values.head)
+    assertEquals(true, divnode1.values.head)
+    assertEquals(false, divnode2.values.head)
   }
 
   @Test def logicalAnd: Unit = {
