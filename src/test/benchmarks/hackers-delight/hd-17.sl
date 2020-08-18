@@ -26,6 +26,10 @@
                          #x0000000000000001
                          #x000000000000001f
                          #xffffffffffffffff
+                         (ite StartBool Start Start)))
+
+                         (StartBool Bool
+                         ((= Start Start)
                          ))))
 
 (declare-var x (BitVec 64))

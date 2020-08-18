@@ -25,7 +25,12 @@
 						 #x0000000000000000
 						 #x000000000000001f
 						 #xffffffffffffffff
-                         x))))
+                         x
+                         (ite StartBool Start Start)))
+
+                         (StartBool Bool
+                         ((= Start Start)
+                         ))))
 
 (declare-var x (BitVec 64))
 (constraint (= (hd09 x) (f x)))

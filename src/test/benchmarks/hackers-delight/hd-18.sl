@@ -1,11 +1,10 @@
-; floor of average of two integers
+; determine if power of two
 
 (set-logic BV)
 
-(define-fun hd14 ((x (BitVec 64)) (y (BitVec 64))) (BitVec 64) (bvadd (bvand x y) (bvlshr (bvxor x y) #x0000000000000001)))
+(define-fun hd18 ((x (BitVec 64))) Bool (and (not (bvredor (bvand (bvsub x #x0000000000000001) x))) (bvredor x)))
 
-(synth-fun f ((x (BitVec 64)) (y (BitVec 64))) (BitVec 64)
-
+(synth-fun f ( (x (BitVec 64)) ) Bool
 ((Start (BitVec 64)
 ((bvnot Start)
 (bvxor Start Start)
@@ -22,20 +21,17 @@
 (bvsdiv Start Start)
 (bvsrem Start Start)
 (bvsub Start Start)
-#x0000000000000000
-#x0000000000000001
-#x000000000000001f
-#xffffffffffffffff
-x
-y
-(ite StartBool Start Start)))
+x)
 
 (StartBool Bool
 ((= Start Start)
-))))
+(bvult Start Start)
+(bvslt Start Start)
+(bvsle Start Start)
+(bvule Start Start)
+)))))
 
 (declare-var x (BitVec 64))
-(declare-var y (BitVec 64))
-(constraint (= (hd14 x y) (f x y)))
+(constraint (= (hd18 x) (f x)))
 (check-synth)
 
