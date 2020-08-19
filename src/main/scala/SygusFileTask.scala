@@ -19,7 +19,7 @@ object Logic extends Enumeration{
 class SygusFileTask(content: String) extends Cloneable{
   def enhance(variables: Iterable[Map[String, Any]]) = {
     val c = this.clone().asInstanceOf[SygusFileTask]
-    c.examples = variables.map(vars => Example(vars.map(kv => kv._1 -> kv._2.asInstanceOf[AnyRef]),null)).to(ListBuffer)
+    c.examples = variables.map(vars => Example(vars.map(kv => kv._1 -> kv._2.asInstanceOf[AnyRef]),null)).toList
     c
   }
 
@@ -45,10 +45,10 @@ class SygusFileTask(content: String) extends Cloneable{
     val constraints = parsed.cmd().asScala.filter(cmd => cmd.getChild(1) != null && cmd.getChild(1).getText == "constraint").map(_.term())
     !constraints.isEmpty && constraints.forall(constraint => SygusFileTask.isExample(constraint,functionName))
   }
-  var examples: ListBuffer[Example] = {
+  var examples: List[Example] = {
     val constraints = parsed.cmd().asScala.filter(cmd => cmd.getChild(1) != null && cmd.getChild(1).getText == "constraint").map(_.term())
-    if(isPBE) constraints.map(constraint => SygusFileTask.exampleFromConstraint(content, constraint, functionName,functionReturnType,functionParameters)).to(ListBuffer).distinct
-    else ListBuffer()
+    if(isPBE) constraints.map(constraint => SygusFileTask.exampleFromConstraint(content, constraint, functionName,functionReturnType,functionParameters)).toList.distinct
+    else List()
   }
 
   var vocab: VocabFactory = {

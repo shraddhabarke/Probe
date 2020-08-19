@@ -36,10 +36,10 @@ object Main extends App {
     ast
   }
 
-  def interpret(filename: String, str: String): Option[(ASTNode, ListBuffer[Any])] = try {
+  def interpret(filename: String, str: String): Option[(ASTNode, List[Any])] = try {
     val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
     val ast = interpret(task, str)
-    Some(ast, task.examples.map(_.output).to(ListBuffer))
+    Some(ast, task.examples.map(_.output))
   } catch {
     case e: RecognitionException => {
       iprintln(s"Cannot parse program: ${e.getMessage}")
