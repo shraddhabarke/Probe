@@ -16,7 +16,12 @@ object Main extends App {
   //"src/test/benchmarks/string/exceljet1.sl"
   //"src/test/benchmarks/too-hard/43606446.sl"
   //"src/test/benchmarks/euphony/count-total-words-in-a-cell.sl"
-  "src/test/benchmarks/hackers_del/hd-01-d0-prog.sl"
+  //"src/test/benchmarks/hackers_del/hd-01-d0-prog.sl"
+  "src/test/benchmarks/string/44789427.sl"
+
+  case class RankedProgram(program: ASTNode, rank: Double) extends Ordered[RankedProgram] {
+    override def compare(that: RankedProgram): Int = this.rank.compare(that.rank)
+  }
 
   case class ExpectedEOFException() extends Exception
 
@@ -66,6 +71,7 @@ object Main extends App {
           val results = task.examples.zip(program.values).map(pair => pair._1.output == pair._2)
           if (results.forall(identity)) {
             p = List(program)
+            iprintln(program.code, program.cost)
             break
           }
         }
@@ -75,7 +81,7 @@ object Main extends App {
       }
     }
     val t1 = System.currentTimeMillis / 1000
-    //iprintln(s"${t1 - t0}s")
+    println(s"${t1 - t0}s")
     p
   }
 
@@ -116,5 +122,5 @@ object Main extends App {
     else cegisTask(filename, sizeBased, probBased)
   }
 
-  synthesize(filename, true, false)
+  synthesize(filename, true, true)
 }

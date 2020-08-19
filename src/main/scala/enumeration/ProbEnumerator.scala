@@ -3,6 +3,13 @@ package enumeration
 import ast.{ASTNode, VocabFactory, VocabMaker}
 import sygus.{SMTProcess, SygusFileTask}
 
+import java.io.FileOutputStream
+
+import ast.{ASTNode, BVAdd, StringReplace, VocabFactory, VocabMaker}
+import enumeration.ProbUpdate.probMap
+import sygus.SygusFileTask
+
+
 import scala.collection.mutable
 import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 
@@ -35,6 +42,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
   var phaseCounter: Int = 0
+
   var fitsMap = mutable.Map[(Class[_], Option[Any]), Double]()
   ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
   ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
@@ -121,19 +129,22 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
       * SyGuS to SMTLib format. If the solver outputs sat, the counterexample returned is added to the list
       * of examples and synthesis restarts.
       ***/
-    if (task.examples.isEmpty || (!task.examples.isEmpty && task.examples.zip(res.get.values).map(pair => pair._1.output == pair._2).forall(identity))) {
-      //Solver is invoked if either the set of examples is empty or the program satisfies all current examples.
-      val smtOut = SMTProcess.toSMT(source.mkString, res.get.code)
-      val solverOut = SMTProcess.invokeCVC(smtOut._1.stripMargin, SMTProcess.cvc4_Smt)
-      if (solverOut.head == "sat") { // counterexample added!
-        val cex = SMTProcess.getCEx(task, smtOut._2, solverOut, smtOut._3)
-        task = task.updateContext(cex)
-        resetEnumeration() //restart synthesis
-      } else if (solverOut.head == "unsat")
+    if (!task.isPBE) {
+      if (task.examples.isEmpty || (!task.examples.isEmpty && task.examples.zip(res.get.values).map(pair => pair._1.output == pair._2).forall(identity))) {
+        //Solver is invoked if either the set of examples is empty or the program satisfies all current examples.
+        val smtOut = SMTProcess.toSMT(source.mkString, res.get.code)
+        val solverOut = SMTProcess.invokeCVC(smtOut._1.stripMargin, SMTProcess.cvc4_Smt)
+        if (solverOut.head == "sat") { // counterexample added!
+          val cex = SMTProcess.getCEx(task, smtOut._2, solverOut, smtOut._3)
+          task = task.updateContext(cex)
+          resetEnumeration() //restart synthesis
+        } else if (solverOut.head == "unsat")
           res.get.unsat = true
+      }
     }
 
     //Console.withOut(fos) { println(currLevelProgs.takeRight(1).map(c => (c.code, c.cost)).mkString(",")) }
+   // Console.withOut(fos) { println(currLevelProgs.takeRight(1).map(c => (c.code, c.cost)).mkString(",")) }
     res
   }
 }

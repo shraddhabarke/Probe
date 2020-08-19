@@ -29,7 +29,7 @@ object ProbUpdate {
   }
 
 
-  def update(fitsMap: mutable.Map[(Class[_], Option[Any]), Double], currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask, fos: FileOutputStream): mutable.Map[(Class[_], Option[Any]), Double] = {
+  def update(fitsMap: mutable.Map[(Class[_], Option[Any]), Double], currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask): mutable.Map[(Class[_], Option[Any]), Double] = {
     fitMap = fitsMap
     for (program <- currLevelProgs) {
       val exampleFit = task.fit(program)
@@ -47,15 +47,14 @@ object ProbUpdate {
               probMap += (changedNode -> update)
             }
           }
-          Console.withOut(fos) { iprintln(program.code, examplesPassed) }
+         // Console.withOut(fos) { iprintln(program.code, examplesPassed) }
         }
       }
     }
     fitMap
   }
 
-  def updatePriors(probMap: mutable.Map[(Class[_], Option[Any]), Double], fos: FileOutputStream): Unit = {
-    Console.withOut(fos) { iprintln("Restarting Enumeration!") }
+  def updatePriors(probMap: mutable.Map[(Class[_], Option[Any]), Double]): Unit = {
     updateProb()
     probMap.foreach(d => priors += (d._1 -> roundValue(-log2(d._2))))
   }
