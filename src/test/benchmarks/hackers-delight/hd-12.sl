@@ -2,7 +2,7 @@
 
 (set-logic BV)
 
-(define-fun hd11 ((x (BitVec 64)) (y (BitVec 64))) Bool (bvule (bvand x (bvnot y)) y))
+(define-fun hd11 ((x (BitVec 64)) (y (BitVec 64))) Bool (bvule (bvand y (bvnot x)) x))
 
 (synth-fun f ((x (BitVec 64)) (y (BitVec 64))) Bool
 

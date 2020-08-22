@@ -3,7 +3,7 @@
 
 (set-logic BV)
 
-(define-fun hd10 ((x (BitVec 64)) (y (BitVec 64))) Bool (bvule (bvand x y) (bvxor x y)))
+(define-fun hd10 ((x (BitVec 64)) (y (BitVec 64))) Bool (bvule (bvxor x y) (bvand x y)))
 
 (synth-fun f ((x (BitVec 64)) (y (BitVec 64))) Bool
     ((Start Bool ((bvule StartBV StartBV)
