@@ -405,9 +405,12 @@ class ASTNodeTests extends JUnitSuite{
   @Test def bvLShiftRight: Unit = {
     val arg = new BVLiteral(2,1)
     val one = new BVLiteral(value = 1, numContexts = 1)
+    val arg2 = new BVLiteral(value = 65, numContexts = 1)
     val signedOne = new BVLiteral(value = -1, numContexts = 1)
     val bvShrNode: BVNode = new BVShrLogical(arg,one)
     val bvShrNodeSigned: BVNode = new BVShrLogical(arg,signedOne)
+    val bvShrNodeSigned2: BVNode = new BVShrLogical(signedOne, arg2)
+    val longarg2: Long = arg2.value
     assertEquals(Types.BitVec64, bvShrNode.nodeType)
     assertEquals(1, bvShrNode.height)
     assertEquals(3, bvShrNode.terms)
@@ -415,6 +418,8 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals("(bvlshr #x0000000000000002 #xffffffffffffffff)", bvShrNodeSigned.code)
     assertEquals(List(1),bvShrNode.values)
     assertEquals(List(0),bvShrNodeSigned.values)
+    assertEquals(List(0),bvShrNodeSigned2.values)
+    assertEquals(65, longarg2)
     assertEquals(List(arg,one), bvShrNode.children)
   }
 

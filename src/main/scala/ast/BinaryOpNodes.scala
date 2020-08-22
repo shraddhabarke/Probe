@@ -161,7 +161,8 @@ class BVShrLogical(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] 
   override def doOp(l: Any, r: Any): Long = {
     val lhsNode = l.asInstanceOf[Long]
     val rhsNode = r.asInstanceOf[Long]
-    lhsNode >>> rhsNode
+    if (rhsNode >= 64 || rhsNode < 0) 0
+    else lhsNode >>> rhsNode
   }
   override lazy val code: String = "(bvlshr " + lhs.code + " " + rhs.code + ")"
 }
