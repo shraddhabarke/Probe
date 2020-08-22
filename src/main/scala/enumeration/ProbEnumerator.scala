@@ -1,17 +1,12 @@
 package enumeration
 
+import sygus.{SMTProcess}
+
 import ast.{ASTNode, VocabFactory, VocabMaker}
-import sygus.{SMTProcess, SygusFileTask}
-
-import java.io.FileOutputStream
-
-import ast.{ASTNode, BVAdd, StringReplace, VocabFactory, VocabMaker}
-import enumeration.ProbUpdate.probMap
 import sygus.SygusFileTask
 
-
 import scala.collection.mutable
-import scala.collection.mutable.{ArrayBuffer, ListBuffer}
+import scala.collection.mutable.ArrayBuffer
 
 class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManager: OEValuesManager, var task: SygusFileTask, var contexts: List[Map[String,Any]], val probBased: Boolean) extends Iterator[ASTNode] {
   override def toString(): String = "enumeration.Enumerator"
