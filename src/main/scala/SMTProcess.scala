@@ -42,18 +42,18 @@ object SMTProcess {
       .replaceAll(s"(?<![\\(])\\(", s" \\(").replaceAll(s"\\)(?![\\)])", s"\\) ")
       .replaceAll("  +", " ").replaceAll("\\s+$", "").replaceAll("^\\s+", "")
 
-    val smtString = "(set-option :produce-models true)\n" +
+
+    var smtString = "(set-option :produce-models true)\n" +
       "(set-logic ALL)\n" +
         functionParameters.map{v => s"(declare-const ${v._1} (_ ${v._2}))"}.mkString("", "\n", "\n") +
         s"(declare-fun $functionName" + " (" + functionParameters.map(v => s"(_ ${v._2})").mkString(" ") + ") " + s"(_ ${functionReturnType.toString.replaceAll("64", " 64")}))\n" +
         s"(assert (not (= $lhsFormat $program)))\n" +
         "(check-sat)\n" +
         s"(get-value (${functionParameters.map{v => v._1}.mkString(" ")}))"
+    smtString = smtString.replaceAll("\\(_ Bool\\)", "Bool")
 
     (smtString, functionParameters.map(c => c._1), lhsFormat)
   }
-
-  def checkSat(solverOut: List[String]): Boolean = if (solverOut.head == "sat") true else false
 
   def getCEx(origTask: SygusFileTask, query: List[String], solverOut: List[String], solution: String): Example = {
     val model = solverOut.last.split("\\) \\(").toList.map(c => {java.lang.Long.parseUnsignedLong(c.substring(c.indexOf("#b") + 2)

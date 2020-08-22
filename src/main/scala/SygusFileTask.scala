@@ -337,6 +337,56 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new Contains(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[StringNode])
         }
+        case ("bvule", Types.Bool,2) => new BasicVocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override val nodeType: Class[_ <: ASTNode] = classOf[BVUle]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVUle(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
+        }
+        case ("bvsle", Types.Bool,2) => new BasicVocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override val nodeType: Class[_ <: ASTNode] = classOf[BVSle]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVSle(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
+        }
+        case ("bvslt", Types.Bool,2) => new BasicVocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override val nodeType: Class[_ <: ASTNode] = classOf[BVSlt]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVSlt(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
+        }
+        case ("bvult", Types.Bool,2) => new BasicVocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override val nodeType: Class[_ <: ASTNode] = classOf[BVUlt]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVUlt(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
+        }
+        case ("bvugt", Types.Bool,2) => new BasicVocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override val nodeType: Class[_ <: ASTNode] = classOf[BVUgt]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVUgt(children(0).asInstanceOf[BVNode],children(1).asInstanceOf[BVNode])
+        }
         case ("bvand",Types.BitVec64,2) => new BasicVocabMaker {
           override val arity: Int = 2
           override val childTypes: List[Types] = childrenTypes

@@ -1,7 +1,7 @@
 package ast
 
 abstract class LiteralNode[T](numContexts: Int) extends ASTNode{
-  assert(numContexts > 0)
+  //assert(numContexts > 0)
   val height = 0
   val terms = 1
   val value: T
