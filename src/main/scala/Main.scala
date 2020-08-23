@@ -16,7 +16,7 @@ object Main extends App {
   //"src/test/benchmarks/string/exceljet1.sl"
   //"src/test/benchmarks/too-hard/43606446.sl"
   //"src/test/benchmarks/euphony/count-total-words-in-a-cell.sl"
-  //"src/test/benchmarks/hackers_del/hd-01-d0-prog.sl"
+  "src/test/benchmarks/hackers-delight/hd-22.sl"
   "src/test/benchmarks/string/44789427.sl"
 
   case class RankedProgram(program: ASTNode, rank: Double) extends Ordered[RankedProgram] {
