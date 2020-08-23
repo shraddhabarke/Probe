@@ -1,10 +1,8 @@
 package enumeration
 
-import java.io.{FileOutputStream}
 import ast._
 import sygus.SygusFileTask
 import scala.collection.mutable
-import trace.DebugPrints.iprintln
 
 object ProbUpdate {
 
@@ -47,7 +45,6 @@ object ProbUpdate {
               probMap += (changedNode -> update)
             }
           }
-         // Console.withOut(fos) { iprintln(program.code, examplesPassed) }
         }
       }
     }
@@ -55,13 +52,9 @@ object ProbUpdate {
   }
 
   def updatePriors(probMap: mutable.Map[(Class[_], Option[Any]), Double]): Unit = {
-    updateProb()
-    probMap.foreach(d => priors += (d._1 -> roundValue(-log2(d._2))))
-  }
-
-  def updateProb(): Unit = {
     val probList = probMap.map(c => c._2)
     probMap.foreach(c => probMap += (c._1 -> (c._2.toFloat / probList.sum)))
+    probMap.foreach(d => priors += (d._1 -> roundValue(-log2(d._2))))
   }
 
   def getRootPrior(node: ASTNode): Int = if (node.isInstanceOf[StringLiteral] || node.isInstanceOf[StringVariable] || node.isInstanceOf[IntVariable]
@@ -70,7 +63,7 @@ object ProbUpdate {
                                         priors((node.getClass,Some(node.code)))
                                         } else priors((node.getClass, None))
 
-  def roundValue(num: Double): Int = if (num < 1) 1 else if (num - num.toInt > 0.5) math.ceil(num).toInt else math.floor(num).toInt
+  def roundValue(num: Double): Int = if (num < 1) 1 else if (num > 6) 6 else if (num - num.toInt > 0.5) math.ceil(num).toInt else math.floor(num).toInt //todo: test
 
   def resetPrior(): mutable.Map[(Class[_], Option[Any]), Int] = {
     priors.foreach(c => (c._1 -> roundValue(-log2(probMap((c._1))))))
@@ -82,6 +75,8 @@ object ProbUpdate {
     vocab.nonLeaves().foreach(l => priors += ((l.nodeType, None) -> roundValue(-log2(probMap((l.nodeType, None))))))
     priors
   }
+
+  //def readjustCosts(probMap: )
 
   def createProbMap(vocab: VocabFactory): mutable.Map[(Class[_], Option[Any]), Double] = {
     val uniform = 1.0 / (vocab.leavesMakers.length + vocab.nonLeaves().length)
