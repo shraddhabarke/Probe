@@ -41,7 +41,7 @@ object SMTProcess {
     val lhsFormat = functionParameters.foldLeft(lhs)((curr, str) => curr.replaceAll(s"(?<![#v])${str._1}", s" ${str._1}"))
       .replaceAll(s"(?<![\\(])\\(", s" \\(").replaceAll(s"\\)(?![\\)])", s"\\) ")
       .replaceAll("  +", " ").replaceAll("\\s+$", "").replaceAll("^\\s+", "")
-
+      .replaceAll("x#", "x #")
 
     var smtString = "(set-option :produce-models true)\n" +
       "(set-logic ALL)\n" +
