@@ -2,7 +2,7 @@
 
 (set-logic BV)
 
-(define-fun hd16 ((x (BitVec 64)) (k (BitVec 64))) (BitVec 64) (bvand (bvsub (bvsub x (bvshl #xffffffffffffffff k)) #xffffffffffffffff) (bvshl #xffffffffffffffff k)))
+(define-fun hd26 ((x (BitVec 64)) (k (BitVec 64))) (BitVec 64) (bvand (bvsub (bvsub x (bvshl #xffffffffffffffff k)) #xffffffffffffffff) (bvshl #xffffffffffffffff k)))
 
 (synth-fun f ((x (BitVec 64)) (k (BitVec 64))) (BitVec 64)
 
@@ -36,6 +36,6 @@ k
 
 (declare-var x (BitVec 64))
 (declare-var k (BitVec 64))
-(constraint (= (hd16 x k) (f x k)))
+(constraint (= (hd26 x k) (f x k)))
 (check-synth)
 
