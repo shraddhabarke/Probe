@@ -431,6 +431,36 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(List(arg,one), bvShrNode.children)
   }
 
+  @Test def bvComp: Unit = {
+    val arg1 = new BVLiteral(1, 1)
+    val arg2 = new BVLiteral(0, 1)
+    val comp1 = new BVComp(arg1, arg2)
+    val comp2 = new BVComp(arg1, arg1)
+    assertEquals(3, comp1.terms)
+    assertEquals("(bvcomp #x0000000000000001 #x0000000000000000)", comp1.code)
+    assertEquals(comp1.values.head, 0)
+    assertEquals(comp2.values.head, 1)
+    val boolLiteral: BoolNode = new BoolLiteral(true,1)
+    val neg1 = new LNot(boolLiteral)
+    assertEquals(neg1.values.head, false)
+  }
+
+  @Test def BoolEquals: Unit = {
+    val arg1: BoolNode = new BoolLiteral(true,1)
+    val arg2: BoolNode = new BoolLiteral(false,1)
+    val eq: BoolNode = new BoolEquals(arg1, arg2)
+    val eq1: BoolNode = new BoolEquals(arg1, arg1)
+    assertEquals(eq.values.head, false)
+    assertEquals(eq1.values.head, true)
+    val arg3: BVNode = new BVLiteral(1, 1)
+    val arg4: BVNode = new BVLiteral(2, 1)
+    val sleNode: BoolNode = new BVSle(arg4, arg3)
+    val eq2: BoolNode = new BoolEquals(sleNode, arg1)
+    val ite = new BVITE(eq2, arg3, arg4)
+    assertEquals(ite.values.head, 2)
+    assertEquals(ite.code, "(ite (= (bvsle #x0000000000000002 #x0000000000000001) true) #x0000000000000001 #x0000000000000002)")
+  }
+
   @Test def bvNeg: Unit = {
     val arg1 = new BVLiteral(0,1)
     val arg2 = new BVLiteral(-5,1)

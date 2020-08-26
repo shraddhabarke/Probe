@@ -1,3 +1,5 @@
+; Exchanging 2 fields A and B of the same register x where m is mask which identifies
+; field B and k is number of bits from end of A to start of B.
 
 (set-logic BV)
 

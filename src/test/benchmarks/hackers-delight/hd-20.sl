@@ -1,5 +1,4 @@
-; Hacker's delight 17, difficulty 5
-; turn off the rightmost string of contiguous ones
+; Next higher unsigned number with the same number of 1 bits.
 
 (set-logic BV)
 

@@ -61,6 +61,13 @@ class IntEquals(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boolean
 
 }
 
+class BoolEquals(val lhs: BoolNode, val rhs: BoolNode) extends BinaryOpNode[Boolean] with BoolNode {
+  override def doOp(l: Any, r: Any): Boolean = l.asInstanceOf[Boolean] == r.asInstanceOf[Boolean]
+
+  override lazy val code: String = "(= " + lhs.code + " " + rhs.code + ")"
+
+}
+
 class PrefixOf(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Boolean] with BoolNode {
   override def doOp(l: Any, r: Any): Boolean = r.asInstanceOf[String].startsWith(l.asInstanceOf[String])
 
@@ -120,6 +127,15 @@ class BVShiftLeft(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] w
   override lazy val code: String = "(bvshl " + lhs.code + " " + rhs.code + ")"
 }
 
+class BVComp(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
+  override def doOp(l: Any, r: Any): Long = {
+    val lhsNode = l.asInstanceOf[Long]
+    val rhsNode = r.asInstanceOf[Long]
+    if (lhsNode == rhsNode) 1
+    else 0
+  }
+  override lazy val code: String = "(bvcomp " + lhs.code + " " + rhs.code + ")"
+}
 class BVAdd(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
   override def doOp(l: Any, r: Any): Long = {
     val lhsNode = l.asInstanceOf[Long]

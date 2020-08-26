@@ -2,7 +2,7 @@ package enumeration
 
 import sygus.SMTProcess
 import enumeration.ProbUpdate
-import ast.{ASTNode, VocabFactory, VocabMaker}
+import ast.{ASTNode, BasicVocabMaker, VocabFactory, VocabMaker}
 import enumeration.ProbUpdate.{probMap, updatePriors}
 import sygus.SygusFileTask
 
@@ -115,8 +115,8 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
     while (res.isEmpty) {
       if (rootMaker!= null && rootMaker.hasNext) {
         val prog = rootMaker.next
-
-        if (oeManager.isRepresentative(prog)) {
+        //need the arity 0 case because initially cegis loop has empty set of points.
+        if (oeManager.isRepresentative(prog) || rootMaker.asInstanceOf[BasicVocabMaker].arity == 0) {
           res = Some(prog)
         }
       }
@@ -133,7 +133,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
       * SyGuS to SMTLib format. If the solver outputs sat, the counterexample returned is added to the list
       * of examples and synthesis restarts.
       ***/
-    if (!task.isPBE) {
+    if (!task.isPBE && (res.get.nodeType == task.functionReturnType)) {
       if (task.examples.isEmpty || (!task.examples.isEmpty && task.examples.zip(res.get.values).map(pair => pair._1.output == pair._2).forall(identity))) {
         //Solver is invoked if either the set of examples is empty or the program satisfies all current examples.
         val smtOut = SMTProcess.toSMT(source.mkString, res.get.code)
