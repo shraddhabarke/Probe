@@ -1,8 +1,9 @@
 package enumeration
 
-import sygus.{SMTProcess}
-
+import sygus.SMTProcess
+import enumeration.ProbUpdate
 import ast.{ASTNode, VocabFactory, VocabMaker}
+import enumeration.ProbUpdate.{probMap, updatePriors}
 import sygus.SygusFileTask
 
 import scala.collection.mutable
@@ -37,7 +38,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
   var phaseCounter: Int = 0
-
+  var baseline: Boolean = true //Change this for running the baseline Cegis
   var fitsMap = mutable.Map[(Class[_], Option[Any]), Double]()
   ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
   ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
@@ -50,7 +51,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   def resetEnumeration(): Unit = {
     source = scala.io.Source.fromFile(filename)
     currIter = vocab.leaves().toList.sortBy(_.rootCost).toIterator
-    contexts = task.examples.map(_.input).toList
+    contexts = task.examples.map(_.input)
     rootMaker = currIter.next().probe_init(currLevelProgs.toList, vocab, costLevel, contexts, bank)
     currLevelProgs.clear()
     oeManager.clear()
@@ -58,6 +59,14 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
     fitsMap.clear
     phaseCounter = 0
     costLevel = 0
+  }
+
+  def resetCache(): Unit = {
+    ProbUpdate.cacheStrings.clear()
+    ProbUpdate.cache.clear()
+    ProbUpdate.cacheCost.clear()
+    ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
+    ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
   }
 
   def advanceRoot(): Boolean = {
@@ -79,7 +88,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   }
 
   def changeLevel(): Boolean = {
-    currIter = totalLeaves.sortBy(_.rootCost).toIterator
+    currIter = totalLeaves.sortBy(_.rootCost).toIterator //todo: more efficient
 
     for (p <- currLevelProgs) updateBank(p)
 
@@ -133,13 +142,14 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
           val cex = SMTProcess.getCEx(task, smtOut._2, solverOut, smtOut._3)
           task = task.updateContext(cex)
           resetEnumeration() //restart synthesis
+          if (baseline) resetCache() else {
+            ProbUpdate.updatePriors(ProbUpdate.readjustCosts(task)) }
+          //reset cache and start with uniform probability if running baseline else readjust weights.
         } else if (solverOut.head == "unsat")
           res.get.unsat = true
       }
     }
-
     //Console.withOut(fos) { println(currLevelProgs.takeRight(1).map(c => (c.code, c.cost)).mkString(",")) }
-   // Console.withOut(fos) { println(currLevelProgs.takeRight(1).map(c => (c.code, c.cost)).mkString(",")) }
     res
   }
 }

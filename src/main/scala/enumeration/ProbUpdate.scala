@@ -9,8 +9,9 @@ object ProbUpdate {
   trace.DebugPrints.setInfo()
   var phaseChange: Boolean = false
   var newPrior = 0.0
-  var fitCost = mutable.Map[Set[Any], Double]()
-  var fitProgs: mutable.ArrayBuffer[String] = mutable.ArrayBuffer()
+  var cache = mutable.Map[ASTNode, Double]()
+  var cacheCost = mutable.Map[Set[Any], Double]()
+  var cacheStrings: mutable.ArrayBuffer[String] = mutable.ArrayBuffer()
   var fitMap = mutable.Map[(Class[_],Option[Any]), Double]()
   var probMap = mutable.Map[(Class[_], Option[Any]), Double]()
   var priors = mutable.Map[(Class[_], Option[Any]), Int]()
@@ -26,7 +27,6 @@ object ProbUpdate {
       program.children.flatMap(c => getAllNodeTypes(c)).toSet + recurseValue
   }
 
-
   def update(fitsMap: mutable.Map[(Class[_], Option[Any]), Double], currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask): mutable.Map[(Class[_], Option[Any]), Double] = {
     fitMap = fitsMap
     for (program <- currLevelProgs) {
@@ -34,9 +34,10 @@ object ProbUpdate {
       val fit: Double = (exampleFit._1.toFloat) / exampleFit._2
       if (fit > 0) {
         val examplesPassed = task.fitExs(program)
-        if (!fitCost.contains(examplesPassed) || ((fitCost(examplesPassed) >= program.cost) && !fitProgs.contains(program.code))) {
-          fitCost += (examplesPassed -> program.cost)
-          fitProgs += program.code
+        if (!cacheCost.contains(examplesPassed) || ((cacheCost(examplesPassed) >= program.cost) && !cacheStrings.contains(program.code))) {
+          cache += (program -> examplesPassed.toList.length)
+          cacheCost += (examplesPassed -> program.cost)
+          cacheStrings += program.code
           val changed: Set[(Class[_], Option[Any])] = getAllNodeTypes(program)
           for (changedNode <- changed) {
             if (!fitMap.contains(changedNode) || fitMap(changedNode) > (1 - fit)) {
@@ -45,6 +46,7 @@ object ProbUpdate {
               probMap += (changedNode -> update)
             }
           }
+          //println(program.code, examplesPassed)
         }
       }
     }
@@ -76,7 +78,24 @@ object ProbUpdate {
     priors
   }
 
-  //def readjustCosts(probMap: )
+  def readjustCosts(task: SygusFileTask): mutable.Map[(Class[_], Option[Any]), Double] = {
+    ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
+    resetPrior()
+    var localMap = mutable.Map[(Class[_],Option[Any]), Double]()
+    for (program <- cache.keys) {
+      val changed: Set[(Class[_], Option[Any])] = getAllNodeTypes(program)
+      val fit = (cache(program).toFloat) / task.examples.length.toFloat
+      for (changedNode <- changed) {
+        if (!localMap.contains(changedNode) || localMap(changedNode) > (1 - fit)) {
+          val update = expo(probMap(changedNode), (1 - fit))
+          localMap += (changedNode -> update)
+          probMap += (changedNode -> update)
+        }
+      }
+    }
+    probMap.map(c => c._2).toList //todo: fix this
+    probMap
+  }
 
   def createProbMap(vocab: VocabFactory): mutable.Map[(Class[_], Option[Any]), Double] = {
     val uniform = 1.0 / (vocab.leavesMakers.length + vocab.nonLeaves().length)
