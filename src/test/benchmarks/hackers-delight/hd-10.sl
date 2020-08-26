@@ -29,11 +29,7 @@
 						   (bvsub StartBV StartBV)
 						   x
 						   y
-						   (ite StartBool StartBV StartBV)))
-
-                           (StartBool Bool
-                           ((= StartBV StartBV)
-                           ))))
+						   (ite Start StartBV StartBV)))))
 
 (declare-var x (BitVec 64))
 (declare-var y (BitVec 64))
