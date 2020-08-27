@@ -178,7 +178,8 @@ class BVShrArithmetic(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Lon
   override def doOp(l: Any, r: Any): Long = {
     val lhsNode = l.asInstanceOf[Long]
     val rhsNode = r.asInstanceOf[Long]
-    lhsNode >> rhsNode
+    if (rhsNode >= 64 && lhsNode >= 0) 0
+    else lhsNode >> rhsNode
   }
   override lazy val code: String = "(bvashr " + lhs.code + " " + rhs.code + ")"
 }

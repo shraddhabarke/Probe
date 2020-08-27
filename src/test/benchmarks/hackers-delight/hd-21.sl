@@ -3,7 +3,7 @@
 (set-logic BV)
 
 (define-fun hd21 ((x (BitVec 64)) (a (BitVec 64)) (b (BitVec 64)) (c (BitVec 64))) (BitVec 64)
-(bvxor (bvxor (bvand (bvneg (= x c)) (bvxor a c)) (bvand (bvneg (= x a)) (bvxor b c))) c))
+(ite (= x a) b (ite (= x b) c a)))
 
 (synth-fun f ((x (BitVec 64)) (a (BitVec 64)) (b (BitVec 64)) (c (BitVec 64))) (BitVec 64)
 		   
@@ -24,12 +24,9 @@
 (bvsrem Start Start)
 (bvsub Start Start)
 x
-m
-k
-#x0000000000000000
-#x0000000000000001
-#x000000000000001f
-#xffffffffffffffff
+a
+b
+c
 (ite StartBool Start Start)))
 (StartBool Bool
 ((= Start Start)))))
