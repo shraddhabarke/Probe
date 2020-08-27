@@ -44,8 +44,12 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
   var timeout = 3 * ProbUpdate.priors.head._2
   var costLevel = 0
+  var solution: String = null
+  var funcArgs: List[String] = null
+  var smtOut: List[String] = null
 
   resetEnumeration()
+  if (!task.isPBE) solverSetup()
   var rootMaker: Iterator[ASTNode] = currIter.next().probe_init(currLevelProgs.toList, vocab, costLevel, contexts, bank)
 
   def resetEnumeration(): Unit = {
@@ -87,6 +91,13 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
       bank(program.cost) += program
   }
 
+  def solverSetup(): Unit = {
+    val out = SMTProcess.toSMT(source.mkString)
+    smtOut = out._1
+    solution = out._3
+    funcArgs = out._2
+  }
+
   def changeLevel(): Boolean = {
     currIter = totalLeaves.sortBy(_.rootCost).toIterator //todo: more efficient
 
@@ -116,7 +127,8 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
       if (rootMaker!= null && rootMaker.hasNext) {
         val prog = rootMaker.next
         //need the arity 0 case because initially cegis loop has empty set of points.
-        if (oeManager.isRepresentative(prog) || rootMaker.asInstanceOf[BasicVocabMaker].arity == 0) {
+        if (oeManager.isRepresentative(prog) ||
+          (task.examples.isEmpty && rootMaker.asInstanceOf[BasicVocabMaker].arity == 0)) {
           res = Some(prog)
         }
       }
@@ -134,12 +146,13 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
       * of examples and synthesis restarts.
       ***/
     if (!task.isPBE && (res.get.nodeType == task.functionReturnType)) {
-      if (task.examples.isEmpty || (!task.examples.isEmpty && task.examples.zip(res.get.values).map(pair => pair._1.output == pair._2).forall(identity))) {
+      if (task.examples.isEmpty ||
+        (!task.examples.isEmpty && task.examples.zip(res.get.values).map(pair => pair._1.output == pair._2).forall(identity))) {
         //Solver is invoked if either the set of examples is empty or the program satisfies all current examples.
-        val smtOut = SMTProcess.toSMT(source.mkString, res.get.code)
-        val solverOut = SMTProcess.invokeCVC(smtOut._1.stripMargin, SMTProcess.cvc4_Smt)
+        val query = SMTProcess.getquery(res.get.code, smtOut)
+        val solverOut = SMTProcess.invokeCVC(query.stripMargin, SMTProcess.cvc4_Smt)
         if (solverOut.head == "sat") { // counterexample added!
-          val cex = SMTProcess.getCEx(task, smtOut._2, solverOut, smtOut._3)
+          val cex = SMTProcess.getCEx(task, funcArgs, solverOut, solution)
           task = task.updateContext(cex)
           resetEnumeration() //restart synthesis
           if (baseline) resetCache() else {

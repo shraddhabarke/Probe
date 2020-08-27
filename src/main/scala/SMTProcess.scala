@@ -27,7 +27,13 @@ object SMTProcess {
     else out
   }
 
-  def toSMT(syData: String, program: String): (String, List[String], String) = {
+  def getquery(program: String, smtStrings: List[String]): String = {
+    var smtString = smtStrings.head + program + smtStrings.last
+    smtString = smtString.replaceAll("\\(_ Bool\\)", "Bool")
+    smtString
+  }
+
+  def toSMT(syData: String): (List[String], List[String], String) = {
     val parsed = new SyGuSParser(new BufferedTokenStream(new SyGuSLexer(CharStreams.fromString(syData)))).syGuS()
     val synthFun = parsed.cmd().asScala.filter(cmd => cmd.getChild(1) != null && cmd.getChild(1).getText == "synth-fun").head
     val defineFun = parsed.cmd().asScala.filter(cmd => cmd.smtCmd() != null).map(_.smtCmd()).filter(cmd => cmd.getChild(1).getText == "define-fun").head
@@ -43,16 +49,16 @@ object SMTProcess {
       .replaceAll("  +", " ").replaceAll("\\s+$", "").replaceAll("^\\s+", "")
       .replaceAll("x#", "x #")
 
-    var smtString = "(set-option :produce-models true)\n" +
+    val smtString1 = "(set-option :produce-models true)\n" +
       "(set-logic ALL)\n" +
         functionParameters.map{v => s"(declare-const ${v._1} (_ ${v._2}))"}.mkString("", "\n", "\n") +
         s"(declare-fun $functionName" + " (" + functionParameters.map(v => s"(_ ${v._2})").mkString(" ") + ") " + s"(_ ${functionReturnType.toString.replaceAll("64", " 64")}))\n" +
-        s"(assert (not (= $lhsFormat $program)))\n" +
+        s"(assert (not (= $lhsFormat "
+    val smtString2 = s")))\n" +
         "(check-sat)\n" +
         s"(get-value (${functionParameters.map{v => v._1}.mkString(" ")}))"
-    smtString = smtString.replaceAll("\\(_ Bool\\)", "Bool")
 
-    (smtString, functionParameters.map(c => c._1), lhsFormat)
+    (List(smtString1,smtString2), functionParameters.map(c => c._1), lhsFormat)
   }
 
   def getCEx(origTask: SygusFileTask, query: List[String], solverOut: List[String], solution: String): Example = {
