@@ -55,3 +55,12 @@ case class LNot(val arg: BoolNode) extends UnaryOpNode[Boolean] with BoolNode {
 
   override val code: String = "(not " + arg.code + ")"
 }
+
+class BVRedor(val arg: BVNode) extends UnaryOpNode[Boolean] with BoolNode {
+  override def doOp(l: Any): Boolean = {
+    val lhsNode = l.asInstanceOf[Long]
+    if (lhsNode == 0) false
+    else true
+  }
+  override lazy val code: String = "(bvredor " + arg.code + ")"
+}

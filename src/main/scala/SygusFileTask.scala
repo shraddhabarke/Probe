@@ -557,6 +557,16 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new LNot(children(0).asInstanceOf[BoolNode])
         }
+        case ("bvredor",Types.Bool,1) => new BasicVocabMaker {
+          override val arity: Int = 1
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+          override val head: String = funcName
+          override val nodeType: Class[_ <: ASTNode] = classOf[BVRedor]
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new BVRedor(children(0).asInstanceOf[BVNode])
+        }
         case ("ite",Types.BitVec64,3) => new BasicVocabMaker {
           override val arity: Int = 3
           override val childTypes: List[Types] = childrenTypes

@@ -127,15 +127,6 @@ class BVShiftLeft(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] w
   override lazy val code: String = "(bvshl " + lhs.code + " " + rhs.code + ")"
 }
 
-class BVComp(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
-  override def doOp(l: Any, r: Any): Long = {
-    val lhsNode = l.asInstanceOf[Long]
-    val rhsNode = r.asInstanceOf[Long]
-    if (lhsNode == rhsNode) 1
-    else 0
-  }
-  override lazy val code: String = "(bvcomp " + lhs.code + " " + rhs.code + ")"
-}
 class BVAdd(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
   override def doOp(l: Any, r: Any): Long = {
     val lhsNode = l.asInstanceOf[Long]

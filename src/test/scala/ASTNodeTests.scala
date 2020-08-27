@@ -431,18 +431,9 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(List(arg,one), bvShrNode.children)
   }
 
-  @Test def bvComp: Unit = {
-    val arg1 = new BVLiteral(1, 1)
-    val arg2 = new BVLiteral(0, 1)
-    val comp1 = new BVComp(arg1, arg2)
-    val comp2 = new BVComp(arg1, arg1)
-    assertEquals(3, comp1.terms)
-    assertEquals("(bvcomp #x0000000000000001 #x0000000000000000)", comp1.code)
-    assertEquals(comp1.values.head, 0)
-    assertEquals(comp2.values.head, 1)
-    val boolLiteral: BoolNode = new BoolLiteral(true,1)
-    val neg1 = new LNot(boolLiteral)
-    assertEquals(neg1.values.head, false)
+  @Test def bvRedor: Unit = {
+    val arg1: BoolNode = new BVRedor(new BVLiteral(3, 1))
+    assertEquals(arg1.values.head, true)
   }
 
   @Test def BoolEquals: Unit = {
