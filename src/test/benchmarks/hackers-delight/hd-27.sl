@@ -2,7 +2,7 @@
 
 (set-logic BV)
 
-(define-fun hd16 ((x (BitVec 64)) (y (BitVec 64))) (BitVec 64) (ite (= (bvsle y x) true) y x))
+(define-fun hd27 ((x (BitVec 64)) (y (BitVec 64))) (BitVec 64) (ite (= (bvsle y x) true) y x))
 
 (synth-fun f ((x (BitVec 64)) (y (BitVec 64))) (BitVec 64)
 ((Start Bool ((bvule StartBV StartBV)
@@ -34,5 +34,5 @@ true
 
 (declare-var x (BitVec 64))
 (declare-var y (BitVec 64))
-(constraint (= (hd16 x y) (f x y)))
+(constraint (= (hd27 x y) (f x y)))
 (check-synth)

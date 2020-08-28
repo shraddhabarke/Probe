@@ -38,6 +38,7 @@
                          ))))
 
 (declare-var x (BitVec 64))
+(declare-var y (BitVec 64))
 (constraint (= (hd25 x y) (f x y)))
 (check-synth)
 
