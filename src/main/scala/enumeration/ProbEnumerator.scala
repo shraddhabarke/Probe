@@ -1,9 +1,10 @@
 package enumeration
 
+import java.io.FileOutputStream
+
 import sygus.SMTProcess
-import enumeration.ProbUpdate
 import ast.{ASTNode, BasicVocabMaker, VocabFactory, VocabMaker}
-import enumeration.ProbUpdate.{probMap, updatePriors}
+import enumeration.ProbUpdate.{cache, expo, fitMap, getAllNodeTypes, probMap}
 import sygus.SygusFileTask
 
 import scala.collection.mutable
@@ -38,7 +39,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
   var phaseCounter: Int = 0
-  var baseline: Boolean = true //Change this for running the baseline Cegis
+  var reset: Boolean = true //Change here for resetting cache
   var fitsMap = mutable.Map[(Class[_], Option[Any]), Double]()
   ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
   ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
@@ -60,7 +61,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
     currLevelProgs.clear()
     oeManager.clear()
     bank.clear()
-    fitsMap.clear
+    fitsMap.clear()
     phaseCounter = 0
     costLevel = 0
   }
@@ -69,6 +70,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
     ProbUpdate.cacheStrings.clear()
     ProbUpdate.cache.clear()
     ProbUpdate.cacheCost.clear()
+    ProbUpdate.fitMap.clear()
     ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
     ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
   }
@@ -104,11 +106,11 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
     for (p <- currLevelProgs) updateBank(p)
 
     if (probBased) {
-      fitsMap = ProbUpdate.update(fitsMap, currLevelProgs, task)
+      if (!currLevelProgs.isEmpty) fitsMap = ProbUpdate.update(fitsMap, currLevelProgs, task)
       if (phaseCounter == 2 * timeout) {
         phaseCounter = 0
         if (!fitsMap.isEmpty) {
-          ProbUpdate.updatePriors(ProbUpdate.probMap)
+          ProbUpdate.priors = ProbUpdate.updatePriors(ProbUpdate.probMap)
           resetEnumeration()
           costLevel = 0
         }
@@ -145,7 +147,8 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
       * SyGuS to SMTLib format. If the solver outputs sat, the counterexample returned is added to the list
       * of examples and synthesis restarts.
       ***/
-    if (!task.isPBE && (res.get.nodeType == task.functionReturnType)) {
+
+    if (!res.isEmpty && !task.isPBE && (res.get.nodeType == task.functionReturnType)) {
       if (task.examples.isEmpty ||
         (!task.examples.isEmpty && task.examples.zip(res.get.values).map(pair => pair._1.output == pair._2).forall(identity))) {
         //Solver is invoked if either the set of examples is empty or the program satisfies all current examples.
@@ -155,11 +158,15 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
           val cex = SMTProcess.getCEx(task, funcArgs, solverOut, solution)
           task = task.updateContext(cex)
           resetEnumeration() //restart synthesis
-          if (baseline) resetCache() else {
-            ProbUpdate.updatePriors(ProbUpdate.readjustCosts(task)) }
-          //reset cache and start with uniform probability if running baseline else readjust weights.
-        } else if (solverOut.head == "unsat")
+          if (reset) resetCache()
+          else {
+            ProbUpdate.readjustCosts(task)
+            ProbUpdate.priors = ProbUpdate.updatePriors(ProbUpdate.probMap)
+          }
+          //reset cache and start with uniform probability if running reset true else readjust weights.
+        } else if (solverOut.head == "unsat") {
           res.get.unsat = true
+        }
       }
     }
     //Console.withOut(fos) { println(currLevelProgs.takeRight(1).map(c => (c.code, c.cost)).mkString(",")) }

@@ -16,8 +16,8 @@ object Main extends App {
   //"src/test/benchmarks/string/exceljet1.sl"
   //"src/test/benchmarks/too-hard/43606446.sl"
   //"src/test/benchmarks/euphony/count-total-words-in-a-cell.sl"
-  "src/test/benchmarks/hackers-delight/hd-22.sl"
-  "src/test/benchmarks/string/44789427.sl"
+  "src/test/benchmarks/hackers-delight/hd-15.sl"
+  //"src/test/benchmarks/string/44789427.sl"
 
   case class RankedProgram(program: ASTNode, rank: Double) extends Ordered[RankedProgram] {
     override def compare(that: RankedProgram): Int = this.rank.compare(that.rank)
@@ -113,6 +113,7 @@ object Main extends App {
       }
     }
     val t1 = System.currentTimeMillis / 1000
+    println(s"${t1 - t0}s")
     p
   }
 
