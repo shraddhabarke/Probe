@@ -70,10 +70,10 @@ object ProbUpdate {
     fitMap
   }
 
-  def updatePriors(pMap: mutable.Map[(Class[_], Option[Any]), Double]): mutable.Map[(Class[_], Option[Any]), Int] = {
+  def updatePriors(pMap: mutable.Map[(Class[_], Option[Any]), Double], round: Int): mutable.Map[(Class[_], Option[Any]), Int] = {
     val probList = pMap.map(c => c._2)
     probMap = pMap.map(c => (c._1 -> (c._2.toFloat / probList.sum)))
-    probMap.map(c => priors += (c._1 -> roundValue(-log2(c._2))))
+    probMap.map(c => priors += (c._1 -> roundValue(-log2(c._2), round)))
     priors
   }
 
@@ -83,16 +83,21 @@ object ProbUpdate {
                                         priors((node.getClass,Some(node.code)))
                                         } else priors((node.getClass, None))
 
-  def roundValue(num: Double): Int = if (num < 1) 1 else if (num > 4) 4 else if (num - num.toInt > 0.5) math.ceil(num).toInt else math.floor(num).toInt //todo: test
+  def roundValue(num: Double, round: Int): Int = if (num < 1) 1
+  else if (num > round) round //todo: test with 4
+  else if (num - num.toInt > 0.5) math.ceil(num).toInt else math.floor(num).toInt
+
+  def createRoundValue(num: Double): Int =
+    if (num - num.toInt > 0.5) math.ceil(num).toInt else math.floor(num).toInt
 
   def resetPrior(): mutable.Map[(Class[_], Option[Any]), Int] = {
-    priors.map(c => (c._1 -> roundValue(-log2(probMap((c._1))))))
+    priors.map(c => (c._1 -> createRoundValue(-log2(probMap((c._1))))))
     priors
   }
 
   def createPrior(vocab: VocabFactory): mutable.Map[(Class[_], Option[Any]), Int] = {
-    vocab.leavesMakers.map(l => priors += ((l.nodeType, Some(l.head)) -> roundValue(-log2(probMap((l.nodeType, Some(l.head)))))))
-    vocab.nodeMakers.map(l => priors += ((l.nodeType, None) -> roundValue(-log2(probMap((l.nodeType, None))))))
+    vocab.leavesMakers.map(l => priors += ((l.nodeType, Some(l.head)) -> createRoundValue(-log2(probMap((l.nodeType, Some(l.head)))))))
+    vocab.nodeMakers.map(l => priors += ((l.nodeType, None) -> createRoundValue(-log2(probMap((l.nodeType, None))))))
     priors
   }
 

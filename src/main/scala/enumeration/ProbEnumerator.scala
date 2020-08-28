@@ -1,10 +1,8 @@
 package enumeration
 
-import java.io.FileOutputStream
-
 import sygus.SMTProcess
 import ast.{ASTNode, BasicVocabMaker, VocabFactory, VocabMaker}
-import enumeration.ProbUpdate.{cache, expo, fitMap, getAllNodeTypes, probMap}
+import enumeration.ProbUpdate.priors
 import sygus.SygusFileTask
 
 import scala.collection.mutable
@@ -33,16 +31,17 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   }
 
   var currIter: Iterator[VocabMaker] = null
-  var source = scala.io.Source.fromFile(filename)
+  val source = scala.io.Source.fromFile(filename)
   val totalLeaves = vocab.leaves().toList ++ vocab.nonLeaves().toList
   var childrenIterator: Iterator[List[ASTNode]] = null
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
   var phaseCounter: Int = 0
-  var reset: Boolean = true //Change here for resetting cache
+  val reset: Boolean = true //Change here for resetting cache
   var fitsMap = mutable.Map[(Class[_], Option[Any]), Double]()
   ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
   ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
+  val round = priors.head._2
   var timeout = 3 * ProbUpdate.priors.head._2
   var costLevel = 0
   var solution: String = null
@@ -54,7 +53,6 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   var rootMaker: Iterator[ASTNode] = currIter.next().probe_init(currLevelProgs.toList, vocab, costLevel, contexts, bank)
 
   def resetEnumeration(): Unit = {
-    source = scala.io.Source.fromFile(filename)
     currIter = vocab.leaves().toList.sortBy(_.rootCost).toIterator
     contexts = task.examples.map(_.input)
     rootMaker = currIter.next().probe_init(currLevelProgs.toList, vocab, costLevel, contexts, bank)
@@ -110,7 +108,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
       if (phaseCounter == 2 * timeout) {
         phaseCounter = 0
         if (!fitsMap.isEmpty) {
-          ProbUpdate.priors = ProbUpdate.updatePriors(ProbUpdate.probMap)
+          ProbUpdate.priors = ProbUpdate.updatePriors(ProbUpdate.probMap, round)
           resetEnumeration()
           costLevel = 0
         }
@@ -161,7 +159,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
           if (reset) resetCache()
           else {
             ProbUpdate.readjustCosts(task)
-            ProbUpdate.priors = ProbUpdate.updatePriors(ProbUpdate.probMap)
+            ProbUpdate.priors = ProbUpdate.updatePriors(ProbUpdate.probMap, round)
           }
           //reset cache and start with uniform probability if running reset true else readjust weights.
         } else if (solverOut.head == "unsat") {
