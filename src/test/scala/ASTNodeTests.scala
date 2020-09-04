@@ -439,6 +439,15 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(arg1.values.head, true)
   }
 
+  @Test def cegis: Unit = {
+    val arg0: BVNode = new BVNeg(new BVLiteral(64,1))
+    assertEquals(arg0.values.head, -64)
+    val arg2: BVNode = new BVShrArithmetic(new BVLiteral(1, 1), arg0)
+    assertEquals(arg2.values.head, 0)
+    val arg1: BoolNode = new BVRedor(new BVLiteral(3, 1))
+    assertEquals(arg1.values.head, true)
+  }
+
   @Test def BoolEquals: Unit = {
     val arg1: BoolNode = new BoolLiteral(true,1)
     val arg2: BoolNode = new BoolLiteral(false,1)
