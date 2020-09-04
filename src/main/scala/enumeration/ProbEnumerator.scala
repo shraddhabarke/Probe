@@ -155,6 +155,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
         if (solverOut.head == "sat") { // counterexample added!
           val cex = SMTProcess.getCEx(task, funcArgs, solverOut, solution)
           task = task.updateContext(cex)
+          //println(res.get.code, task.examples)
           resetEnumeration() //restart synthesis
           if (reset) resetCache()
           else {

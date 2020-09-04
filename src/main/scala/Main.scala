@@ -15,8 +15,8 @@ object Main extends App {
   //"src/test/benchmarks/euphony/extract-word-that-begins-with-specific-character.sl"
   //"src/test/benchmarks/string/exceljet1.sl"
   //"src/test/benchmarks/too-hard/43606446.sl"
-  //"src/test/benchmarks/euphony/count-total-words-in-a-cell.sl"
-  "src/test/benchmarks/hackers-delight/hd-15.sl"
+  //"src/test/benchmarks/string/count-total-words-in-a-cell.sl"
+  "src/test/benchmarks/hackers-delight/hd-11.sl"
   //"src/test/benchmarks/string/44789427.sl"
 
   case class RankedProgram(program: ASTNode, rank: Double) extends Ordered[RankedProgram] {

@@ -84,7 +84,7 @@ object ProbUpdate {
                                         } else priors((node.getClass, None))
 
   def roundValue(num: Double, round: Int): Int = if (num < 1) 1
-  else if (num > round) round //todo: test with 4
+  //else if (num > round) round //todo: test with 4
   else if (num - num.toInt > 0.5) math.ceil(num).toInt else math.floor(num).toInt
 
   def createRoundValue(num: Double): Int =
