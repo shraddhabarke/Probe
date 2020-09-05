@@ -37,7 +37,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
   var phaseCounter: Int = 0
-  val reset: Boolean = true //Change here for resetting cache
+  val reset: Boolean = false //Change here for resetting cache
   var fitsMap = mutable.Map[(Class[_], Option[Any]), Double]()
   ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
   ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
@@ -69,6 +69,8 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
     ProbUpdate.cache.clear()
     ProbUpdate.cacheCost.clear()
     ProbUpdate.fitMap.clear()
+    ProbUpdate.examplesCovered.clear()
+    ProbUpdate.currBest = Set[Any]()
     ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
     ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
   }
@@ -109,6 +111,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
         phaseCounter = 0
         if (!fitsMap.isEmpty) {
           ProbUpdate.priors = ProbUpdate.updatePriors(ProbUpdate.probMap, round)
+          println(ProbUpdate.priors)
           resetEnumeration()
           costLevel = 0
         }
@@ -155,7 +158,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
         if (solverOut.head == "sat") { // counterexample added!
           val cex = SMTProcess.getCEx(task, funcArgs, solverOut, solution)
           task = task.updateContext(cex)
-          //println(res.get.code, task.examples)
+         // println(res.get.code, task.examples)
           resetEnumeration() //restart synthesis
           if (reset) resetCache()
           else {
