@@ -16,8 +16,8 @@ object Main extends App {
   //"src/test/benchmarks/string/exceljet1.sl"
   //"src/test/benchmarks/too-hard/43606446.sl"
   //"src/test/benchmarks/string/count-total-words-in-a-cell.sl"
-  "src/test/benchmarks/hackers-delight/hd-11.sl"
-  //"src/test/benchmarks/string/44789427.sl"
+  "src/test/benchmarks/bitvec/1_10.sl"
+  //"src/test/benchmarks/string/38871714.sl"
 
   case class RankedProgram(program: ASTNode, rank: Double) extends Ordered[RankedProgram] {
     override def compare(that: RankedProgram): Int = this.rank.compare(that.rank)
@@ -71,6 +71,33 @@ object Main extends App {
           val results = task.examples.zip(program.values).map(pair => pair._1.output == pair._2)
           if (results.forall(identity)) {
             p = List(program)
+            iprintln(program.code, program.terms)
+            break
+          }
+        }
+        if (!deadline.hasTimeLeft) {
+          break
+        }
+      }
+    }
+    val t1 = System.currentTimeMillis / 1000
+    println(s"${t1 - t0}s")
+    p
+  }
+
+  def cegisExTask(filename: String, task: SygusFileTask, sizeBased: Boolean, probBased: Boolean, timeout: Int = 600): List[ASTNode] = {
+    val oeManager = new InputsValuesManager()
+    val enumerator =  if (!sizeBased) new enumeration.Enumerator(task.vocab, oeManager, List())
+    else new enumeration.ProbEnumerator(filename, task.vocab, oeManager, task, List(), probBased)
+    val deadline = timeout.seconds.fromNow
+    var p = List[ASTNode]()
+    val t0 = System.currentTimeMillis / 1000
+
+    breakable {
+      for ((program, i) <- enumerator.zipWithIndex) {
+        if (program.nodeType == task.functionReturnType) {
+          if (program.unsat == true) {
+            p = List(program)
             iprintln(program.code, program.cost)
             break
           }
@@ -94,7 +121,6 @@ object Main extends App {
     val deadline = timeout.seconds.fromNow
     var p = List[ASTNode]()
     val t0 = System.currentTimeMillis / 1000
-
     /**
      * If the solver returns unsat, the program is verified and returned as the solution.
      */
@@ -117,11 +143,12 @@ object Main extends App {
     p
   }
 
-  def synthesize(filename: String, sizeBased: Boolean, probBased: Boolean) = {
+  def synthesize(filename: String, sizeBased: Boolean, probBased: Boolean, cegis: Boolean) = {
     val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
-    if (task.isPBE) synthesizeTask(filename, task, sizeBased, probBased)
+    if (task.isPBE && !cegis) synthesizeTask(filename, task, sizeBased, probBased)
+    else if (task.isPBE && cegis) cegisExTask(filename, task, sizeBased, probBased)
     else cegisTask(filename, sizeBased, probBased)
   }
 
-  synthesize(filename, true, true)
+  synthesize(filename, true, true, true)
 }

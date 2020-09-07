@@ -10,7 +10,7 @@ object SizeMain extends App {
     var program: List[ASTNode] = null
     val t0 = System.currentTimeMillis()
     ProbUpdate.resetPrior()
-    program = Main.synthesize(filename, true, false)
+    program = Main.synthesize(filename, true, false, false)
     val t1 = System.currentTimeMillis()
     if (!program.isEmpty) {
       println(filename.drop(20) + resultPrinter(program.head, t1 - t0, program.head.terms))
