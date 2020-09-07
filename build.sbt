@@ -37,6 +37,6 @@ libraryDependencies += "commons-cli" % "commons-cli" % "1.4"
 Project.inConfig(Test)(baseAssemblySettings)
 assemblyJarName in (Test, assembly) := s"${name.value}-full.jar"
 
-javaOptions += "-Xmx4096m"
+javaOptions += "-Xmx10G"
 //Anlr command line:
 //java -jar antlr-4.7.2-complete.jar -package "sygus" -visitor SyGuS.g4

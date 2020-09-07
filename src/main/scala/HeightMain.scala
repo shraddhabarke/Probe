@@ -14,7 +14,7 @@ object HeightMain extends App {
     var program: List[ASTNode] = null
     val t0 = System.currentTimeMillis()
     ProbUpdate.resetPrior()
-    program = Main.synthesize(filename, false, false)
+    program = Main.synthesize(filename, false, false, false)
     val t1 = System.currentTimeMillis()
     if (!program.isEmpty) {
       println(filename + resultPrinter(program.head, t1 - t0, program.head.terms))

@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.{BailErrorStrategy, BufferedTokenStream, CharStreams
 import collection.JavaConverters._
 import ast._
 
+import scala.collection.mutable.ListBuffer
 import scala.sys.process._
 
 object SMTProcess {
@@ -80,4 +81,25 @@ object SMTProcess {
     Example((query zip model).toMap, ast.values.head)
   }
 
+  def getEx(origTask: SygusFileTask, cExamples: List[Example], program: ASTNode): (Boolean, Example, List[Example]) = {
+    val inputsList = cExamples.map(_.input)
+    val task = origTask.enhance(inputsList)
+    val lexer = new SyGuSLexer(CharStreams.fromString(program.code))
+    lexer.removeErrorListeners()
+    lexer.addErrorListener(new ThrowingLexerErrorListener)
+    val parser = new SyGuSParser(new BufferedTokenStream(lexer))
+    parser.removeErrorListeners()
+    parser.setErrorHandler(new BailErrorStrategy)
+    val parsed = parser.bfTerm()
+    if (parser.getCurrentToken.getType != Token.EOF)
+      throw new Exception(parser.getCurrentToken.getText)
+    val visitor = new ASTGenerator(task)
+    val ast = visitor.visit(parsed)
+    if (cExamples.zip(ast.values).map(pair => pair._1.output == pair._2).forall(identity))
+      (true, null, List())
+    else {
+      val cex = cExamples.zip(ast.values).map(pair => (pair, pair._1.output == pair._2)).find(_._2 == false).get._1._1
+      (false, cex, cExamples.filter(_.input != cex.input))
+    }
+  }
 }

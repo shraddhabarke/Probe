@@ -10,7 +10,7 @@ object ProbeMain extends App {
     var program: List[ASTNode] = null
     val t0 = System.currentTimeMillis()
     ProbUpdate.resetPrior()
-    program = Main.synthesize(filename, true, true)
+    program = Main.synthesize(filename, true, true, false)
     val t1 = System.currentTimeMillis()
     if (!program.isEmpty) {
       println(filename.drop(20)  + resultPrinter(program.head, t1 - t0, program.head.terms, "ite".r.findAllMatchIn(program.head.code).length))
