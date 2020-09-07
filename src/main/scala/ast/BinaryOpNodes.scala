@@ -235,6 +235,12 @@ class LOr(val lhs: BoolNode, val rhs: BoolNode) extends BinaryOpNode[Boolean] wi
   override val code: String = "(or " + lhs.code + " " + rhs.code + ")"
 }
 
+class LXor(val lhs: BoolNode, val rhs: BoolNode) extends BinaryOpNode[Boolean] with BoolNode {
+  override def doOp(l: Any, r: Any): Boolean = l.asInstanceOf[Boolean] ^ r.asInstanceOf[Boolean]
+
+  override val code: String = "(xor " + lhs.code + " " + rhs.code + ")"
+}
+
 class BVSRem(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
   override def doOp(l: Any, r: Any): Long = l.asInstanceOf[Long] % r.asInstanceOf[Long]
 
