@@ -1,11 +1,12 @@
 package enumeration
 
+import sygus.{Example, SMTProcess, SygusFileTask}
 import ast.{ASTNode, VocabFactory, VocabMaker}
 import trace.DebugPrints.dprintln
 
 import scala.collection.mutable
 
-class Enumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, val contexts: List[Map[String,Any]]) extends Iterator[ASTNode]{
+class Enumerator(val filename: String, val vocab: VocabFactory, val oeManager: OEValuesManager, var task: SygusFileTask, var contexts: List[Map[String,Any]]) extends Iterator[ASTNode]{
   override def toString(): String = "enumeration.Enumerator"
 
   var nextProgram: Option[ASTNode] = None
@@ -24,11 +25,36 @@ class Enumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, val co
     res
   }
 
+  def solverSetup(): Unit = {
+    val out = SMTProcess.toSMT(source.mkString)
+    smtOut = out._1
+    solution = out._3
+    funcArgs = out._2
+  }
+
   var currIter = vocab.leaves
+  val source = scala.io.Source.fromFile(filename)
   var childrenIterator: Iterator[List[ASTNode]] = Iterator.single(Nil)
   var rootMaker: VocabMaker = currIter.next()
   var prevLevelProgs: mutable.ListBuffer[ASTNode] = mutable.ListBuffer()
   var currLevelProgs: mutable.ListBuffer[ASTNode] = mutable.ListBuffer()
+  var height = 0
+  var solution: String = null
+  var funcArgs: List[String] = null
+  var smtOut: List[String] = null
+  if (!task.isPBE) solverSetup()
+
+  def resetEnumeration(): Unit = {
+    currIter = vocab.leaves
+    contexts = task.examples.map(_.input)
+    rootMaker = currIter.next()
+    childrenIterator = Iterator.single(Nil)
+    currLevelProgs.clear()
+    prevLevelProgs.clear()
+    oeManager.clear()
+    height = 0
+  }
+
   def advanceRoot(): Boolean = {
     if (!currIter.hasNext) return false
     rootMaker = currIter.next()
@@ -37,7 +63,7 @@ class Enumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, val co
     else new ChildrenIterator(prevLevelProgs.toList,rootMaker.childTypes,height)
     true
   }
-  var height = 0
+
   def changeLevel(): Boolean = {
     dprintln(currLevelProgs.length)
     if (currLevelProgs.isEmpty) return false
@@ -48,6 +74,7 @@ class Enumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, val co
     currLevelProgs.clear()
     advanceRoot()
   }
+
   def getNextProgram(): Option[ASTNode] = {
     var res : Option[ASTNode] = None
     while(res.isEmpty) {
@@ -69,6 +96,23 @@ class Enumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, val co
       }
     }
     currLevelProgs += res.get
+    if (!res.isEmpty && !task.isPBE && (res.get.nodeType == task.functionReturnType)) {
+      if (contexts.isEmpty ||
+        (!contexts.isEmpty && task.examples.zip(res.get.values).map(pair => pair._1.output == pair._2).forall(identity))) {
+        //Solver is invoked if either the set of examples is empty or the program satisfies all current examples.
+        val query = SMTProcess.getquery(res.get.code, smtOut)
+        val solverOut = SMTProcess.invokeCVC(query.stripMargin, SMTProcess.cvc4_Smt)
+        if (solverOut.head == "sat") { // counterexample added!
+          val cex = SMTProcess.getCEx(task, funcArgs, solverOut, solution)
+          task = task.updateContext(cex)
+          //println(res.get.code, task.examples.toList.length)
+          resetEnumeration() //restart synthesis
+          //reset cache and start with uniform probability if running reset true else readjust weights.
+        } else if (solverOut.head == "unsat") {
+          res.get.unsat = true
+        }
+      }
+    }
     res
   }
 }

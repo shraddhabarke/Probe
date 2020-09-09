@@ -58,7 +58,7 @@ object Main extends App {
   def synthesizeTask(filename: String, task: SygusFileTask, sizeBased: Boolean, probBased: Boolean, timeout: Int = 600): List[ASTNode] = {
     val oeManager = new InputsValuesManager()
 
-    val enumerator =  if (!sizeBased) new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input).toList)
+    val enumerator =  if (!sizeBased) new enumeration.Enumerator(filename, task.vocab, oeManager, task, task.examples.map(_.input).toList)
     else new enumeration.ProbEnumerator(filename, task.vocab, oeManager, task, task.examples.map(_.input).toList, probBased)
 
     val deadline = timeout.seconds.fromNow
@@ -71,7 +71,7 @@ object Main extends App {
           val results = task.examples.zip(program.values).map(pair => pair._1.output == pair._2)
           if (results.forall(identity)) {
             p = List(program)
-            iprintln(program.code, program.terms)
+            //iprintln(program.code, program.terms)
             break
           }
         }
@@ -81,13 +81,13 @@ object Main extends App {
       }
     }
     val t1 = System.currentTimeMillis / 1000
-    println(s"${t1 - t0}s")
+    //println(s"${t1 - t0}s")
     p
   }
 
   def cegisExTask(filename: String, task: SygusFileTask, sizeBased: Boolean, probBased: Boolean, timeout: Int = 600): List[ASTNode] = {
     val oeManager = new InputsValuesManager()
-    val enumerator =  if (!sizeBased) new enumeration.Enumerator(task.vocab, oeManager, List())
+    val enumerator =  if (!sizeBased) new enumeration.Enumerator(filename, task.vocab, oeManager, task, List())
     else new enumeration.ProbEnumerator(filename, task.vocab, oeManager, task, List(), probBased)
     val deadline = timeout.seconds.fromNow
     var p = List[ASTNode]()
@@ -98,7 +98,7 @@ object Main extends App {
         if (program.nodeType == task.functionReturnType) {
           if (program.unsat == true) {
             p = List(program)
-            iprintln(program.code, program.cost)
+            //iprintln(program.code, program.cost)
             break
           }
         }
@@ -108,14 +108,14 @@ object Main extends App {
       }
     }
     val t1 = System.currentTimeMillis / 1000
-    println(s"${t1 - t0}s")
+    //println(s"${t1 - t0}s")
     p
   }
 
   def cegisTask(filename: String, sizeBased: Boolean, probBased: Boolean, timeout: Int = 6000): List[ASTNode] = {
     val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
     val oeManager = new InputsValuesManager()
-    val enumerator = if (!sizeBased) new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input).toList)
+    val enumerator = if (!sizeBased) new enumeration.Enumerator(filename, task.vocab, oeManager, task, task.examples.map(_.input).toList)
     else new enumeration.ProbEnumerator(filename, task.vocab, oeManager, task, task.examples.map(_.input).toList, probBased)
 
     val deadline = timeout.seconds.fromNow
@@ -129,7 +129,7 @@ object Main extends App {
         if (program.nodeType == task.functionReturnType) {
           if (program.unsat == true) {
             p = List(program)
-            println(p.head.code)
+            //println(p.head.code)
             break
           }
         }
@@ -139,7 +139,7 @@ object Main extends App {
       }
     }
     val t1 = System.currentTimeMillis / 1000
-    println(s"${t1 - t0}s")
+    //println(s"${t1 - t0}s")
     p
   }
 
