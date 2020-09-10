@@ -5,10 +5,15 @@ import ast.Types.Types
 import scala.collection._
 
 class ChildrenIterator(val childrenCandidates: List[ASTNode], val childTypes: List[Types], val currHeight: Int) extends Iterator[List[ASTNode]]{
-  val childrenLists =
-    childTypes.map(t => childrenCandidates.filter(c => c.nodeType == t))
-  val candidates = childrenLists.map(l => l.iterator).toArray
-  val allExceptLast = candidates.dropRight(1).map(_.next()).toArray
+  var childrenLists : List[List[ASTNode]] = Nil
+  var candidates = Array[Iterator[ASTNode]]()
+  var allExceptLast : Array[ASTNode] = Array.empty
+
+  childrenLists = childTypes.map(t => childrenCandidates.filter(c => c.nodeType == t))
+  candidates = if (childrenLists.exists(l => l.isEmpty)) childrenLists.map(_ => Iterator.empty).toArray
+  else childrenLists.map(l => l.iterator).toArray
+  if (!candidates.isEmpty && candidates(0).hasNext)
+    allExceptLast = candidates.dropRight(1).map(_.next())
   var next_child: Option[List[ASTNode]] = None
   def getNextChild(): Unit = {
     next_child = None
