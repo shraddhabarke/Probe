@@ -1,5 +1,7 @@
 package enumeration
 
+import java.io.FileOutputStream
+
 import sygus.{Example, SMTProcess, SygusFileTask}
 import ast.{ASTNode, VocabFactory, VocabMaker}
 import trace.DebugPrints.dprintln
@@ -34,6 +36,7 @@ class Enumerator(val filename: String, val vocab: VocabFactory, val oeManager: O
 
   var currIter = vocab.leaves
   val source = scala.io.Source.fromFile(filename)
+  var fos = new FileOutputStream("height.txt", true)
   var childrenIterator: Iterator[List[ASTNode]] = Iterator.single(Nil)
   var rootMaker: VocabMaker = currIter.next()
   var prevLevelProgs: mutable.ListBuffer[ASTNode] = mutable.ListBuffer()
@@ -45,14 +48,14 @@ class Enumerator(val filename: String, val vocab: VocabFactory, val oeManager: O
   if (!task.isPBE) solverSetup()
 
   def resetEnumeration(): Unit = {
+    height = 0
     currIter = vocab.leaves
     contexts = task.examples.map(_.input)
-    rootMaker = currIter.next()
     childrenIterator = Iterator.single(Nil)
+    rootMaker = currIter.next()
     currLevelProgs.clear()
     prevLevelProgs.clear()
     oeManager.clear()
-    height = 0
   }
 
   def advanceRoot(): Boolean = {
@@ -67,7 +70,6 @@ class Enumerator(val filename: String, val vocab: VocabFactory, val oeManager: O
   def changeLevel(): Boolean = {
     dprintln(currLevelProgs.length)
     if (currLevelProgs.isEmpty) return false
-
     currIter = vocab.nonLeaves
     height += 1
     prevLevelProgs ++= currLevelProgs
@@ -105,7 +107,7 @@ class Enumerator(val filename: String, val vocab: VocabFactory, val oeManager: O
         if (solverOut.head == "sat") { // counterexample added!
           val cex = SMTProcess.getCEx(task, funcArgs, solverOut, solution)
           task = task.updateContext(cex)
-          //println(res.get.code, task.examples.toList.length)
+          println(res.get.code, task.examples.toList.length)
           resetEnumeration() //restart synthesis
           //reset cache and start with uniform probability if running reset true else readjust weights.
         } else if (solverOut.head == "unsat") {
@@ -113,6 +115,7 @@ class Enumerator(val filename: String, val vocab: VocabFactory, val oeManager: O
         }
       }
     }
+    Console.withOut(fos) { println(currLevelProgs.takeRight(1).map(c => (c.code, c.height)).mkString(",")) }
     res
   }
 }
