@@ -70,7 +70,8 @@ object SMTProcess {
       .replaceAll("\\)", ""))})
     val inputsList = Iterable((query zip model).toMap)
     val task = origTask.enhance(inputsList)
-    val lexer = new SyGuSLexer(CharStreams.fromString(solution.replaceAll("false", " false")
+    val lexer = new SyGuSLexer(CharStreams.fromString(solution
+      .replaceAll("false", " false")
       .replaceAll("true", " true")))
     lexer.removeErrorListeners()
     lexer.addErrorListener(new ThrowingLexerErrorListener)
