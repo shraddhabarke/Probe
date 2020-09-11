@@ -2,7 +2,7 @@
 
 (set-logic BV)
 
-(define-fun hd16 ((x (BitVec 64)) (y (BitVec 64))) (BitVec 64) (ite (= (bvsle y x) true) x y))
+(define-fun hd16 ((x (BitVec 64)) (y (BitVec 64))) (BitVec 64) (ite (bvslt x y) y x))
 
 (synth-fun f ((x (BitVec 64)) (y (BitVec 64))) (BitVec 64)
 ((Start Bool ((bvule StartBV StartBV)
@@ -10,8 +10,7 @@
 (bvslt StartBV StartBV)
 (bvsle StartBV StartBV)
 (bvugt StartBV StartBV)
-true
-(= Start Start)))
+(= StartBV StartBV)))
 
 (StartBV (BitVec 64) ((bvnot StartBV)
 					(bvxor StartBV StartBV)
