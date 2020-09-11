@@ -30,22 +30,6 @@ object ProbUpdate {
       program.children.flatMap(c => getAllNodeTypes(c)).toSet + recurseValue
   }
 
-  def readjustCosts(task: SygusFileTask): Unit = this.synchronized {
-    probMap = ProbUpdate.createProbMap(task.vocab)
-    priors = ProbUpdate.createPrior(task.vocab)
-    var localMap = mutable.Map[(Class[_],Option[Any]), Double]()
-    for (program <- cache.keys) {
-      val changed: Set[(Class[_], Option[Any])] = getAllNodeTypes(program)
-      val fit = (cache(program).toFloat) / task.examples.length
-      for (changedNode <- changed) {
-        if (!localMap.contains(changedNode) || localMap(changedNode) > (1 - fit)) {
-          val update = expo(ProbUpdate.probMap(changedNode), (1 - fit))
-          localMap += (changedNode -> update)
-          probMap += (changedNode -> update)
-        }
-      }
-    }
-  }
 /**
   def update(fitsMap: mutable.Map[(Class[_], Option[Any]), Double], currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask): mutable.Map[(Class[_], Option[Any]), Double] = {
     fitMap = fitsMap
@@ -89,13 +73,13 @@ object ProbUpdate {
       val fit: Double = (exampleFit._1.toFloat) / exampleFit._2
       if (fit > 0) {
         val examplesPassed = task.fitExs(program)
-        if (!cacheCost.contains(examplesPassed) || ((!examplesCovered.contains(examplesPassed)) && (cacheCost(examplesPassed) == program.cost))) {
-        //if (!cacheCost.contains(examplesPassed)) {
+        //if (!cacheCost.contains(examplesPassed) || ((!examplesCovered.contains(examplesPassed)) && (cacheCost(examplesPassed) == program.cost))) {
+        if (!cacheCost.contains(examplesPassed)) {
         //if (!cacheCost.contains(examplesPassed) || ((cacheCost(examplesPassed) >= program.cost) && !cacheStrings.contains(program.code))) {
-          cache += (program -> examplesPassed.toList.length)
+          //cache += (program -> examplesPassed.toList.length)
           cacheCost += (examplesPassed -> program.cost)
-          cacheStrings += program.code
-          examples += examplesPassed
+          //cacheStrings += program.code
+          //examples += examplesPassed
           val changed: Set[(Class[_], Option[Any])] = getAllNodeTypes(program)
           for (changedNode <- changed) {
             if (!fitMap.contains(changedNode) || fitMap(changedNode) > (1 - fit)) {
@@ -108,7 +92,7 @@ object ProbUpdate {
         }
       }
     }
-    examplesCovered = examplesCovered ++ examples
+    //examplesCovered = examplesCovered ++ examples
     fitMap
   }
 

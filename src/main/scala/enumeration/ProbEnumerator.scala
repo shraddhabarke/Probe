@@ -33,13 +33,14 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
 
   var currIter: Iterator[VocabMaker] = null
   val source = scala.io.Source.fromFile(filename)
-  var cegis = true
+  var fos = new FileOutputStream("probe2.txt", true)
+  var cegis = false
   val totalLeaves = vocab.leaves().toList.distinct ++ vocab.nonLeaves().toList.distinct
   var childrenIterator: Iterator[List[ASTNode]] = null
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
   var phaseCounter: Int = 0
-  val reset: Boolean = false //Change here for resetting cache
+  val reset: Boolean = true //Change here for resetting cache
   var fitsMap = mutable.Map[(Class[_], Option[Any]), Double]()
   ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
   ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
@@ -56,13 +57,14 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   var rootMaker: Iterator[ASTNode] = currIter.next().probe_init(currLevelProgs.toList, vocab, costLevel, contexts, bank)
 
   def resetEnumeration(): Unit = {
-    currIter = vocab.leaves().toList.distinct.sortBy(_.rootCost).toIterator
+    currIter = vocab.leaves().toList.sortBy(_.rootCost).toIterator
     contexts = task.examples.map(_.input)
     rootMaker = currIter.next().probe_init(currLevelProgs.toList, vocab, costLevel, contexts, bank)
     currLevelProgs.clear()
     oeManager.clear()
     bank.clear()
-    //fitsMap.clear()
+    fitsMap.clear()
+    phaseCounter = 0
     costLevel = 0
   }
 
@@ -71,7 +73,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
     ProbUpdate.cache.clear()
     ProbUpdate.cacheCost.clear()
     ProbUpdate.fitMap.clear()
-    fitsMap.clear()
+    //fitsMap.clear()
     ProbUpdate.examplesCovered.clear()
     ProbUpdate.currBest = Set[Any]()
     ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
@@ -109,17 +111,15 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
     for (p <- currLevelProgs) updateBank(p)
     costLevel += 1
     phaseCounter += 1
+
     if (probBased) {
       if (!currLevelProgs.isEmpty) fitsMap = ProbUpdate.update(fitsMap, currLevelProgs, task)
       if (phaseCounter == 2 * timeout) {
         phaseCounter = 0
         if (!fitsMap.isEmpty) {
           ProbUpdate.priors = ProbUpdate.updatePriors(ProbUpdate.probMap, round)
-          //println(ProbUpdate.priors)
+          Console.withOut(fos) { println(ProbUpdate.priors) }
           resetEnumeration()
-          fitsMap.clear()
-          phaseCounter = 0
-          costLevel = 0
         }
       }
     }
@@ -161,7 +161,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
         if (solverOut.head == "sat") { // counterexample added!
           val cex = SMTProcess.getCEx(task, funcArgs, solverOut, solution)
           task = task.updateContext(cex)
-          println(res.get.code, task.examples)
+          //println(res.get.code, task.examples)
           resetEnumeration() //restart synthesis
           if (reset) resetCache()
         } else if (solverOut.head == "unsat") {
@@ -183,7 +183,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
         }
       }
     }
-    //println(currLevelProgs.takeRight(1).map(c => (c.code, c.cost)).mkString(","))
+    Console.withOut(fos) { println(currLevelProgs.takeRight(1).map(c => (c.code, c.cost)).mkString(",")) }
     res
   }
 }
