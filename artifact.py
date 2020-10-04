@@ -30,16 +30,27 @@ def run(args):
             with Pool(1) as pool:
                 pool.map(run_height, files)
     elif args.cmd == "bitvec":
-        files = [i for i in os.listdir("src/test/benchmarks/bitvec/") if i.endswith("sl")]
+        files = [i for i in os.listdir("src/test/benchmarks/hackers-delight/") if i.endswith("sl")]
         if args.strategy == "probe":
             with Pool(1) as pool:
                 pool.map(run_probe_bitvec, files)
         elif args.strategy == "size":
             with Pool(1) as pool:
-                pool.map(run_size, files)
+                pool.map(run_size_bitvec, files)
         elif args.strategy == "height":
             with Pool(1) as pool:
-                pool.map(run_height, files) 
+                pool.map(run_height_bitvec, files) 
+    elif args.cmd == "circuit":
+        files = [i for i in os.listdir("src/test/benchmarks/circuit/test/") if i.endswith("sl")]
+        if args.strategy == "probe":
+            with Pool(1) as pool:
+                pool.map(run_probe_circuit, files)
+        elif args.strategy == "size":
+            with Pool(1) as pool:
+                pool.map(run_size_circuit, files)
+        elif args.strategy == "height":
+            with Pool(1) as pool:
+                pool.map(run_height_circuit, files)             
 
 def run_larger(args):
     times = args.timeout
@@ -51,6 +62,9 @@ def run_larger(args):
         elif args.strategy == "size":
             with Pool(1) as pool:
                 pool.map(run_size_larger, files)
+        elif args.strategy == "height":
+            with Pool(1) as pool:
+                pool.map(run_height_larger, files)        
 
 def run_accuracy(args):
     times = args.timeout
@@ -112,11 +126,19 @@ def run_size(filename):
     run_main('results/size.csv', filename, cmd)
 
 def run_size_bitvec(filename):
-    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/bitvec/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/hackers-delight/%s" % (filename) ]
     run_main('results/size-bitvec.csv', filename, cmd)
+
+def run_size_circuit(filename):
+    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/circuit/test/%s" % (filename) ]
+    run_main('results/size-circuit.csv', filename, cmd)
 
 def run_size_larger(filename):
     cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/larger-grammar/%s" % (filename) ]
+    run_main('results/height-larger.csv', filename, cmd)
+
+def run_height_larger(filename):
+    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/larger-grammar/%s" % (filename) ]
     run_main('results/size-larger.csv', filename, cmd)
 
 def run_height(filename):
@@ -124,8 +146,12 @@ def run_height(filename):
     run_main('results/height.csv', filename, cmd)
 
 def run_height_bitvec(filename):
-    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/bitvec/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/hackers-delight/%s" % (filename) ]
     run_main('results/height-bitvec.csv', filename, cmd)
+
+def run_height_circuit(filename):
+    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/circuit/test/%s" % (filename) ]
+    run_main('results/height-circuit.csv', filename, cmd)
 
 def run_main(resultfile, filename, cmd):
     try:
@@ -148,8 +174,12 @@ def run_probe(filename):
     run_main('results/probe.csv', filename, cmd)
 
 def run_probe_bitvec(filename):
-    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/bitvec/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/hackers-delight/%s" % (filename) ]
     run_main('results/probe-bitvec.csv', filename, cmd)
+
+def run_probe_circuit(filename):
+    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/circuit/test/%s" % (filename) ]
+    run_main('results/probe-circuit.csv', filename, cmd)
 
 def run_probe_larger(filename):
     cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/larger-grammar/%s" % (filename) ]
@@ -172,6 +202,11 @@ def parse_args():
     subparser.add_argument("--memory", type = int, default = 16)
     subparser.add_argument("--strategy", type = str, default = "probe")
     subparser.add_argument("--expt", type=str, default="perf")
+    subparser = subparsers.add_parser("circuit", help="Run the BitVector Benchmark Programs")
+    subparser.add_argument("--timeout", type = int, default = 600)
+    subparser.add_argument("--memory", type = int, default = 16)
+    subparser.add_argument("--strategy", type = str, default = "probe")
+    subparser.add_argument("--expt", type=str, default="perf")
     return parser.parse_args()
 
 args = parse_args()
@@ -179,13 +214,13 @@ times = args.timeout
 
 def main():
     args = parse_args()
-    if args.cmd in [ "string", "bitvec"] and args.strategy in [ "probe", "size", "height" ] and args.expt in ["perf"]:
+    if args.cmd in [ "string", "bitvec", "circuit"] and args.strategy in [ "probe", "size", "height" ] and args.expt in ["perf"]:
         run(args)
-    elif args.cmd in [ "string", "bitvec"] and args.strategy in [ "probe", "cvc4" ] and args.expt in ["accuracy"]:
+    elif args.cmd in [ "string", "bitvec", "circuit"] and args.strategy in [ "probe", "cvc4" ] and args.expt in ["accuracy"]:
         run_accuracy(args)
-    elif args.cmd in [ "string", "bitvec"] and args.strategy in [ "probe", "size", "height" ] and args.expt in ["sanity"]:
+    elif args.cmd in [ "string", "bitvec", "circuit"] and args.strategy in [ "probe", "size", "height" ] and args.expt in ["sanity"]:
         run_sanity(args) 
-    elif args.cmd in [ "string"] and args.strategy in [ "probe", "size" ] and args.expt in ["extgrammar"]:
+    elif args.cmd in [ "string", "circuit"] and args.strategy in [ "probe", "size", "height" ] and args.expt in ["extgrammar"]:
         run_larger(args)     
     else:
         print("Invalid Argument")
