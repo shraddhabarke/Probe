@@ -76,7 +76,8 @@ class SygusFileTask(content: String) extends Cloneable{
 
   def fitExs(program: ASTNode): Set[Any] = {
     val expectedResults = examples.map(_.output)
-    val k = program.values.zip(expectedResults).filter(pair => pair._1 == pair._2).map(c => c._1)
+    //val k = program.values.zip(expectedResults).filter(pair => pair._1 == pair._2).map(c => c._1)
+    val k = program.values.zip(examples).filter(pair => pair._1 == pair._2.output).map(c => c._2)
     k.toSet
   }
 }

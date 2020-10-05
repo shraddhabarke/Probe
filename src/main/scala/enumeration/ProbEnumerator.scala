@@ -1,6 +1,8 @@
 package enumeration
 
 import java.io.FileOutputStream
+import org.antlr.v4.runtime.{BailErrorStrategy, BufferedTokenStream, CharStreams, Token}
+import sygus._
 
 import sygus.{Example, SMTProcess, SygusFileTask}
 import ast.{ASTNode, BasicVocabMaker, VocabFactory, VocabMaker}
@@ -32,15 +34,16 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   }
 
   var currIter: Iterator[VocabMaker] = null
+  var fos = new FileOutputStream("motivating.txt", true)
   val source = scala.io.Source.fromFile(filename)
-  var fos = new FileOutputStream("probe2.txt", true)
   var cegis = false
+  var count = 0
   val totalLeaves = vocab.leaves().toList.distinct ++ vocab.nonLeaves().toList.distinct
   var childrenIterator: Iterator[List[ASTNode]] = null
   var currLevelProgs: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
   var bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
   var phaseCounter: Int = 0
-  val reset: Boolean = true //Change here for resetting cache
+  val reset: Boolean = false //Change here for resetting cache
   var fitsMap = mutable.Map[(Class[_], Option[Any]), Double]()
   ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
   ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
@@ -73,7 +76,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
     ProbUpdate.cache.clear()
     ProbUpdate.cacheCost.clear()
     ProbUpdate.fitMap.clear()
-    //fitsMap.clear()
+    fitsMap.clear()
     ProbUpdate.examplesCovered.clear()
     ProbUpdate.currBest = Set[Any]()
     ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
@@ -107,22 +110,26 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
 
   def changeLevel(): Boolean = {
     currIter = totalLeaves.sortBy(_.rootCost).toIterator //todo: more efficient
-
-    for (p <- currLevelProgs) updateBank(p)
+    if (currLevelProgs.length > 0) Console.withOut(fos) { println("Number of Programs at level", costLevel, currLevelProgs.length) } 
     costLevel += 1
     phaseCounter += 1
 
+    for (p <- currLevelProgs) updateBank(p)
+ 
     if (probBased) {
       if (!currLevelProgs.isEmpty) fitsMap = ProbUpdate.update(fitsMap, currLevelProgs, task)
       if (phaseCounter == 2 * timeout) {
         phaseCounter = 0
         if (!fitsMap.isEmpty) {
           ProbUpdate.priors = ProbUpdate.updatePriors(ProbUpdate.probMap, round)
-          Console.withOut(fos) { println(ProbUpdate.priors) }
+          Console.withOut(fos) { println(ProbUpdate.priors) } 
           resetEnumeration()
+          fitsMap.clear()
+          phaseCounter = 0
         }
       }
     }
+   
     currLevelProgs.clear()
     advanceRoot()
   }
@@ -160,10 +167,33 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
         val solverOut = SMTProcess.invokeCVC(query.stripMargin, SMTProcess.cvc4_Smt)
         if (solverOut.head == "sat") { // counterexample added!
           val cex = SMTProcess.getCEx(task, funcArgs, solverOut, solution)
+          //Console.withOut(fos) { println("CEGIS counterexample", cex, "\n") }
           task = task.updateContext(cex)
-          //println(res.get.code, task.examples)
+          //Console.withOut(fos) { println(res.get.code) }
           resetEnumeration() //restart synthesis
           if (reset) resetCache()
+          else {
+            val lexer = new SyGuSLexer(CharStreams.fromString(res.get.code))
+            lexer.removeErrorListeners()
+            lexer.addErrorListener(new ThrowingLexerErrorListener)
+            val parser = new SyGuSParser(new BufferedTokenStream(lexer))
+            parser.removeErrorListeners()
+            parser.setErrorHandler(new BailErrorStrategy)
+            val parsed = parser.bfTerm()
+            if (parser.getCurrentToken.getType != Token.EOF)
+              throw new Exception(parser.getCurrentToken.getText)
+            val visitor = new ASTGenerator(task)
+            val ast = visitor.visit(parsed)
+            val examplesPassed = task.fitExs(ast)
+            ProbUpdate.cache += (ast.code -> examplesPassed.toList.length)
+            //Console.withOut(fos) { println(ProbUpdate.cache.keys) }
+
+            //println("Before:", ProbUpdate.cache)
+            ProbUpdate.readjustCosts(task)
+            ProbUpdate.priors = ProbUpdate.updatePriors(ProbUpdate.probMap, round)
+            //println("After:", ProbUpdate.cache)
+
+          }
         } else if (solverOut.head == "unsat") {
           res.get.unsat = true
         }
@@ -171,7 +201,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
     } else if (!res.isEmpty && task.isPBE && cegis && (res.get.nodeType == task.functionReturnType)) {
       if (task.examples.isEmpty || (!task.examples.isEmpty &&
         task.examples.zip(res.get.values).map(pair => pair._1.output == pair._2).forall(identity))) { // satisfies all examples so far
-        println(res.get.code, task.examples)
+        //println(res.get.code, task.examples)
         val exampleOut = SMTProcess.getEx(task, cExamples, res.get)
         if (exampleOut._1 == true) {
           res.get.unsat = true
@@ -183,7 +213,8 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
         }
       }
     }
-    Console.withOut(fos) { println(currLevelProgs.takeRight(1).map(c => (c.code, c.cost)).mkString(",")) }
+    //Console.withOut(fos) { println(currLevelProgs.takeRight(1).map(c => (c.code, c.cost)).mkString(",")) }
+    //println(currLevelProgs.takeRight(1).map(c => (c.code, c.cost)).mkString(",")) 
     res
   }
 }

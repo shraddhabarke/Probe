@@ -1,6 +1,9 @@
 package enumeration
 
+import org.antlr.v4.runtime.{BailErrorStrategy, BufferedTokenStream, CharStreams, Token}
+import sygus._
 import ast._
+import java.io.FileOutputStream
 import sygus.SygusFileTask
 import scala.collection.mutable.ListBuffer
 import scala.collection.mutable
@@ -10,15 +13,19 @@ object ProbUpdate {
   trace.DebugPrints.setInfo()
   var phaseChange: Boolean = false
   var newPrior = 0.0
-  var cache = mutable.Map[ASTNode, Double]()
+  var count = 0
+  var cache = mutable.Map[String, Double]()
   var cacheCost = mutable.Map[Set[Any], Double]()
+  var cacheExamples = mutable.ListBuffer[Set[Any]]()
   var cacheStrings: mutable.ArrayBuffer[String] = mutable.ArrayBuffer()
   var fitMap = mutable.Map[(Class[_],Option[Any]), Double]()
   var probMap = mutable.Map[(Class[_], Option[Any]), Double]()
   var priors = mutable.Map[(Class[_], Option[Any]), Int]()
   var examplesCovered = mutable.ListBuffer[Set[Any]]()
+  var maximalExamples = mutable.Set[Any]()
   var currBest = Set[Any]()
   val lnOf2 = scala.math.log(2) // natural log of 2
+  var fos = new FileOutputStream("motivating.txt", true)
   def log2(x: Double): Double = scala.math.log(x) / lnOf2
   def expo (i: Double, exp:Double):Double = scala.math.pow(i,exp)
 
@@ -29,7 +36,6 @@ object ProbUpdate {
       (program.getClass -> Some(program.code)) else (program.getClass -> None)
       program.children.flatMap(c => getAllNodeTypes(c)).toSet + recurseValue
   }
-
 /**
   def update(fitsMap: mutable.Map[(Class[_], Option[Any]), Double], currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask): mutable.Map[(Class[_], Option[Any]), Double] = {
     fitMap = fitsMap
@@ -49,7 +55,7 @@ object ProbUpdate {
         if (currBest.toList.length < theExample.toList.length) {
           currBest = theExample
           val prog = cacheCost(theExample)
-          //println(prog.code, theExample)
+          //println(prog.code, theExample, prog.cost)
           val changed: Set[(Class[_], Option[Any])] = getAllNodeTypes(prog)
             for (changedNode <- changed) {
               if (!fitMap.contains(changedNode) || fitMap(changedNode) > (1 - theExample.toList.length)) {
@@ -65,6 +71,65 @@ object ProbUpdate {
   }
 **/
 
+  def readjustCosts(task: SygusFileTask): Unit = this.synchronized {
+    probMap = ProbUpdate.createProbMap(task.vocab)
+    priors = ProbUpdate.createPrior(task.vocab)
+    var localMap = mutable.Map[(Class[_],Option[Any]), Double]()
+    for (program <- cache.keys) {
+      val lexer = new SyGuSLexer(CharStreams.fromString(program))
+      lexer.removeErrorListeners()
+      lexer.addErrorListener(new ThrowingLexerErrorListener)
+      val parser = new SyGuSParser(new BufferedTokenStream(lexer))
+      parser.removeErrorListeners()
+      parser.setErrorHandler(new BailErrorStrategy)
+      val parsed = parser.bfTerm()
+      if (parser.getCurrentToken.getType != Token.EOF)
+        throw new Exception(parser.getCurrentToken.getText)
+      val visitor = new ASTGenerator(task)
+      val ast = visitor.visit(parsed)
+      val changed: Set[(Class[_], Option[Any])] = getAllNodeTypes(ast)
+      val exampleFit = task.fit(ast)
+      val fit: Double = (exampleFit._1.toFloat) / exampleFit._2
+      if (fit > 0) {
+        val examplesPassed = task.fitExs(ast)
+        //val union = maximalExamples.union(examplesPassed)
+        //if (union.toList.length > maximalExamples.toList.length) {
+            //maximalExamples = union
+        //if (!cacheCost.contains(examplesPassed) || ((!examplesCovered.contains(examplesPassed)) && (cacheCost(examplesPassed) == program.cost))) {
+        if (!cacheExamples.contains(examplesPassed)) {
+        //if (!cacheCost.contains(examplesPassed) || ((cacheCost(examplesPassed) >= program.cost) && !cacheStrings.contains(program.code))) {
+          cache += (ast.code -> examplesPassed.toList.length)
+          cacheExamples += (examplesPassed)
+          //cacheStrings += program.code
+          //examples += examplesPassed
+          val changed: Set[(Class[_], Option[Any])] = getAllNodeTypes(ast)
+          for (changedNode <- changed) {
+            if (!fitMap.contains(changedNode) || fitMap(changedNode) > (1 - fit)) {
+              val update = expo(probMap(changedNode), (1- fit))
+              fitMap += (changedNode -> update)
+              probMap += (changedNode -> update)
+            }
+          }
+          //println("Chosen partial solution:" , program.code, examplesPassed, program.cost)
+          //Console.withOut(fos) { println("Chosen partial solution:" , ast.code, examplesPassed, ast.cost) }
+        }
+        //Console.withOut(fos) { println(program.code, examplesPassed, program.cost) }
+      }
+      /**
+      val fit = (cache(ast.code).toFloat) / task.examples.length
+      for (changedNode <- changed) {
+        Console.withOut(fos) { (task.examples) }
+        if (!localMap.contains(changedNode) || localMap(changedNode) > (1 - fit)) {
+          val update = expo(ProbUpdate.probMap(changedNode), (1 - fit))
+          localMap += (changedNode -> update)
+          probMap += (changedNode -> update)
+        }
+      }
+    }
+    **/
+  } 
+}
+
   def update(fitsMap: mutable.Map[(Class[_], Option[Any]), Double], currLevelProgs: mutable.ArrayBuffer[ASTNode], task: SygusFileTask): mutable.Map[(Class[_], Option[Any]), Double] = {
     fitMap = fitsMap
     val examples = ListBuffer[Set[Any]]()
@@ -73,12 +138,17 @@ object ProbUpdate {
       val fit: Double = (exampleFit._1.toFloat) / exampleFit._2
       if (fit > 0) {
         val examplesPassed = task.fitExs(program)
+        //val union = maximalExamples.union(examplesPassed)
+        //if (union.toList.length > maximalExamples.toList.length) {
+            //maximalExamples = union
         //if (!cacheCost.contains(examplesPassed) || ((!examplesCovered.contains(examplesPassed)) && (cacheCost(examplesPassed) == program.cost))) {
         if (!cacheCost.contains(examplesPassed)) {
+        //if (!cacheExamples.contains(examplesPassed)) {
         //if (!cacheCost.contains(examplesPassed) || ((cacheCost(examplesPassed) >= program.cost) && !cacheStrings.contains(program.code))) {
-          //cache += (program -> examplesPassed.toList.length)
+          //cache += (program.code -> examplesPassed.toList.length)
           cacheCost += (examplesPassed -> program.cost)
-          //cacheStrings += program.code
+          cacheExamples += (examplesPassed)
+        cacheStrings += program.code
           //examples += examplesPassed
           val changed: Set[(Class[_], Option[Any])] = getAllNodeTypes(program)
           for (changedNode <- changed) {
@@ -88,11 +158,13 @@ object ProbUpdate {
               probMap += (changedNode -> update)
             }
           }
-          //println(program.code, examplesPassed, program.cost)
+          println(program.code, examplesPassed, program.cost)
+          //Console.withOut(fos) { println(program.code, examplesPassed, program.cost) }
         }
+      //Console.withOut(fos) { println(program.code, examplesPassed, program.cost) }
       }
     }
-    //examplesCovered = examplesCovered ++ examples
+    examplesCovered = examplesCovered ++ examples
     fitMap
   }
 

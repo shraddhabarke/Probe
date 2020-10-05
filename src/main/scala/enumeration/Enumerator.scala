@@ -36,7 +36,6 @@ class Enumerator(val filename: String, val vocab: VocabFactory, val oeManager: O
 
   var currIter = vocab.leaves
   val source = scala.io.Source.fromFile(filename)
-  var fos = new FileOutputStream("height.txt", true)
   var childrenIterator: Iterator[List[ASTNode]] = Iterator.single(Nil)
   var rootMaker: VocabMaker = currIter.next()
   var prevLevelProgs: mutable.ListBuffer[ASTNode] = mutable.ListBuffer()
@@ -68,7 +67,6 @@ class Enumerator(val filename: String, val vocab: VocabFactory, val oeManager: O
   }
 
   def changeLevel(): Boolean = {
-    dprintln(currLevelProgs.length)
     if (currLevelProgs.isEmpty) return false
     currIter = vocab.nonLeaves
     height += 1
@@ -107,15 +105,13 @@ class Enumerator(val filename: String, val vocab: VocabFactory, val oeManager: O
         if (solverOut.head == "sat") { // counterexample added!
           val cex = SMTProcess.getCEx(task, funcArgs, solverOut, solution)
           task = task.updateContext(cex)
-          println(res.get.code, task.examples.toList.length)
           resetEnumeration() //restart synthesis
-          //reset cache and start with uniform probability if running reset true else readjust weights.
         } else if (solverOut.head == "unsat") {
           res.get.unsat = true
         }
       }
     }
-    Console.withOut(fos) { println(currLevelProgs.takeRight(1).map(c => (c.code, c.height)).mkString(",")) }
+    //Console.withOut(fos) { println(currLevelProgs.takeRight(1).map(c => (c.code, c.height)).mkString(",")) }
     res
   }
 }

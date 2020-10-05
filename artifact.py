@@ -135,11 +135,11 @@ def run_size_circuit(filename):
 
 def run_size_larger(filename):
     cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/larger-grammar/%s" % (filename) ]
-    run_main('results/height-larger.csv', filename, cmd)
+    run_main('results/size-larger.csv', filename, cmd)
 
 def run_height_larger(filename):
     cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/larger-grammar/%s" % (filename) ]
-    run_main('results/size-larger.csv', filename, cmd)
+    run_main('results/height-larger.csv', filename, cmd)
 
 def run_height(filename):
     cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/string/%s" % (filename) ]
