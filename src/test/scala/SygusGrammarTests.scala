@@ -140,9 +140,9 @@ class SygusGrammarTests extends JUnitSuite{
     assertEquals(4,task.examples.length)
     assertEquals(Example(Map("name" -> "Nancy FreeHafer"),"N.F."),task.examples.head)
     assertEquals(Example(Map("name" -> "Jan Kotas"), "J.K."),task.examples(2))
-    assertEquals(8, task.vocab.leaves.length)
-    assertEquals(10, task.vocab.nonLeaves.length)
-    assertEquals(List("name","\" \"","\".\"","0","1","2","true","false"),task.vocab.leaves.map(_.apply(Nil,task.examples.map(_.input).toList).code).toList)
+    assertEquals(8, task.vocab.leaves().length)
+    assertEquals(10, task.vocab.nonLeaves().length)
+    assertEquals(List("name","\" \"","\".\"","0","1","2","true","false"),task.vocab.leaves().map(_.apply(Nil,task.examples.map(_.input).toList).code).toList)
   }
 
   @Test def equalityTest = {

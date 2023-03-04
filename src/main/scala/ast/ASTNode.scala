@@ -17,7 +17,7 @@ trait ASTNode {
     _cost.get
   }
   def renewCost(): Unit = {
-    children.foreach(_.renewCost)
+    children.foreach(_.renewCost())
     _cost = Some(ProbUpdate.getRootPrior(this) + children.map(c => c.cost).sum)
   }
 }

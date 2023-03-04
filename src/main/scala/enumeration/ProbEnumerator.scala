@@ -110,7 +110,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
 
   def changeLevel(): Boolean = {
     currIter = totalLeaves.sortBy(_.rootCost).toIterator //todo: more efficient
-    if (currLevelProgs.length > 0) Console.withOut(fos) { println("Number of Programs at level", costLevel, currLevelProgs.length) } 
+    //if (currLevelProgs.length > 0) Console.withOut(fos) { println("Number of Programs at level", costLevel, currLevelProgs.length) }
     costLevel += 1
     phaseCounter += 1
 

@@ -3,7 +3,6 @@ import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
 import org.junit.Assert._
 
-
 class ASTNodeTests extends JUnitSuite{
   @Test def stringLiteralNode(): Unit = {
     val stringLiteral: StringNode = new StringLiteral("abc",1)

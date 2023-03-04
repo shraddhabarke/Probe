@@ -158,7 +158,7 @@ object ProbUpdate {
               probMap += (changedNode -> update)
             }
           }
-          println(program.code, examplesPassed, program.cost)
+         // println(program.code, examplesPassed, program.cost)
           //Console.withOut(fos) { println(program.code, examplesPassed, program.cost) }
         }
       //Console.withOut(fos) { println(program.code, examplesPassed, program.cost) }

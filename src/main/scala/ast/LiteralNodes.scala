@@ -10,17 +10,17 @@ abstract class LiteralNode[T](numContexts: Int) extends ASTNode{
   def includes(varName: String): Boolean = false
 }
 class StringLiteral(val value: String, numContexts: Int) extends LiteralNode[String](numContexts) with StringNode{
-  override lazy val code: String = '"' + value + '"' //escape?
+  override val code: String = '"' + value + '"' //escape?
   }
 
 case class IntLiteral(val value: Int, numContexts: Int) extends LiteralNode[Int](numContexts) with IntNode{
-  override lazy val code: String = value.toString
+  override val code: String = value.toString
   }
 
 case class BoolLiteral(val value: Boolean, numContexts: Int) extends LiteralNode[Boolean](numContexts) with BoolNode {
-  override lazy val code: String = value.toString
+  override val code: String = value.toString
   }
 
 case class BVLiteral(val value: Long, numContexts: Int) extends LiteralNode[Long](numContexts) with BVNode {
-  override lazy val code: String = f"#x$value%016x"
+  override val code: String = f"#x$value%016x"
 }

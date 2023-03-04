@@ -6,7 +6,7 @@ abstract class VariableNode[T](contexts: List[Map[String,Any]]) extends ASTNode 
   val name: String
   val values: List[T] = contexts.map{ context =>
     context(name).asInstanceOf[T]}.toList
-  override lazy val code: String = name
+  override val code: String = name
   override val children: Iterable[ASTNode] = Iterable.empty
 
   def includes(varName: String): Boolean = name == varName

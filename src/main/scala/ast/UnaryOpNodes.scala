@@ -3,7 +3,7 @@ package ast
 trait UnaryOpNode[T] extends ASTNode{
   val arg: ASTNode
   def doOp(x: Any): T
-  override lazy val values : List[T] = arg.values.map(doOp)
+  override val values : List[T] = arg.values.map(doOp)
   override val height = 1 + arg.height
   override val terms: Int = 1 + arg.terms
   override val children: Iterable[ASTNode] = Iterable(arg)
@@ -13,7 +13,7 @@ trait UnaryOpNode[T] extends ASTNode{
 class IntToString(val arg: IntNode) extends UnaryOpNode[String] with StringNode {
   override def doOp(x: Any): String = if (x.asInstanceOf[Int] >= 0) x.asInstanceOf[Int].toString else ""
 
-  override lazy val code: String = "(int.to.str " + arg.code + ")"
+  override val code: String = "(int.to.str " + arg.code + ")"
 
 }
 
@@ -24,14 +24,14 @@ class StringToInt(val arg: StringNode) extends UnaryOpNode[Int] with IntNode {
     else -1
   }
 
-  override lazy val code: String = "(str.to.int " + arg.code + ")"
+  override val code: String = "(str.to.int " + arg.code + ")"
 
 }
 
 class StringLength(val arg: StringNode) extends UnaryOpNode[Int] with IntNode {
   override def doOp(x: Any): Int = x.asInstanceOf[String].length
 
-  override lazy val code: String = "(str.len " + arg.code + ")"
+  override val code: String = "(str.len " + arg.code + ")"
 
 }
 
@@ -41,7 +41,7 @@ case class BVNot(val arg: BVNode) extends UnaryOpNode[Long] with BVNode {
     ~bv
   }
 
-  override lazy val code: String = "(bvnot " + arg.code + ")"
+  override val code: String = "(bvnot " + arg.code + ")"
 }
 
 case class BVNeg(val arg: BVNode) extends UnaryOpNode[Long] with BVNode {
@@ -62,5 +62,5 @@ class BVRedor(val arg: BVNode) extends UnaryOpNode[Boolean] with BoolNode {
     if (lhsNode == 0) false
     else true
   }
-  override lazy val code: String = "(bvredor " + arg.code + ")"
+  override val code: String = "(bvredor " + arg.code + ")"
 }

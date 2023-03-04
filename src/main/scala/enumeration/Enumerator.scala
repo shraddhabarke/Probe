@@ -34,7 +34,7 @@ class Enumerator(val filename: String, val vocab: VocabFactory, val oeManager: O
     funcArgs = out._2
   }
 
-  var currIter = vocab.leaves
+  var currIter = vocab.leaves()
   val source = scala.io.Source.fromFile(filename)
   var childrenIterator: Iterator[List[ASTNode]] = Iterator.single(Nil)
   var rootMaker: VocabMaker = currIter.next()
@@ -48,7 +48,7 @@ class Enumerator(val filename: String, val vocab: VocabFactory, val oeManager: O
 
   def resetEnumeration(): Unit = {
     height = 0
-    currIter = vocab.leaves
+    currIter = vocab.leaves()
     contexts = task.examples.map(_.input)
     childrenIterator = Iterator.single(Nil)
     rootMaker = currIter.next()
@@ -68,7 +68,7 @@ class Enumerator(val filename: String, val vocab: VocabFactory, val oeManager: O
 
   def changeLevel(): Boolean = {
     if (currLevelProgs.isEmpty) return false
-    currIter = vocab.nonLeaves
+    currIter = vocab.nonLeaves()
     height += 1
     prevLevelProgs ++= currLevelProgs
     currLevelProgs.clear()

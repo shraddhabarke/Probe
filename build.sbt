@@ -1,10 +1,8 @@
 name := "probe"
 
-version := "0.1"
+version := "1.8.2"
 
-scalaVersion := "2.12.6"
-
-// libraryDependencies += "org.scala-lang.modules" %% "scala-parallel-collections" % "0.2.0"
+scalaVersion := "3.2.2"
 
 // https://mvnrepository.com/artifact/jline/jline
 libraryDependencies += "jline" % "jline" % "2.14.6"
@@ -22,13 +20,16 @@ libraryDependencies += "commons-io" % "commons-io" % "2.6"
 libraryDependencies += "junit" % "junit" % "4.13-rc-1" % Test
 
 // https://mvnrepository.com/artifact/org.scalatest/scalatest
-//libraryDependencies += "org.scalactic" %% "scalactic" % "3.1.0"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.0" % Test
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.10" % Test
 
 // https://mvnrepository.com/artifact/org.scalatestplus/scalatestplus-junit
-libraryDependencies += "org.scalatestplus" %% "scalatestplus-junit" % "1.0.0-SNAP9"
+libraryDependencies += "org.scalatestplus" %% "junit-4-13" % "3.2.15.0" % "test"
 
-libraryDependencies += "io.spray" %% "spray-json" % "1.3.5"
+libraryDependencies += "junit" % "junit" % "4.12" % "test"
+
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.0" % "test"
+
+libraryDependencies += "io.spray" %% "spray-json" % "1.3.6"
 
 // https://mvnrepository.com/artifact/commons-cli/commons-cli
 libraryDependencies += "commons-cli" % "commons-cli" % "1.4"

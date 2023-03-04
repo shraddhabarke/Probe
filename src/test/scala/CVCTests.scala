@@ -1,9 +1,11 @@
-import org.scalatest.{BeforeAndAfterAll, FunSuite}
+import org.junit.Test
+import org.scalatest.{BeforeAndAfterAll, funsuite}
+import org.scalatestplus.junit.JUnitSuite
 import sygus.{Example, SMTProcess, SygusFileTask}
 
-class CVCTests extends FunSuite with BeforeAndAfterAll {
+class CVCTests extends JUnitSuite with BeforeAndAfterAll {
 
-  test("Parsing sygus to SMTlib") {
+  @Test def parseSyGUS(): Unit = {
     val synthConvert = SMTProcess.toSMT(
       """(set-logic BV)
         |
@@ -29,7 +31,8 @@ class CVCTests extends FunSuite with BeforeAndAfterAll {
     assert(synthConvert._3 == "(bvadd (bvand x y) (bvlshr (bvxor x y) #x0000000000000001))")
   }
 
-  test("Getting cex from query output") {
+  // Getting CEX from output
+  @Test def cexTest(): Unit = {
     val synthRes = SMTProcess.getCEx(new SygusFileTask("""(set-logic BV)
       |(define-fun hd14 ((x (BitVec 64)) (y (BitVec 64))) (BitVec 64) (bvadd (bvand x y) (bvlshr (bvxor x y) #x0000000000000001)))
       |(synth-fun f ((x (BitVec 64)) (y (BitVec 64))) (BitVec 64)
@@ -50,7 +53,8 @@ class CVCTests extends FunSuite with BeforeAndAfterAll {
       assert(synthRes == Example(Map("x" -> -2252078851551128L, "y" -> -2252078785228704L),-2252078818389916L))
   }
 
-  test("Parsing SMT2 format LIA") {
+  //Parsing SMT2 format LIA
+  @Test def smt2ToLIA(): Unit = {
     val synthRes = SMTProcess.invokeCVC(
       """(set-option :print-success false)
         |(set-option :produce-models true)
@@ -64,7 +68,7 @@ class CVCTests extends FunSuite with BeforeAndAfterAll {
     assert(synthRes == List("sat", "(model", "(define-fun x () Int (- 1))", "(define-fun y () Int 0)", ")"))
   }
 
-  test("Checking unsat") {
+  @Test def checkUnSat(): Unit = {
     val synthRes = SMTProcess.invokeCVC(
       """(set-option :print-success false)
         |(set-option :produce-models true)
@@ -77,7 +81,8 @@ class CVCTests extends FunSuite with BeforeAndAfterAll {
     assert(synthRes == List("unsat"))
   }
 
-  test("Parsing a synthesis fail") {
+  //Parsing a synthesis fail
+  @Test def synthesisFail(): Unit = {
     val synthRes = SMTProcess.invokeCVC(
       """(set-logic BV)
         |

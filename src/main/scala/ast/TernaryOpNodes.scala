@@ -10,7 +10,7 @@ trait TernaryOpNode[T] extends ASTNode{
   override val terms: Int = 1 + arg0.terms + arg1.terms + arg2.terms
   assert(arg0.values.length == arg1.values.length && arg1.values.length == arg2.values.length)
   def doOp(a0: Any, a1: Any, a2: Any): T
-  lazy val values : List[T] =
+  val values : List[T] =
     arg0.values.zip(arg1.values).zip(arg2.values).map(tup => doOp(tup._1._1, tup._1._2, tup._2)).toList
 
   override val children: Iterable[ASTNode] = Iterable(arg0,arg1,arg2)
@@ -22,21 +22,21 @@ class StringReplace(val arg0: StringNode, val arg1: StringNode, val arg2: String
   override def doOp(a0: Any, a1: Any, a2: Any): String =
     StringUtils.replaceOnce(a0.asInstanceOf[String],a1.asInstanceOf[String],a2.asInstanceOf[String])
 
-  override lazy val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(str.replace "," ",")")
+  override val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(str.replace "," ",")")
 
 }
 
 class StringITE(val arg0: BoolNode, val arg1: StringNode, val arg2: StringNode) extends TernaryOpNode[String] with StringNode {
   override def doOp(a0: Any, a1: Any, a2: Any): String = if (a0.asInstanceOf[Boolean]) a1.asInstanceOf[String] else a2.asInstanceOf[String]
 
-  override lazy val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(ite "," ",")")
+  override val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(ite "," ",")")
 
 }
 
 case class IntITE(val arg0: BoolNode, val arg1: IntNode, val arg2: IntNode) extends TernaryOpNode[Int] with IntNode {
   override def doOp(a0: Any, a1: Any, a2: Any): Int = if (a0.asInstanceOf[Boolean]) a1.asInstanceOf[Int] else a2.asInstanceOf[Int]
 
-  override lazy val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(ite "," ",")")
+  override val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(ite "," ",")")
 
 }
 
@@ -55,13 +55,13 @@ class Substring(val arg0: StringNode, val arg1: IntNode, val arg2: IntNode) exte
     else a.drop(b).take(c)
   }
 
-  override lazy val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(str.substr "," ",")")
+  override val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(str.substr "," ",")")
   }
 
 class IndexOf(val arg0: StringNode, val arg1: StringNode, val arg2: IntNode) extends TernaryOpNode[Int] with IntNode {
   override def doOp(a0: Any, a1: Any, a2: Any): Int = a0.asInstanceOf[String].indexOf(a1.asInstanceOf[String],a2.asInstanceOf[Int])
 
-  override lazy val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(str.indexof "," ",")")
+  override val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(str.indexof "," ",")")
   }
 
 case class BVITE(val arg0: BoolNode, val arg1: BVNode, val arg2: BVNode) extends TernaryOpNode[Long] with BVNode {

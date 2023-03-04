@@ -5,7 +5,6 @@ import org.scalatestplus.junit.JUnitSuite
 import org.junit.Test
 import org.junit.Assert._
 import sygus.{SyGuSLexer, SyGuSParser, SygusFileTask}
-
 import collection.JavaConverters._
 
 class EnumeratorTests  extends JUnitSuite{
@@ -26,12 +25,12 @@ class EnumeratorTests  extends JUnitSuite{
       grammarDef.groupedRuleList().asScala.flatMap{nonTerminal => nonTerminal.gTerm().asScala.map(vocabElem =>
         SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().getText),nonTerminals))}.toList
     )
-    assertEquals(4,vocab.leaves.size)
+    assertEquals(4,vocab.leaves().size)
     assertEquals(3,vocab.nonLeaves().size)
-    val enumerator = new Enumerator(vocab, new OEValuesManager {
+    val enumerator = new Enumerator("", vocab, new OEValuesManager {
       override def isRepresentative(program: ASTNode): Boolean = true
       override def clear(): Unit = {}
-    },Map("input"->0) :: Nil)
+    }, new SygusFileTask(grammar), Map("input"->0) :: Nil)
     assertTrue(enumerator.hasNext)
     assertEquals("input",enumerator.next().code)
     assertTrue(enumerator.hasNext)
@@ -92,7 +91,7 @@ class EnumeratorTests  extends JUnitSuite{
         SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().getText),nonTerminals))}.toList
     )
     val inputValues: Map[String,AnyRef] = Map("x" -> 1.asInstanceOf[AnyRef])
-    val enumerator = new Enumerator(vocab, new InputsValuesManager,inputValues :: Nil)
+    val enumerator = new Enumerator("", vocab, new InputsValuesManager, new SygusFileTask(grammar), inputValues :: Nil)
     assertTrue(enumerator.hasNext)
     assertEquals("x",enumerator.next().code)
     assertEquals("false",enumerator.next().code)
@@ -119,7 +118,7 @@ class EnumeratorTests  extends JUnitSuite{
         SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().getText),nonTerminals))}.toList
     )
     val inputValues: List[Map[String,AnyRef]] = List(Map("x" -> 1.asInstanceOf[AnyRef]), Map("x" -> 0.asInstanceOf[AnyRef]))
-    val enumerator = new Enumerator(vocab, new InputsValuesManager,inputValues)
+    val enumerator = new Enumerator("", vocab, new InputsValuesManager, new SygusFileTask(grammar), inputValues)
     assertTrue(enumerator.hasNext)
     assertEquals("x",enumerator.next().code)
     assertEquals("false",enumerator.next().code)
@@ -144,7 +143,7 @@ class EnumeratorTests  extends JUnitSuite{
       grammarDef.groupedRuleList().asScala.flatMap{nonTerminal => nonTerminal.gTerm().asScala.map(vocabElem =>
         SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().getText),nonTerminals))}.toList
     )
-    val enumerator = new Enumerator(vocab, new InputsValuesManager, Map.empty[String,AnyRef] :: Nil)
+    val enumerator = new Enumerator("", vocab, new InputsValuesManager, new SygusFileTask(grammar), Map.empty[String,AnyRef] :: Nil)
     assertTrue(enumerator.hasNext)
     assertEquals("0", enumerator.next.code)
     assertFalse(enumerator.hasNext)
@@ -165,10 +164,10 @@ class EnumeratorTests  extends JUnitSuite{
       grammarDef.groupedRuleList().asScala.flatMap{nonTerminal => nonTerminal.gTerm().asScala.map(vocabElem =>
         SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().getText),nonTerminals))}.toList
     )
-    val enumerator = new Enumerator(vocab, new OEValuesManager {
+    val enumerator = new Enumerator("", vocab, new OEValuesManager {
       override def isRepresentative(program: ASTNode): Boolean = true
       override def clear(): Unit = {}
-    },Map.empty[String,AnyRef] :: Nil)
+    }, new SygusFileTask(grammar), Map.empty[String,AnyRef] :: Nil)
     assertEquals("0",enumerator.next().code)
     assertEquals("1",enumerator.next().code)
     assertEquals("false",enumerator.next().code)
@@ -179,5 +178,4 @@ class EnumeratorTests  extends JUnitSuite{
     assertEquals("(<= 1 1)", enumerator.next.code)
     assertEquals("(= 0 0)", enumerator.next.code)
   }
-
 }
