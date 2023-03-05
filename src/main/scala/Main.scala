@@ -56,7 +56,7 @@ object Main extends App {
     }
   }
 
-  def synthesizeTask(filename: String, task: SygusFileTask, sizeBased: Boolean, probBased: Boolean, timeout: Int = 600): List[ASTNode] = {
+  def synthesizeTask(filename: String, task: SygusFileTask, sizeBased: Boolean, probBased: Boolean, timeout: Int = 2): List[ASTNode] = {
     val oeManager = new InputsValuesManager()
 
     val enumerator = if (!sizeBased) new enumeration.Enumerator(filename, task.vocab, oeManager, task, task.examples.map(_.input))
@@ -72,20 +72,21 @@ object Main extends App {
           val results = task.examples.zip(program.values).map(pair => pair._1.output == pair._2)
           if (results.forall(identity)) {
             p = List(program)
-            print(program.code, program.terms)
+            //print(program.code, program.terms)
             break
           }
+        }
         if (!deadline.hasTimeLeft) {
             break
           }
         }
       }
     val t1 = System.currentTimeMillis / 1000
-    print(s"${t1 - t0}s")
+    //print(s"${t1 - t0}s")
     p
   }
 
-  def cegisExTask(filename: String, task: SygusFileTask, sizeBased: Boolean, probBased: Boolean, timeout: Int = 600): List[ASTNode] = {
+  def cegisExTask(filename: String, task: SygusFileTask, sizeBased: Boolean, probBased: Boolean, timeout: Int = 60): List[ASTNode] = {
     val oeManager = new InputsValuesManager()
     val enumerator =  if (!sizeBased) new enumeration.Enumerator(filename, task.vocab, oeManager, task, List())
     else new enumeration.ProbEnumerator(filename, task.vocab, oeManager, task, List(), probBased)
@@ -98,7 +99,7 @@ object Main extends App {
         if (program.nodeType == task.functionReturnType) {
           if (program.unsat == true) {
             p = List(program)
-            print(program.code, program.cost)
+            //print(program.code, program.cost)
             break
           }
         }
@@ -108,7 +109,7 @@ object Main extends App {
       }
     }
     val t1 = System.currentTimeMillis / 1000
-    print(s"${t1 - t0}s")
+    //print(s"${t1 - t0}s")
     p
   }
 
@@ -145,7 +146,7 @@ object Main extends App {
 
   def synthesize(filename: String, sizeBased: Boolean, probBased: Boolean, cegis: Boolean) = {
     val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
-    print(scala.io.Source.fromFile(filename).mkString)
+    //print(scala.io.Source.fromFile(filename).mkString)
     if (task.isPBE && !cegis) synthesizeTask(filename, task, sizeBased, probBased)
     else if (task.isPBE && cegis) cegisExTask(filename, task, sizeBased, probBased)
     else cegisTask(filename, sizeBased, probBased)
