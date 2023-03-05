@@ -1,6 +1,6 @@
 name := "probe"
 
-version := "1.8.2"
+version := "0.1"
 
 scalaVersion := "3.2.2"
 
@@ -36,7 +36,7 @@ libraryDependencies += "commons-cli" % "commons-cli" % "1.4"
 
 //mainClass in (assembly) := Some("pcShell.ShellMain")
 Project.inConfig(Test)(baseAssemblySettings)
-assemblyJarName in (Test, assembly) := s"${name.value}-full.jar"
+Test / assembly / assemblyJarName := s"${name.value}-full.jar"
 
 javaOptions += "-Xmx10G"
 //Anlr command line:

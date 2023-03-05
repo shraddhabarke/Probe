@@ -91,7 +91,7 @@ def run_acc_probe(filename):
         result = dict(reader)
     key = filename.replace('-long','')
     try:
-        cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/AccuracyMain', "src/test/benchmarks/accuracy-expt/{}".format(filename), "{}".format(result[key])]
+        cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/AccuracyMain', "src/test/benchmarks/accuracy-expt/{}".format(filename), "{}".format(result[key])]
         output, err  = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
         output_str = output.decode("utf-8")
         print(output_str)
@@ -109,7 +109,7 @@ def run_acc_cvc(filename):
         result = dict(reader)
     key = filename.replace('-long','')
     try:
-        cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/AccuracyMain', "src/test/benchmarks/accuracy-expt/{}".format(filename), "{}".format(result[key])]
+        cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/AccuracyMain', "src/test/benchmarks/accuracy-expt/{}".format(filename), "{}".format(result[key])]
         output, err  = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
         output_str = output.decode("utf-8")
         print(output_str)
@@ -122,35 +122,35 @@ def run_acc_cvc(filename):
         pass   
 
 def run_size(filename):
-    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/string/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/string/%s" % (filename) ]
     run_main('results/size.csv', filename, cmd)
 
 def run_size_bitvec(filename):
-    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/hackers-delight/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/hackers-delight/%s" % (filename) ]
     run_main('results/size-bitvec.csv', filename, cmd)
 
 def run_size_circuit(filename):
-    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/circuit/test/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/circuit/test/%s" % (filename) ]
     run_main('results/size-circuit.csv', filename, cmd)
 
 def run_size_larger(filename):
-    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/larger-grammar/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/larger-grammar/%s" % (filename) ]
     run_main('results/size-larger.csv', filename, cmd)
 
 def run_height_larger(filename):
-    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/larger-grammar/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/larger-grammar/%s" % (filename) ]
     run_main('results/height-larger.csv', filename, cmd)
 
 def run_height(filename):
-    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/string/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/string/%s" % (filename) ]
     run_main('results/height.csv', filename, cmd)
 
 def run_height_bitvec(filename):
-    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/hackers-delight/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/hackers-delight/%s" % (filename) ]
     run_main('results/height-bitvec.csv', filename, cmd)
 
 def run_height_circuit(filename):
-    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/circuit/test/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/circuit/test/%s" % (filename) ]
     run_main('results/height-circuit.csv', filename, cmd)
 
 def run_main(resultfile, filename, cmd):
@@ -170,23 +170,23 @@ def run_main(resultfile, filename, cmd):
         pass
 
 def run_probe(filename):
-    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/string/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/string/%s" % (filename) ]
     run_main('results/probe.csv', filename, cmd)
 
 def run_probe_bitvec(filename):
-    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/hackers-delight/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/hackers-delight/%s" % (filename) ]
     run_main('results/probe-bitvec.csv', filename, cmd)
 
 def run_probe_circuit(filename):
-    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/circuit/test/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/circuit/test/%s" % (filename) ]
     run_main('results/probe-circuit.csv', filename, cmd)
 
 def run_probe_larger(filename):
-    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/larger-grammar/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/larger-grammar/%s" % (filename) ]
     run_main('results/probe-larger.csv', filename, cmd)
 
 def run_san(filename):
-    cmd = [ 'java', '-cp','target/scala-2.12/probe-assembly-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/string/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/string/%s" % (filename) ]
     run_main('results/sanity.csv', filename, cmd)
 
 def parse_args():
