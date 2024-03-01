@@ -6,14 +6,14 @@ import java.nio.file.{FileSystems, Files}
 import scala.Console.println
 import scala.collection.JavaConverters.*
 
-object ProbeMain extends App {
+object ProbeMain{
   def runBenchmarks(filename: String,
                     resultPrinter: (ASTNode, Long, Long, Long) => String
-                   ): String = {
+                  ): String = {
     var program: List[ASTNode] = null
     val t0 = System.currentTimeMillis()
     ProbUpdate.resetPrior()
-    program = Main.synthesize(filename, true, true, false)
+    program = Main.synthesize(filename, true, true, true)
     val t1 = System.currentTimeMillis()
     if (!program.isEmpty) {
       println(filename + resultPrinter(program.head, t1 - t0, program.head.terms, "ite".r.findAllMatchIn(program.head.code).length))
@@ -29,11 +29,17 @@ object ProbeMain extends App {
     ", " + program.code+ ", " + (msec.toFloat / 1000) + ", " + size + ", " + ite
   }
 
-  //val probeBenchmarks = runBenchmarks("src/test/benchmarks/string/count-total-words-in-a-cell.sl", regularBenchmarkPrinter)
-  val files = Files.list(FileSystems.getDefault.getPath("src/test/benchmarks/string/")).iterator().asScala
-  for (file <- files) {
-    println(file)
-    runBenchmarks(file.toString, regularBenchmarkPrinter)
-    print("\n\n")
+  def main(args: Array[String]): Unit = {
+    if (args.length > 0) {
+      val filename = args(0)
+      println(filename)
+      val result = runBenchmarks(filename, regularBenchmarkPrinter)
+      println(result)
+    } else {
+      println("No filename provided.")
+    }
+    //result
   }
+
+  //main()
 }

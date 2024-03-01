@@ -33,6 +33,7 @@ libraryDependencies += "io.spray" %% "spray-json" % "1.3.6"
 
 // https://mvnrepository.com/artifact/commons-cli/commons-cli
 libraryDependencies += "commons-cli" % "commons-cli" % "1.4"
+libraryDependencies += "com.lihaoyi" %% "ujson" % "1.4.0"
 
 //mainClass in (assembly) := Some("pcShell.ShellMain")
 Project.inConfig(Test)(baseAssemblySettings)

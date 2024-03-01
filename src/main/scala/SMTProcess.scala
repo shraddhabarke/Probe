@@ -9,7 +9,7 @@ import scala.collection.mutable.ListBuffer
 import scala.sys.process._
 
 object SMTProcess {
-  val cvc4exe = "cvc4" //"C:\\cvc4-1.8-win64-opt.exe"
+  val cvc4exe = "cvc4"
   val cvc4_SyGus = cvc4exe + " --sygus-out=status-or-def --lang sygus1 -m" //" --cegqi-si=all --sygus-out=status-or-def --lang sygus"
   val cvc4_Smt = cvc4exe + " --lang smt -m" //" --cegqi-si=all --sygus-out=status-or-def --lang sygus"
 
