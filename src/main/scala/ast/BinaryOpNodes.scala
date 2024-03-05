@@ -147,14 +147,22 @@ class BVSub(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BV
 }
 
 class BVSDiv(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
-  override def doOp(l: Any, r: Any): Long = l.asInstanceOf[Long] / r.asInstanceOf[Long]
-
+  override def doOp(l: Any, r: Any): Long = {
+    val lhsNode = l.asInstanceOf[Long]
+    val rhsNode = r.asInstanceOf[Long]
+    if (rhsNode == 0L) 0
+    else lhsNode / rhsNode
+  }
   override val code: String = "(bvsdiv " + lhs.code + " " + rhs.code + ")"
 }
 
 class BVUDiv(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
-  override def doOp(l: Any, r: Any): Long = java.lang.Long.divideUnsigned(l.asInstanceOf[Long],r.asInstanceOf[Long])
-
+  override def doOp(l: Any, r: Any): Long = {
+    val lhsNode = l.asInstanceOf[Long]
+    val rhsNode = r.asInstanceOf[Long]
+    if (rhsNode == 0L) 0
+    else java.lang.Long.divideUnsigned(lhsNode,rhsNode)
+  }
   override val code: String = "(bvudiv " + lhs.code + " " + rhs.code + ")"
 }
 
@@ -242,13 +250,21 @@ class LXor(val lhs: BoolNode, val rhs: BoolNode) extends BinaryOpNode[Boolean] w
 }
 
 class BVSRem(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
-  override def doOp(l: Any, r: Any): Long = l.asInstanceOf[Long] % r.asInstanceOf[Long]
-
-  override val code: String = "(bvsrem " + lhs.code + " " + rhs.code + ")"
+    override def doOp(l: Any, r: Any): Long = {
+    val lhsNode = l.asInstanceOf[Long]
+    val rhsNode = r.asInstanceOf[Long]
+    if (rhsNode == 0L) 0
+    else l.asInstanceOf[Long] % r.asInstanceOf[Long]
+  }
+    override val code: String = "(bvsrem " + lhs.code + " " + rhs.code + ")"
 }
 
 class BVURem(val lhs: BVNode, val rhs: BVNode) extends BinaryOpNode[Long] with BVNode {
-  override def doOp(l: Any, r: Any): Long = java.lang.Long.remainderUnsigned(l.asInstanceOf[Long], r.asInstanceOf[Long])
-
+  override def doOp(l: Any, r: Any): Long = {
+    val lhsNode = l.asInstanceOf[Long]
+    val rhsNode = r.asInstanceOf[Long]
+    if (rhsNode == 0L) 0
+    else java.lang.Long.remainderUnsigned(l.asInstanceOf[Long], r.asInstanceOf[Long])
+  }
   override val code: String = "(bvurem " + lhs.code + " " + rhs.code + ")"
 }

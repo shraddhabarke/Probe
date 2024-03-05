@@ -28,10 +28,14 @@ object AccuracyMain extends App {
         fit
     }
 
-    val eval = evalExpr(args(0), args(1), regularBenchmarkPrinter)
-    
     def regularBenchmarkPrinter(filename: String, eval: ASTNode, fit: Long): String = {
-    "," + filename + "," + eval.code + "," + fit
-  }
+        "," + filename + "," + eval.code + "," + fit
+    }
 
+    def run(): Unit = {
+      val eval = evalExpr(args(0), args(1), regularBenchmarkPrinter)
+      println(eval)
+    }
+    //val eval = evalExpr(args(0), args(1), regularBenchmarkPrinter)
+    run()
 }

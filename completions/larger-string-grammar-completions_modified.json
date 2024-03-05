@@ -1,0 +1,919 @@
+{
+    "exceljet2modified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1)) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1)) 1)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1)) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1)) 1)))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1))) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1)))))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1)) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1)) 1)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1)) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1)) 1)))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1))) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1)))))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1)) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1)) 1)))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1))) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1)))))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1)) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1)) 1)))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1))) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1)))))"
+        ],
+        "time_ms": 773.361,
+        "fit_count_of_1": 0
+    },
+    "31753108modified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" 0)) (- (str.indexof _arg_0 \" \" (+ 1 (str.indexof _arg_0 \" \" 0))) (+ 1 (str.indexof _arg_0 \" \" 0))))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \" \" 0) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \" \" 0) 1)))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \" \" 1) (+ 1 (str.indexof _arg_0 \" \" 2)))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \" \" 1) (+ 1 (str.indexof _arg_0 \" \" (str.indexof _arg_0 \" \" 1))))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" 1)) (- (str.len _arg_0) (+ 2 (str.indexof _arg_0 \" \" 1))))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" 0)) (- (str.len _arg_0) (+ 2 (str.indexof _arg_0 \" \" 0))))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \" \" 1) (+ 1 (str.indexof _arg_0 \" \" (+ 1 (str.indexof _arg_0 \" \" 1)))))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" 0)) (- (str.len _arg_0) (+ 2 (str.indexof _arg_0 \" \" 0))))",
+            "(str.substr _arg_0 1 9)"
+        ],
+        "time_ms": 445.416,
+        "fit_count_of_1": 0
+    },
+    "clean-and-reformat-telephone-numbersmodified.sl": {
+        "solutions": [
+            "(str.replace (str.replace (str.replace _arg_0 \"-\" \"\") \".\" \"\") \"<\" \"\")",
+            "(str.replace (str.replace (str.replace _arg_0 \"-\" \"\") \".\" \"\") \" \" \"\")",
+            "(str.replace (str.replace (str.replace _arg_0 \"-\" \"\") \".\" \"\") \" \" \"\")",
+            "(str.replace (str.replace (str.replace _arg_0 \"-\" \"\") \"<\" \"\") \".\" \"\")",
+            "(str.replace (str.replace (str.replace _arg_0 \"-\" \"\") \"<\" \"\") \".\" \"\")",
+            "(str.replace (str.replace (str.replace _arg_0 \"-\" \"\") \"<\" \"\") \".\" \"\")",
+            "(str.replace (str.replace (str.replace _arg_0 \"-\" \"\") \"<\" \"\") \".\" \"\")",
+            "(str.replace (str.replace (str.replace _arg_0 \"-\" \"\") \".\" \"\") \" \" \"\")",
+            "(str.replace (str.replace (str.replace _arg_0 \"-\" \"\") \"<\" \"\") \">\" \"\")",
+            "(str.replace (str.replace (str.replace _arg_0 \"-\" \"\") \".\" \"\") \" \" \"\")"
+        ],
+        "time_ms": 344.19,
+        "fit_count_of_1": 0
+    },
+    "17212077modified.sl": {
+        "solutions": [
+            "(str.++ (str.substr _arg_0 0 3) (str.substr _arg_0 6 4))",
+            "(str.++ (str.substr _arg_0 0 3) (str.substr _arg_0 6 4))",
+            "(str.++ (str.substr _arg_0 0 3) (str.substr _arg_0 6 4))",
+            "(str.++ (str.substr _arg_0 0 3) (str.substr _arg_0 6 4))",
+            "(str.++ (str.substr _arg_0 0 3) (str.substr _arg_0 6 4))",
+            "(str.++ (str.substr _arg_0 0 3) (str.substr _arg_0 6 4))",
+            "(str.++ (str.substr _arg_0 0 3) (str.substr _arg_0 6 4))",
+            "(str.++ (str.substr _arg_0 0 3) (str.substr _arg_0 6 4))",
+            "(str.++ (str.substr _arg_0 0 3) (str.substr _arg_0 6 4))",
+            "(str.++ (str.substr _arg_0 0 3) (str.substr _arg_0 6 4))"
+        ],
+        "time_ms": 221.965,
+        "fit_count_of_1": 10
+    },
+    "stackoverflow4modified.sl": {
+        "solutions": [
+            "(str.replace (str.replace (str.replace _arg_0 \"<\" \" \") \">\" \" \") \",\" \" \")",
+            "(str.replace (str.replace (str.replace _arg_0 \"<\" \" \") \">\" \" \") \",\" \" \")",
+            "(str.replace (str.replace (str.replace _arg_0 \"<\" \" \") \">\" \" \") \",\" \" \")",
+            "(str.replace (str.replace (str.replace _arg_0 \"<\" \" \") \">\" \" \") \",\" \" \")",
+            "(str.replace (str.replace (str.replace _arg_0 \"<\" \" \") \">\" \" \") \",\" \" \")",
+            "(str.replace (str.replace (str.replace _arg_0 \"<\" \" \") \">\" \" \") \",\" \" \")",
+            "(str.replace (str.replace (str.replace _arg_0 \"<\" \" \") \">\" \" \") \",\" \" \")"
+        ],
+        "time_ms": 904.598,
+        "fit_count_of_1": 0
+    },
+    "stackoverflow11modified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 (str.indexof _arg_0 \" \" 0) (- (str.len _arg_0) 1))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \" \" 0) (str.len _arg_0))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \" \" 1) (- (str.len _arg_0) (str.indexof _arg_0 \" \" 1)))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \" \" 0) (- (str.len _arg_0) 1))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \" \" 0) (str.len _arg_0))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \" \" 0) (str.len _arg_0))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \" \" 0) (str.len _arg_0))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \" \" 0) (str.len _arg_0))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \" \" 0) (- (str.len _arg_0) (str.indexof _arg_0 \" \" 0)))"
+        ],
+        "time_ms": 223.929,
+        "fit_count_of_1": 0
+    },
+    "stackoverflow3modified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"6\" 0)) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \"6\" 0))))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"6\" 0)) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \"6\" 0))))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"6\" 0)) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \"6\" 0))))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"6\" 0)) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \"6\" 0))))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1))) (- (str.len _arg_0) 1))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"6\" 0)) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \"6\" 0))))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" (- 1 (str.len _arg_0)))) (- (str.len _arg_0) 1))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1))) (- (str.len _arg_0) 1))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"6\" 0)) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \"6\" 0))))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"6\" 0)) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \"6\" 0))))"
+        ],
+        "time_ms": 227.913,
+        "fit_count_of_1": 0
+    },
+    "phone-7modified.sl": {
+        "solutions": [
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)"
+        ],
+        "time_ms": 53.494,
+        "fit_count_of_1": 10
+    },
+    "43606446modified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 (- (str.len _arg_0) 1) 1)",
+            "(str.substr _arg_0 (- (str.len _arg_0) 1) 1)",
+            "(str.substr _arg_0 (- (str.len _arg_0) 1) 1)",
+            "(str.substr _arg_0 (- (str.len _arg_0) 1) 1)",
+            "(str.substr _arg_0 (- (str.len _arg_0) 1) 1)",
+            "(str.substr _arg_0 (- (str.len _arg_0) 1) 1)",
+            "(str.substr _arg_0 (- (str.len _arg_0) 1) 1)",
+            "(str.substr _arg_0 (- (str.len _arg_0) 1) 1)",
+            "(str.substr _arg_0 (- (str.len _arg_0) 1) 1)",
+            "(str.substr _arg_0 (- (str.len _arg_0) 1) 1)"
+        ],
+        "time_ms": 700.275,
+        "fit_count_of_1": 0
+    },
+    "phone-5-long-repeatmodified.sl": {
+        "solutions": [
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 1))",
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 0))"
+        ],
+        "time_ms": 431.42,
+        "fit_count_of_1": 0
+    },
+    "stackoverflow10modified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 (- (str.len _arg_0) 4) 4)",
+            "(str.substr _arg_0 (- (str.len _arg_0) 4) 4)",
+            "(str.substr _arg_0 (- (str.len _arg_0) 4) 4)",
+            "(str.substr _arg_0 (- (str.len _arg_0) 4) 4)",
+            "(str.substr _arg_0 (- (str.len _arg_0) 4) 4)",
+            "(str.substr _arg_0 (- (str.len _arg_0) 4) 4)",
+            "(str.substr _arg_0 (- (str.len _arg_0) 4) 4)",
+            "(str.substr _arg_0 (- (str.len _arg_0) 4) 4)",
+            "(str.substr _arg_0 (- (str.len _arg_0) 4) 4)",
+            "(str.substr _arg_0 (- (str.len _arg_0) 4) 4)"
+        ],
+        "time_ms": 901.789,
+        "fit_count_of_1": 0
+    },
+    "count-total-words-in-a-cellmodified.sl": {
+        "solutions": [
+            "(+ 1 (str.len (str.replace _arg_0 \" \" \"\")))",
+            "(+ 1 (str.len (str.replace _arg_0 \" \" \"\")))",
+            "(+ 1 (str.len (str.replace _arg_0 \" \" \"\")))",
+            "(+ 1 (str.len (str.replace _arg_0 \" \" \"\")))",
+            "(+ 1 (str.len (str.replace _arg_0 \" \" \"\")))",
+            "(+ 1 (str.len (str.replace _arg_0 \" \" \"\")))",
+            "(+ 1 (str.len (str.replace _arg_0 \" \" \"\")))",
+            "(+ 1 (str.len (str.replace _arg_0 \" \" \"\")))",
+            "(+ 1 (str.len (str.replace _arg_0 \" \" \"\")))",
+            "(+ 1 (str.len (str.replace _arg_0 \" \" \"\")))"
+        ],
+        "time_ms": 185.418,
+        "fit_count_of_1": 0
+    },
+    "39060015modified.sl": {
+        "solutions": [
+            "(str.replace _arg_0 \"\" \"\")",
+            "(str.replace _arg_0 \"\" \"\")",
+            "(str.replace _arg_0 \"\" \"\")",
+            "(str.replace _arg_0 \"\" \"\")",
+            "(str.replace _arg_0 \"\" \"\")",
+            "(str.replace _arg_0 \"\" \"\")",
+            "(str.replace _arg_0 \"\" \"\")",
+            "(str.replace _arg_0 \"\" \"\")",
+            "(str.replace _arg_0 \"\" \"\")",
+            "(str.replace _arg_0 \"\" \"\")"
+        ],
+        "time_ms": 269.854,
+        "fit_count_of_1": 0
+    },
+    "phone-7-long-repeatmodified.sl": {
+        "solutions": [
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ 1 (str.indexof name \"-\" 0)) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ 1 (str.indexof name \"-\" 0)) 3)",
+            "(str.substr name (+ 5 (str.indexof name \"-\" 0)) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)"
+        ],
+        "time_ms": 578.46,
+        "fit_count_of_1": 9
+    },
+    "stackoverflow1modified.sl": {
+        "solutions": [
+            "(str.replace _arg_0 \"Inc\" \"\")",
+            "(str.replace _arg_0 \"Inc\" \"\")",
+            "(str.replace _arg_0 \"Inc\" \"\")",
+            "(str.replace _arg_0 \"Inc\" \"\")",
+            "(str.replace _arg_0 \"Inc\" \"\")",
+            "(str.replace _arg_0 \"Inc\" \"\")",
+            "(str.replace _arg_0 \"Inc\" \"\")",
+            "(str.replace _arg_0 \"Inc\" \"\")",
+            "(str.replace _arg_0 \"Inc\" \"\")",
+            "(str.replace _arg_0 \"Inc\" \"\")"
+        ],
+        "time_ms": 141.285,
+        "fit_count_of_1": 0
+    },
+    "phone-5modified.sl": {
+        "solutions": [
+            "(str.substr name 1 (str.indexof name \" \" 1))",
+            "(str.substr name 1 (str.indexof name \" \" (- (str.len name) 1)))",
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 1))",
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 1))",
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 1))",
+            "(str.substr name 1 (str.indexof name \" \" 0))"
+        ],
+        "time_ms": 998.926,
+        "fit_count_of_1": 0
+    },
+    "phone-6-long-repeatmodified.sl": {
+        "solutions": [
+            "(str.substr name (+ (str.indexof name \" \" 0) 1) 3)",
+            "(str.substr name 5 3)",
+            "(str.substr name (+ (str.indexof name \" \" 0) 1) 3)",
+            "(str.substr name (+ 1 (str.indexof name \" \" 0)) 3)",
+            "(str.substr name (+ (str.indexof name \" \" 0) 1) 3)",
+            "(str.substr name (+ 1 (str.indexof name \" \" 0)) 3)",
+            "(str.substr name (+ 1 (str.indexof name \" \" 0)) 3)",
+            "(str.substr name (+ (str.indexof name \" \" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \" \" 0) 1) 3)",
+            "(str.substr name (+ 1 (str.indexof name \" \" 0)) 3)"
+        ],
+        "time_ms": 707.828,
+        "fit_count_of_1": 9
+    },
+    "phone-9-shortmodified.sl": {
+        "solutions": [
+            "(str.replace (str.replace (str.replace name \" \" \"\") \"-\" \".\") \"+\" \"\")",
+            "(str.replace (str.replace name \" \" \".\") \"-\" \".\")",
+            "(str.replace (str.replace (str.replace name \" \" \"\") \"-\" \".\") \"+\" \"\")",
+            "(str.replace (str.replace name \" \" \".\") \"-\" \".\")",
+            "(str.replace (str.replace name \" \" \".\") \"-\" \".\")",
+            "(str.replace (str.replace name \"-\" \".\") \" \" \".\")",
+            "(str.replace (str.replace name \"-\" \".\") \" \" \".\")",
+            "(str.replace (str.replace name \"-\" \".\") \" \" \".\")",
+            "(str.replace (str.replace name \"-\" \".\") \" \" \".\")",
+            "(str.replace (str.replace name \"-\" \".\") \" \" \".\")"
+        ],
+        "time_ms": 956.514,
+        "fit_count_of_1": 0
+    },
+    "38871714modified.sl": {
+        "solutions": [
+            "(str.replace _arg_0 \"<\" \"\")",
+            "(str.replace _arg_0 \"<\" \"\")",
+            "(str.replace (str.replace _arg_0 \"<\" \"\") \">\" \"\")",
+            "(str.replace _arg_0 \"<\" \"\")",
+            "(str.replace _arg_0 \"<\" \"\")",
+            "(str.replace (str.replace _arg_0 \"<\" \"\") \">\" \"\")",
+            "(str.replace _arg_0 \"<\" \"\")",
+            "(str.replace _arg_0 \"<\" \"\")",
+            "(str.replace _arg_0 \"<\" \"\")",
+            "(str.replace _arg_0 \"<\" \"\")"
+        ],
+        "time_ms": 197.143,
+        "fit_count_of_1": 0
+    },
+    "phone-5-shortmodified.sl": {
+        "solutions": [
+            "(str.substr name 1 (str.indexof name \" \" 1))",
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 1))",
+            "(str.substr name 1 (str.indexof name \" \" 1))",
+            "(str.substr name 1 (str.indexof name \" \" 1))",
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 1))",
+            "(str.substr name 1 (str.indexof name \" \" 1))",
+            "(str.substr name 1 (str.indexof name \" \" 1))",
+            "(str.substr name 1 (str.indexof name \" \" 1))"
+        ],
+        "time_ms": 854.573,
+        "fit_count_of_1": 0
+    },
+    "stackoverflow5modified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \"=\" 0))",
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \"=\" 0))",
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \"=\" 0))",
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \"=\" 0))",
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \"=\" 0))",
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \"=\" 0))",
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \"=\" 0))",
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \"=\" 0))",
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \"=\" 0))",
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \"=\" 0))"
+        ],
+        "time_ms": 350.608,
+        "fit_count_of_1": 0
+    },
+    "phone-6modified.sl": {
+        "solutions": [
+            "(str.substr name 3 3)",
+            "(str.substr name 3 3)",
+            "(str.substr name 3 3)",
+            "(str.substr name 3 3)",
+            "(str.substr name 3 3)",
+            "(str.substr name 3 3)",
+            "(str.substr name 3 3)",
+            "(str.substr name 3 3)",
+            "(str.substr name 3 3)",
+            "(str.substr name 3 3)"
+        ],
+        "time_ms": 566.289,
+        "fit_count_of_1": 0
+    },
+    "phone-7-longmodified.sl": {
+        "solutions": [
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ 4 (str.indexof name \"-\" 0)) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)"
+        ],
+        "time_ms": 110.157,
+        "fit_count_of_1": 9
+    },
+    "stackoverflow2modified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \" \" -1))",
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \" \" -1))",
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \" \" -1))",
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \" \" -1))"
+        ],
+        "time_ms": 888.951,
+        "fit_count_of_1": 0
+    },
+    "phone-6-longmodified.sl": {
+        "solutions": [
+            "(str.substr name 3 3)",
+            "(str.substr name 4 3)",
+            "(str.substr name 4 3)",
+            "(str.substr name 3 3)",
+            "(str.substr name 3 3)",
+            "(str.substr name 4 3)",
+            "(str.substr name 3 3)",
+            "(str.substr name (+ 3 (str.indexof name \" \" 0)) 3)",
+            "(str.substr name 4 3)",
+            "(str.substr name 3 3)"
+        ],
+        "time_ms": 550.716,
+        "fit_count_of_1": 0
+    },
+    "phone-6-shortmodified.sl": {
+        "solutions": [
+            "(str.substr name 3 3)",
+            "(str.substr name 3 3)",
+            "(str.substr name 3 3)",
+            "(str.substr name 3 3)",
+            "(str.substr name 3 3)",
+            "(str.substr name 3 3)",
+            "(str.substr name 3 3)",
+            "(str.substr name 3 3)",
+            "(str.substr name 3 3)",
+            "(str.substr name 3 3)"
+        ],
+        "time_ms": 242.645,
+        "fit_count_of_1": 0
+    },
+    "phone-9-longmodified.sl": {
+        "solutions": [
+            "(str.replace (str.replace name \" \" \"\") \"-\" \".\")",
+            "(str.replace (str.replace name \" \" \"\") \"-\" \".\")",
+            "(str.replace (str.replace name \" \" \".\") \"-\" \".\")",
+            "(str.replace (str.replace name \" \" \".\") \"-\" \".\")",
+            "(str.replace (str.replace name \" \" \".\") \"-\" \".\")",
+            "(str.replace (str.replace name \" \" \".\") \"-\" \".\")",
+            "(str.replace (str.replace name \" \" \".\") \"-\" \".\")",
+            "(str.replace (str.replace name \" \" \"\") \"-\" \".\")",
+            "(str.replace (str.replace name \" \" \".\") \"-\" \".\")",
+            "(str.replace (str.replace name \"+\" \"\") \"-\" \".\")"
+        ],
+        "time_ms": 95.532,
+        "fit_count_of_1": 0
+    },
+    "phone-5-longmodified.sl": {
+        "solutions": [
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 1))",
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 0))",
+            "(str.substr name 1 (str.indexof name \" \" 0))"
+        ],
+        "time_ms": 135.752,
+        "fit_count_of_1": 0
+    },
+    "stackoverflow7modified.sl": {
+        "solutions": [
+            "(str.replace _arg_0 _arg_1 \"\")",
+            "(str.replace _arg_0 _arg_1 \"\")",
+            "(str.replace _arg_0 _arg_1 \"\")",
+            "(str.replace _arg_0 _arg_1 \"\")",
+            "(str.replace _arg_0 _arg_1 \"\")",
+            "(str.replace _arg_0 _arg_1 \"\")",
+            "(str.replace _arg_0 _arg_1 \"\")",
+            "(str.replace _arg_0 _arg_1 \"\")",
+            "(str.replace _arg_0 _arg_1 \"\")",
+            "(str.replace _arg_0 _arg_1 \"\")"
+        ],
+        "time_ms": 927.477,
+        "fit_count_of_1": 0
+    },
+    "phone-7-shortmodified.sl": {
+        "solutions": [
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ 4 (str.indexof name \"-\" 0)) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)",
+            "(str.substr name (+ (str.indexof name \"-\" 0) 1) 3)"
+        ],
+        "time_ms": 916.066,
+        "fit_count_of_1": 9
+    },
+    "36462127modified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1))) (- (str.len _arg_0) 1))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1))) (- (str.len _arg_0) 1))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1))) (- (str.len _arg_0) 1))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)) 1)))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1))) (- (str.len _arg_0) 1))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1))) (- (str.len _arg_0) 1))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1))) (- (str.len _arg_0) 1))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1))) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)))))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1))) (- (str.len _arg_0) 1))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1))) (- (str.len _arg_0) 1))"
+        ],
+        "time_ms": 473.968,
+        "fit_count_of_1": 0
+    },
+    "initials-long-repeatmodified.sl": {
+        "solutions": [
+            
+        ],
+        "time_ms": 137.047,
+        "fit_count_of_1": 0
+    },
+    "strip-html-from-text-or-numbersmodified.sl": {
+        "solutions": [
+            
+        ],
+        "time_ms": 990.643,
+        "fit_count_of_1": 0
+    },
+    "phone-9modified.sl": {
+        "solutions": [
+            "(str.replace (str.replace (str.replace name \" \" \"\") \"-\" \"\") \"+\" \"\")",
+            "(str.replace (str.replace (str.replace name \" \" \"\") \"-\" \".\") \"+\" \"\")",
+            "(str.replace (str.replace name \" \" \".\") \"-\" \".\")",
+            "(str.replace (str.replace (str.replace name \" \" \"\") \"-\" \".\") \"+\" \"\")",
+            "(str.replace (str.replace (str.replace name \" \" \"\") \"-\" \".\") \"+\" \"\")",
+            "(str.replace (str.replace name \" \" \".\") \"-\" \".\")",
+            "(str.replace (str.replace (str.replace name \" \" \"\") \"-\" \".\") \"+\" \"\")",
+            "(str.replace (str.replace (str.replace name \" \" \"\") \"-\" \".\") \"+\" \"\")",
+            "(str.replace (str.replace (str.replace name \" \" \".\") \"-\" \".\") \"+\" \"\")",
+            "(str.replace (str.replace (str.replace name \" \" \"\") \"-\" \".\") \"+\" \"\")"
+        ],
+        "time_ms": 580.042,
+        "fit_count_of_1": 0
+    },
+    "get-domain-name-from-urlmodified.sl": {
+        "solutions": [
+            "(str.++ (str.substr _arg_0 0 (+ 1 (str.indexof _arg_0 \"/\" 2))) \"/\")",
+            "(str.++ (str.substr _arg_0 0 (str.indexof _arg_0 \"/\" 2)) \"/\")",
+            "(str.++ (str.substr _arg_0 0 (+ 1 (str.indexof _arg_0 \"/\" 2))) \"\")",
+            "(str.++ (str.substr _arg_0 0 (+ (str.indexof _arg_0 \"/\" 2) 1)) \"\")",
+            "(str.++ (str.substr _arg_0 0 (+ 1 (str.indexof _arg_0 \"/\" 2))) \"\")",
+            "(str.++ (str.substr _arg_0 0 (+ 2 (str.indexof _arg_0 \"/\" 2))) \"/\")",
+            "(str.++ (str.substr _arg_0 0 (str.indexof _arg_0 \"/\" 2)) \"/\")",
+            "(str.++ (str.substr _arg_0 0 (str.indexof _arg_0 \"/\" 2)) \"/\")",
+            "(str.++ (str.substr _arg_0 0 (+ 1 (str.indexof _arg_0 \"/\" 2))) \"\")",
+            "(str.++ (str.substr _arg_0 0 (str.indexof _arg_0 \"/\" 8)) \"/\")"
+        ],
+        "time_ms": 847.771,
+        "fit_count_of_1": 0
+    },
+    "33619752modified.sl": {
+        "solutions": [
+            "(str.replace _arg_0 \"Inc\" \"\")",
+            "(str.replace _arg_0 \"Inc\" \"\")",
+            "(str.replace (str.replace (str.replace (str.replace _arg_0 \"Inc\" \"\") \"Corporation\" \"\") \"Company\" \"\") \"Enterprises\" \"\")",
+            "(str.replace (str.replace (str.replace (str.replace _arg_0 \"Inc\" \"\") \"Corporation\" \"\") \"Enterprises\" \"\") \"Company\" \"\")",
+            "(str.replace (str.replace (str.replace _arg_0 \"Inc\" \"\") \"Corporation\" \"\") \"Company\" \"\")",
+            "(str.replace (str.replace (str.replace (str.replace _arg_0 \"Inc\" \"\") \"Company\" \"\") \"Corporation\" \"\") \"Enterprises\" \"\")",
+            "(str.replace (str.replace (str.replace (str.replace _arg_0 \"Inc\" \"\") \"Company\" \"\") \"Corporation\" \"\") \"Enterprises\" \"\")",
+            "(str.replace (str.replace (str.replace (str.replace _arg_0 \"Inc\" \"\") \"Corporation\" \"\") \"Company\" \"\") \"Enterprises\" \"\")",
+            "(str.replace _arg_0 \"Inc\" \"\")"
+        ],
+        "time_ms": 499.455,
+        "fit_count_of_1": 0
+    },
+    "exceljet3modified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"=\" 0) 2) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"=\" 0) 2)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"=\" 0) 2) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"=\" 0) 2)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"=\" 0) 2) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"=\" 0) 2)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"=\" 0) 2) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"=\" 0) 2)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"=\" 0) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"=\" 0) 1)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"=\" 0) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"=\" 0) 1)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"=\" 0) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"=\" 0) 1)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"=\" 0) 2) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"=\" 0) 2)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"=\" 0) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"=\" 0) 1)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"=\" 0) 2) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"=\" 0) 2)))"
+        ],
+        "time_ms": 722.28,
+        "fit_count_of_1": 6
+    },
+    "25239569modified.sl": {
+        "solutions": [
+            "(str.replace (str.replace (str.replace _arg_0 \"BRD\" \"Branding\") \"LDS\" \"Leads\") \"DRS\" \"Direct Response\")",
+            "(str.replace (str.replace (str.replace _arg_0 \"BRD\" \"Branding\") \"DRS\" \"Direct Response\") \"LDS\" \"Leads\")",
+            "(str.replace (str.replace (str.replace _arg_0 \"BRD\" \"Branding\") \"DRS\" \"Direct Response\") \"LDS\" \"Leads\")",
+            "(str.replace (str.replace (str.replace _arg_0 \"BRD\" \"Branding\") \"LDS\" \"Leads\") \"DRS\" \"Direct Response\")",
+            "(str.replace (str.replace (str.replace _arg_0 \"BRD\" \"Branding\") \"DRS\" \"Direct Response\") \"LDS\" \"Leads\")",
+            "(str.replace (str.replace (str.replace _arg_0 \"BRD\" \"Branding\") \"DRS\" \"Direct Response\") \"LDS\" \"Leads\")",
+            "(str.replace (str.replace (str.replace _arg_0 \"BRD\" \"Branding\") \"DRS\" \"Direct Response\") \"LDS\" \"Leads\")",
+            "(str.replace (str.replace (str.replace _arg_0 \"BRD\" \"Branding\") \"DRS\" \"Direct Response\") \"LDS\" \"Leads\")",
+            "(str.replace (str.replace (str.replace _arg_0 \"BRD\" \"Branding\") \"DRS\" \"Direct Response\") \"LDS\" \"Leads\")",
+            "(str.replace (str.replace (str.replace _arg_0 \"BRD\" \"Branding\") \"DRS\" \"Direct Response\") \"LDS\" \"Leads\")"
+        ],
+        "time_ms": 690.124,
+        "fit_count_of_1": 10
+    },
+    "initials-longmodified.sl": {
+        "solutions": [
+            
+        ],
+        "time_ms": 664.25,
+        "fit_count_of_1": 0
+    },
+    "stackoverflow6modified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"=\" 0) 2) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"=\" 0) 2)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"=\" 0) 2) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"=\" 0) 2)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"=\" 0) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"=\" 0) 1)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"=\" 0) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"=\" 0) 1)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"=\" 0) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"=\" 0) 1)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"=\" 0) 2) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"=\" 0) 2)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"=\" 0) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"=\" 0) 1)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"=\" 0) 2) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"=\" 0) 2)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"=\" 0) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"=\" 0) 1)))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"=\" 0)) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \"=\" 0))))"
+        ],
+        "time_ms": 49.24,
+        "fit_count_of_1": 0
+    },
+    "43120683modified.sl": {
+        "solutions": [
+            
+        ],
+        "time_ms": 445.919,
+        "fit_count_of_1": 0
+    },
+    "phone-10modified.sl": {
+        "solutions": [
+            
+        ],
+        "time_ms": 148.579,
+        "fit_count_of_1": 0
+    },
+    "split-text-string-at-specific-charactermodified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \"_\" (- _arg_1 1)))",
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \"_\" (- _arg_1 1)))",
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \"_\" (- _arg_1 1)))",
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \"_\" (- _arg_1 1)))",
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \"_\" (- _arg_1 1)))",
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \"_\" (- _arg_1 1)))",
+            "(str.substr _arg_0 0 (ite (= _arg_1 1) (str.indexof _arg_0 \"_\" 0) (str.len _arg_0)))",
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \"_\" (- _arg_1 1)))",
+            "(str.substr _arg_0 0 (ite (= _arg_1 1) (str.indexof _arg_0 \"_\" 0) (str.len _arg_0)))",
+            "(str.substr _arg_0 0 (str.indexof _arg_0 \"_\" (- _arg_1 1)))",
+            "(str.substr _arg_0 0 (ite (= _arg_1 1) (str.indexof _arg_0 \"_\" 0) (str.len _arg_0)))"
+        ],
+        "time_ms": 80.83,
+        "fit_count_of_1": 0
+    },
+    "phone-10_shortmodified.sl": {
+        "solutions": [
+            
+        ],
+        "time_ms": 537.488,
+        "fit_count_of_1": 0
+    },
+    "find-nth-occurrence-of-charactermodified.sl": {
+        "solutions": [
+            "(str.indexof _arg_0 \"_\" (str.indexof _arg_0 \"_\" (- _arg_1 1)))",
+            "(str.indexof _arg_0 \"_\" (str.indexof _arg_0 \"_\" 0))",
+            "(str.indexof _arg_0 \"_\" (str.indexof _arg_0 \"_\" (- _arg_1 1)))"
+        ],
+        "time_ms": 0.413,
+        "fit_count_of_1": 0
+    },
+    "phone-10-long-repeatmodified.sl": {
+        "solutions": [
+            
+        ],
+        "time_ms": 859.68,
+        "fit_count_of_1": 0
+    },
+    "get-last-line-in-cellmodified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 (str.indexof _arg_0 \"/n\" (- (str.len _arg_0) 1)) (str.len _arg_0))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"/n\" (- (str.len _arg_0) 1)) (- (str.len _arg_0) (str.indexof _arg_0 \"/n\" (- (str.len _arg_0) 1))))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"/n\" (- (str.len _arg_0) 1)) (str.len _arg_0))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"/n\" (- (str.len _arg_0) 1)) (str.len _arg_0))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"/n\" (- (str.len _arg_0) 1)) (str.len _arg_0))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"/n\" (- (str.len _arg_0) 1)) (str.len _arg_0))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"/n\" (- (str.len _arg_0) 1)) (str.len _arg_0))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"/n\" (- (str.len _arg_0) 2)) (str.len _arg_0))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"/n\" (- (str.len _arg_0) 1)) (str.len _arg_0))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"/n\" (- (str.len _arg_0) 1)) (str.len _arg_0))"
+        ],
+        "time_ms": 859.705,
+        "fit_count_of_1": 0
+    },
+    "44789427modified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 0 (ite (= _arg_1 1) (str.indexof _arg_0 \"-\" 0) (str.len _arg_0)))"
+        ],
+        "time_ms": 453.361,
+        "fit_count_of_1": 0
+    },
+    "get-first-name-from-name-with-commamodified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \",\" 0) (ite (= _arg_1 1) 2 0)) (str.len (str.substr _arg_0 (str.indexof _arg_0 \",\" 0) (str.len _arg_0))))"
+        ],
+        "time_ms": 504.928,
+        "fit_count_of_1": 0
+    },
+    "extract-nth-word-from-text-stringmodified.sl": {
+        "solutions": [
+            "(str.at (str.++ _arg_0 \" \") (+ (str.indexof (str.++ _arg_0 \" \") \" \" (- _arg_1 1)) 1))",
+            "(str.at (str.++ _arg_0 \" \") (+ (str.indexof (str.++ _arg_0 \" \") \" \" (- _arg_1 1)) 1))",
+            "(str.at (str.++ _arg_0 \" \") (str.indexof (str.++ _arg_0 \" \") \" \" (- _arg_1 1)))",
+            "(str.at (str.++ _arg_0 \" \") (str.indexof (str.++ _arg_0 \" \") \" \" (- _arg_1 1)))",
+            "(str.at (str.++ _arg_0 \" \") (+ (str.indexof (str.++ _arg_0 \" \") \" \" (- _arg_1 1)) 1))",
+            "(str.at (str.++ _arg_0 \" \") (+ _arg_1 (- (str.indexof (str.++ _arg_0 \" \") \" \" _arg_1) _arg_1)))",
+            "(str.at (str.++ _arg_0 \" \") (+ (str.indexof (str.++ _arg_0 \" \") \" \" (- _arg_1 1)) 1))",
+            "(str.at (str.++ _arg_0 \" \") (+ (str.indexof (str.++ _arg_0 \" \") \" \" (- _arg_1 1)) 1))",
+            "(str.at (str.++ _arg_0 \" \") (+ (str.indexof (str.++ _arg_0 \" \") \" \" (- _arg_1 1)) 1))",
+            "(str.at (str.++ _arg_0 \" \") (str.indexof (str.++ _arg_0 \" \") \" \" _arg_1))"
+        ],
+        "time_ms": 228.358,
+        "fit_count_of_1": 0
+    },
+    "strip-non-numeric-charactersmodified.sl": {
+        "solutions": [
+            
+        ],
+        "time_ms": 966.829,
+        "fit_count_of_1": 0
+    },
+    "get-last-name-from-name-with-commamodified.sl": {
+        "solutions": [
+            
+        ],
+        "time_ms": 357.066,
+        "fit_count_of_1": 0
+    },
+    "phone-10-longmodified.sl": {
+        "solutions": [
+            "(str.replace (str.replace name \"-\" \" \") \" \" \"(\")"
+        ],
+        "time_ms": 49.729,
+        "fit_count_of_1": 0
+    },
+    "stackoverflow9modified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" (+ 1 (str.indexof _arg_0 \" \" 0)))) -1)",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" (+ 1 (str.indexof _arg_0 \" \" 0)))) -1)",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" (+ 1 (str.indexof _arg_0 \" \" 0)))) -1)",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" (+ 1 (str.indexof _arg_0 \" \" 0)))) -1)",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" (+ 1 (str.indexof _arg_0 \" \" 0)))) -1)",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \" \" 0) 1) -1)"
+        ],
+        "time_ms": 139.355,
+        "fit_count_of_1": 0
+    },
+    "remove-text-by-positionmodified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)) 1)))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1))) (- (str.len _arg_0) 1))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1))) (- (str.len _arg_0) 1))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)) 1) (- (str.len _arg_0) 1))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)) 1)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)) 1) (- (str.len _arg_0) 1))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1))) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)))))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)) 1)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)) 1)))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1))) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)))))"
+        ],
+        "time_ms": 656.079,
+        "fit_count_of_1": 0
+    },
+    "extract-word-that-begins-with-specific-charactermodified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 (str.indexof _arg_0 \"_\" 0) (+ 1 (str.indexof (str.substr _arg_0 (str.indexof _arg_0 \"_\" 0) (str.len _arg_0)) \" \" 0)))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"_\" 0) (+ 1 (str.indexof (str.substr _arg_0 (str.indexof _arg_0 \"_\" 0) (str.len _arg_0)) \" \" 0)))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"_\" 0) (+ 1 (str.indexof (str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"_\" 0)) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \"_\" 0)))) \" \" 0)))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"_\" 0) (+ 1 (str.indexof (str.substr _arg_0 (str.indexof _arg_0 \"_\" 0) (str.len _arg_0)) \" \" 0)))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"_\" 0) (+ 1 (str.indexof (str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"_\" 0)) 1) \" \" 0)))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"_\" 0) (+ 1 (str.indexof (str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"_\" 0)) (str.len _arg_0)) \" \" 0)))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"_\" 0) (+ 1 (str.indexof (str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"_\" 0)) (- (str.len _arg_0) 1)) \" \" 0)))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"_\" 0) (+ 1 (str.indexof (str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"_\" 0)) (str.len _arg_0)) \" \" 0)))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"_\" 0) (+ 1 (str.indexof (str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"_\" 0)) (str.len _arg_0)) \" \" -1)))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"_\" 0) (+ 1 (str.indexof (str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"_\" 0)) 1) \" \" 0)))"
+        ],
+        "time_ms": 254.246,
+        "fit_count_of_1": 0
+    },
+    "11604909modified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1)) (+ (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1)) 3))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \".\" (- (str.indexof _arg_0 \" \" 1) 1)) 3)",
+            "(str.substr _arg_0 (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1)) (+ 3 (str.indexof _arg_0 \".\" (- (str.len _arg_0) 1))))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \".\" (- (str.indexof _arg_0 \" \" 1) 1)) (+ 3 (str.indexof _arg_0 \" \" 1)))",
+            "(str.replace (str.substr _arg_0 0 (str.indexof (str.replace _arg_0 \".\" \" \") \" \" 0)) \".\" \"\")"
+        ],
+        "time_ms": 107.513,
+        "fit_count_of_1": 0
+    },
+    "get-last-wordmodified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1))) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1)))))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1))) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1)))))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1))) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1)))))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1))) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1)))))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1))) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1)))))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1))) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1)))))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1))) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1)))))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1))) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1)))))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1))) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1)))))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1))) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \" \" (- (str.len _arg_0) 1)))))"
+        ],
+        "time_ms": 895.561,
+        "fit_count_of_1": 0
+    },
+    "initialsmodified.sl": {
+        "solutions": [
+            
+        ],
+        "time_ms": 590.75,
+        "fit_count_of_1": 0
+    },
+    "initials_smallmodified.sl": {
+        "solutions": [
+            
+        ],
+        "time_ms": 686.038,
+        "fit_count_of_1": 0
+    },
+    "phone-9-long-repeatmodified.sl": {
+        "solutions": [
+            "(str.replace (str.replace name \" \" \".\") \"-\" \".\")",
+            "(str.replace (str.replace name \" \" \".\") \"-\" \".\")",
+            "(str.replace (str.replace name \"-\" \".\") \" \" \".\")",
+            "(str.replace (str.replace (str.replace name \"+\" \"\") \" \" \".\") \"-\" \".\")",
+            "(str.replace (str.replace name \" \" \".\") \"-\" \".\")",
+            "(str.replace (str.replace name \" \" \".\") \"-\" \".\")",
+            "(str.replace (str.replace name \"-\" \".\") \" \" \"\")",
+            "(str.replace (str.replace name \"-\" \".\") \" \" \".\")",
+            "(str.replace (str.replace name \" \" \".\") \"-\" \".\")",
+            "(str.replace (str.replace (str.replace name \"+\" \"\") \" \" \".\") \"-\" \".\")"
+        ],
+        "time_ms": 440.539,
+        "fit_count_of_1": 0
+    },
+    "exceljet1modified.sl": {
+        "solutions": [
+            
+        ],
+        "time_ms": 3.599,
+        "fit_count_of_1": 0
+    },
+    "extract-word-containing-specific-textmodified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 (str.indexof _arg_0 \"_\" (- (str.len _arg_0) 1)) (- (str.len _arg_0) (str.indexof _arg_0 \"_\" (- (str.len _arg_0) 1))))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"_\" -1) (str.len _arg_0))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"_\" -1) (+ 1 (str.indexof _arg_0 \".\" (str.indexof _arg_0 \"_\" -1))))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"_\" -1) (str.len _arg_0))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"_\" (- (str.len _arg_0) 1)) (- (str.len _arg_0) (str.indexof _arg_0 \"_\" (- (str.len _arg_0) 1))))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"_\" (- (str.len _arg_0) 1)) (str.len _arg_0))"
+        ],
+        "time_ms": 111.765,
+        "fit_count_of_1": 0
+    },
+    "stackoverflow8modified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)) (- (str.len _arg_0) (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1))))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)) (- (str.len _arg_0) (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1))))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"/\" 0) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"/\" 0) 1)))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)) (- (str.len _arg_0) (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1))))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)) (str.len _arg_0))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)) (- (str.len _arg_0) 1))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1))) (- (str.len _arg_0) 1))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)) (- (str.len _arg_0) 1))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1))) (- (str.len _arg_0) 1))"
+        ],
+        "time_ms": 387.341,
+        "fit_count_of_1": 0
+    },
+    "get-middle-name-from-full-namemodified.sl": {
+        "solutions": [
+            
+        ],
+        "time_ms": 479.456,
+        "fit_count_of_1": 0
+    },
+    "extract-text-between-parenthesesmodified.sl": {
+        "solutions": [
+            "(str.to.int (str.substr _arg_0 (+ (str.indexof _arg_0 \"<\" 0) 1) (- (str.indexof _arg_0 \">\" 0) (+ (str.indexof _arg_0 \"<\" 0) 1))))",
+            "(str.to.int (str.substr _arg_0 (+ (str.indexof _arg_0 \"<\" 0) 1) (- (str.indexof _arg_0 \">\" 0) (+ (str.indexof _arg_0 \"<\" 0) 1))))",
+            "(str.to.int (str.substr _arg_0 (+ (str.indexof _arg_0 \"<\" 0) 1) (- (str.indexof _arg_0 \">\" 0) (+ (str.indexof _arg_0 \"<\" 0) 1))))",
+            "(str.to.int (str.substr _arg_0 (+ (str.indexof _arg_0 \"<\" 0) 1) (- (str.indexof _arg_0 \">\" 0) (+ (str.indexof _arg_0 \"<\" 0) 1))))",
+            "(str.to.int (str.substr _arg_0 (+ (str.indexof _arg_0 \"<\" 0) 1) (- (str.indexof _arg_0 \">\" 0) (+ (str.indexof _arg_0 \"<\" 0) 1))))",
+            "(str.to.int (str.substr _arg_0 (+ (str.indexof _arg_0 \"<\" 0) 1) (- (str.indexof _arg_0 \">\" 0) (+ (str.indexof _arg_0 \"<\" 0) 1))))",
+            "(str.to.int (str.substr _arg_0 (+ (str.indexof _arg_0 \"<\" 0) 1) (- (str.indexof _arg_0 \">\" 0) (+ (str.indexof _arg_0 \"<\" 0) 1))))",
+            "(str.to.int (str.substr _arg_0 (+ (str.indexof _arg_0 \"<\" 0) 1) (- (str.indexof _arg_0 \">\" 0) (+ (str.indexof _arg_0 \"<\" 0) 1))))",
+            "(str.to.int (str.substr _arg_0 (+ (str.indexof _arg_0 \"<\" 0) 1) (- (str.indexof _arg_0 \">\" 0) (+ (str.indexof _arg_0 \"<\" 0) 1))))",
+            "(str.to.int (str.substr _arg_0 (+ (str.indexof _arg_0 \"<\" 0) 1) (- (str.indexof _arg_0 \">\" 0) (+ (str.indexof _arg_0 \"<\" 0) 1))))"
+        ],
+        "time_ms": 385.148,
+        "fit_count_of_1": 10
+    },
+    "strip-numeric-characters-from-cellmodified.sl": {
+        "solutions": [
+            "(str.replace _arg_0 \"0\" (str.replace _arg_0 \"1\" (str.replace _arg_0 \"2\" (str.replace _arg_0 \"3\" (str.replace _arg_0 \"4\" (str.replace _arg_0 \"5\" (str.replace _arg_0 \"6\" (str.replace _arg_0 \"7\" (str.replace _arg_0 \"8\" (str.replace _arg_0 \"9\" \"\"))))))))))",
+            "(str.replace _arg_0 \"1\" (str.replace _arg_0 \"2\" (str.replace _arg_0 \"3\" (str.replace _arg_0 \"4\" (str.replace _arg_0 \"5\" (str.replace _arg_0 \"6\" (str.replace _arg_0 \"7\" (str.replace _arg_0 \"8\" (str.replace _arg_0 \"9\" (str.replace _arg_0 \"0\" \"\"))))))))))"
+        ],
+        "time_ms": 701.951,
+        "fit_count_of_1": 0
+    },
+    "35744094modified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"/\" 2) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"/\" 2) 1)))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1))) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)))))",
+            "(str.substr _arg_0 (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1)) (- (str.len _arg_0) (str.indexof _arg_0 \"/\" (- (str.len _arg_0) 1))))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"/\" 2) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"/\" 2) 1)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"/\" 2) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"/\" 2) 1)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"/\" 2) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"/\" 2) 1)))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"/\" 2) 1) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"/\" 2) 1)))"
+        ],
+        "time_ms": 25.914,
+        "fit_count_of_1": 0
+    },
+    "exceljet4modified.sl": {
+        "solutions": [
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"/\" 0) 2) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"/\" 0) 2)))",
+            "(str.substr _arg_0 (+ 1 (str.indexof _arg_0 \"/\" 0)) (- (str.len _arg_0) (+ 1 (str.indexof _arg_0 \"/\" 0))))",
+            "(str.substr _arg_0 (+ (str.indexof _arg_0 \"/\" 0) 2) (- (str.len _arg_0) (+ (str.indexof _arg_0 \"/\" 0) 2)))"
+        ],
+        "time_ms": 20.845,
+        "fit_count_of_1": 2
+    },
+    "remove-leading-and-trailing-spaces-from-textmodified.sl": {
+        "solutions": [
+            
+        ],
+        "time_ms": 869.153,
+        "fit_count_of_1": 0
+    }
+}

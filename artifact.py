@@ -21,47 +21,47 @@ def run(args):
     if args.cmd == "string":
         files = [i for i in os.listdir("src/test/benchmarks/string/") if i.endswith("sl")]
         if args.strategy == "probe":
-            with Pool(1) as pool:
-                pool.map(run_probe, files)
+            for file in files:
+                run_probe(filename=file)
         elif args.strategy == "size":
-            with Pool(1) as pool:
-                pool.map(run_size, files)
+            for file in files:
+                run_size(filename=file)
         elif args.strategy == "height":
             with Pool(1) as pool:
                 pool.map(run_height, files)
     elif args.cmd == "bitvec":
         files = [i for i in os.listdir("src/test/benchmarks/hackers-delight/") if i.endswith("sl")]
         if args.strategy == "probe":
-            with Pool(1) as pool:
-                pool.map(run_probe_bitvec, files)
+            for file in files:
+                run_probe_bitvec(filename=file)
         elif args.strategy == "size":
-            with Pool(1) as pool:
-                pool.map(run_size_bitvec, files)
+            for file in files:
+                run_size_bitvec(filename=file)
         elif args.strategy == "height":
             with Pool(1) as pool:
-                pool.map(run_height_bitvec, files) 
+                pool.map(run_height, files)
     elif args.cmd == "circuit":
         files = [i for i in os.listdir("src/test/benchmarks/circuit/test/") if i.endswith("sl")]
         if args.strategy == "probe":
-            with Pool(1) as pool:
-                pool.map(run_probe_circuit, files)
+            for file in files:
+                run_probe_circuit(filename=file)
         elif args.strategy == "size":
-            with Pool(1) as pool:
-                pool.map(run_size_circuit, files)
+            for file in files:
+                run_size_circuit(filename=file)
         elif args.strategy == "height":
             with Pool(1) as pool:
-                pool.map(run_height_circuit, files)             
+                pool.map(run_height, files)
 
 def run_larger(args):
     times = args.timeout
     if args.cmd == "string":
         files = [i for i in os.listdir("src/test/benchmarks/larger-grammar/") if i.endswith("sl")]
         if args.strategy == "probe":
-            with Pool(1) as pool:
-                pool.map(run_probe_larger, files)
+            for file in files:
+                run_probe_larger(filename=file)
         elif args.strategy == "size":
-            with Pool(1) as pool:
-                pool.map(run_size_larger, files)
+            for file in files:
+                run_size_larger(filename=file)
         elif args.strategy == "height":
             with Pool(1) as pool:
                 pool.map(run_height_larger, files)        
@@ -91,10 +91,9 @@ def run_acc_probe(filename):
         result = dict(reader)
     key = filename.replace('-long','')
     try:
-        cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/AccuracyMain', "src/test/benchmarks/accuracy-expt/{}".format(filename), "{}".format(result[key])]
+        cmd = [ 'java', '-cp','target/scala-3.2.2/probe-assembly-0.1.jar', 'sygus/AccuracyMain', "src/test/benchmarks/accuracy-expt/{}".format(filename), "{}".format(result[key])]
         output, err  = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
         output_str = output.decode("utf-8")
-        print(output_str)
         if (output_str != "" and "memory" not in output_str):
             with open('results/probe-accuracy.csv', 'a', newline='') as csvfile:
                 csvwriter = csv.writer(csvfile, delimiter=',', quotechar='"', skipinitialspace=True)
@@ -109,10 +108,9 @@ def run_acc_cvc(filename):
         result = dict(reader)
     key = filename.replace('-long','')
     try:
-        cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/AccuracyMain', "src/test/benchmarks/accuracy-expt/{}".format(filename), "{}".format(result[key])]
+        cmd = [ 'java', '-cp','target/scala-3.2.2/probe-assembly-0.1.jar', 'sygus/AccuracyMain', "src/test/benchmarks/accuracy-expt/{}".format(filename), "{}".format(result[key])]
         output, err  = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
         output_str = output.decode("utf-8")
-        print(output_str)
         if (output_str != "" and "memory" not in output_str):
             with open('results/cvc4-accuracy.csv', 'a', newline='') as csvfile:
                 csvwriter = csv.writer(csvfile, delimiter=',', quotechar='"', skipinitialspace=True)
@@ -122,43 +120,41 @@ def run_acc_cvc(filename):
         pass   
 
 def run_size(filename):
-    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/string/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe-assembly-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/string/%s" % (filename) ]
     run_main('results/size.csv', filename, cmd)
 
 def run_size_bitvec(filename):
-    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/hackers-delight/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe-assembly-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/hackers-delight/%s" % (filename) ]
     run_main('results/size-bitvec.csv', filename, cmd)
 
 def run_size_circuit(filename):
-    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/circuit/test/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe-assembly-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/circuit/test/%s" % (filename) ]
     run_main('results/size-circuit.csv', filename, cmd)
 
 def run_size_larger(filename):
-    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/larger-grammar/%s" % (filename) ]
-    run_main('results/size-larger.csv', filename, cmd)
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe-assembly-0.1.jar', 'sygus/SizeMain', "src/test/benchmarks/larger-grammar/%s" % (filename) ]
+    run_main('results/init_pcfg.csv', filename, cmd)
 
 def run_height_larger(filename):
-    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/larger-grammar/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe-assembly-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/larger-grammar/%s" % (filename) ]
     run_main('results/height-larger.csv', filename, cmd)
 
 def run_height(filename):
-    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/string/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe-assembly-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/string/%s" % (filename) ]
     run_main('results/height.csv', filename, cmd)
 
 def run_height_bitvec(filename):
-    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/hackers-delight/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe-assembly-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/hackers-delight/%s" % (filename) ]
     run_main('results/height-bitvec.csv', filename, cmd)
 
 def run_height_circuit(filename):
-    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/circuit/test/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe-assembly-0.1.jar', 'sygus/HeightMain', "src/test/benchmarks/circuit/test/%s" % (filename) ]
     run_main('results/height-circuit.csv', filename, cmd)
 
 def run_main(resultfile, filename, cmd):
     try:
-        print("Synthesizing program for %s" % filename)
         run = subprocess.run(cmd,stderr=subprocess.PIPE, stdout=subprocess.PIPE, timeout=times)
         output_str = run.stdout.decode()
-        print(output_str)
         if (output_str != "" and "memory" not in output_str):
             with open(resultfile, 'a', newline='') as csvfile:
                 csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
@@ -170,23 +166,23 @@ def run_main(resultfile, filename, cmd):
         pass
 
 def run_probe(filename):
-    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/string/%s" % (filename) ]
+    cmd = ['java', '-cp', 'target/scala-3.2.2/probe-assembly-0.1.jar', 'sygus/ProbeMain', f"src/test/benchmarks/larger-grammar/{filename}"]
     run_main('results/probe.csv', filename, cmd)
 
 def run_probe_bitvec(filename):
-    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/hackers-delight/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe-assembly-0.1.jar', 'sygus/ProbeMain', f"src/test/benchmarks/hackers-delight/{filename}"]
     run_main('results/probe-bitvec.csv', filename, cmd)
 
 def run_probe_circuit(filename):
-    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/circuit/test/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe-assembly-0.1.jar', 'sygus/ProbeMain', f"src/test/benchmarks/circuit/test/{filename}"]
     run_main('results/probe-circuit.csv', filename, cmd)
 
 def run_probe_larger(filename):
-    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/larger-grammar/%s" % (filename) ]
-    run_main('results/probe-larger.csv', filename, cmd)
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe-assembly-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/larger-grammar/%s" % (filename) ]
+    run_main('results/probe-latest.csv', filename, cmd)
 
 def run_san(filename):
-    cmd = [ 'java', '-cp','target/scala-3.2.2/probe_3-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/string/%s" % (filename) ]
+    cmd = [ 'java', '-cp','target/scala-3.2.2/probe-assembly-0.1.jar', 'sygus/ProbeMain', "src/test/benchmarks/string/%s" % (filename) ]
     run_main('results/sanity.csv', filename, cmd)
 
 def parse_args():

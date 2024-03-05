@@ -3,10 +3,10 @@ package sygus
 import ast.ASTNode
 import enumeration.ProbUpdate
 
-object SizeMain extends App {
+object SizeMain {
   def runBenchmarks(filename: String,
                     resultPrinter: (ASTNode, Long, Long) => String
-                   ): String = {
+                  ): String = {
     var program: List[ASTNode] = null
     val t0 = System.currentTimeMillis()
     ProbUpdate.resetPrior()
@@ -26,6 +26,17 @@ object SizeMain extends App {
     "," + program.code + "," + (msec.toFloat / 1000) + "," + size
   }
 
-  val probeBenchmarks = runBenchmarks(args(0), regularBenchmarkPrinter)
+  //val probeBenchmarks = runBenchmarks(args(0), regularBenchmarkPrinter)
+  def main(args: Array[String]): Unit = {
+    if (args.length > 0) {
+      val filename = args(0)
+      println(filename)
+      val result = runBenchmarks(filename, regularBenchmarkPrinter)
+      println(result)
+    } else {
+      println("No filename provided.")
+    }
+    //result
+  }
 
 }

@@ -11,14 +11,14 @@ import sygus.SMTProcess
 
 import scala.collection.mutable.ListBuffer
 object Main extends App {
-  val filename =
+  //val filename = ""
     //"src/test/benchmarks/euphony/extract-word-that-begins-with-specific-character.sl"
   //"src/test/benchmarks/circuit/test/CrCy_10-sbox2-D5-sIn104.sl"
   //"src/test/benchmarks/too-hard/43606446.sl"
   //"src/test/benchmarks/string/count-total-words-in-a-cell.sl"
   //"src/test/benchmarks/bitvec/1_10.sl"
   //"src/test/benchmarks/string/38871714.sl"
-  "src/test/benchmarks/string/exceljet1.sl"
+  //"src/test/benchmarks/string/exceljet1.sl"
 
   case class RankedProgram(program: ASTNode, rank: Double) extends Ordered[RankedProgram] {
     override def compare(that: RankedProgram): Int = this.rank.compare(that.rank)
@@ -56,7 +56,7 @@ object Main extends App {
     }
   }
 
-  def synthesizeTask(filename: String, task: SygusFileTask, sizeBased: Boolean, probBased: Boolean, timeout: Int = 2): List[ASTNode] = {
+  def synthesizeTask(filename: String, task: SygusFileTask, sizeBased: Boolean, probBased: Boolean, timeout: Int = 600): List[ASTNode] = {
     val oeManager = new InputsValuesManager()
 
     val enumerator = if (!sizeBased) new enumeration.Enumerator(filename, task.vocab, oeManager, task, task.examples.map(_.input))
@@ -86,7 +86,7 @@ object Main extends App {
     p
   }
 
-  def cegisExTask(filename: String, task: SygusFileTask, sizeBased: Boolean, probBased: Boolean, timeout: Int = 60): List[ASTNode] = {
+  def cegisExTask(filename: String, task: SygusFileTask, sizeBased: Boolean, probBased: Boolean, timeout: Int = 600): List[ASTNode] = {
     val oeManager = new InputsValuesManager()
     val enumerator =  if (!sizeBased) new enumeration.Enumerator(filename, task.vocab, oeManager, task, List())
     else new enumeration.ProbEnumerator(filename, task.vocab, oeManager, task, List(), probBased)
@@ -113,7 +113,7 @@ object Main extends App {
     p
   }
 
-  def cegisTask(filename: String, sizeBased: Boolean, probBased: Boolean, timeout: Int = 6000): List[ASTNode] = {
+  def cegisTask(filename: String, sizeBased: Boolean, probBased: Boolean, timeout: Int = 600): List[ASTNode] = {
     val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
     val oeManager = new InputsValuesManager()
     val enumerator = if (!sizeBased) new enumeration.Enumerator(filename, task.vocab, oeManager, task, task.examples.map(_.input).toList)
@@ -152,5 +152,5 @@ object Main extends App {
     else cegisTask(filename, sizeBased, probBased)
   }
 
-  synthesize(filename, true, true, false)
+  //synthesize(filename, true, true, true)
 }

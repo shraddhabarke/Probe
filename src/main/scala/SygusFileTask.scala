@@ -45,6 +45,7 @@ class SygusFileTask(content: String) extends Cloneable{
     val constraints = parsed.cmd().asScala.filter(cmd => cmd.getChild(1) != null && cmd.getChild(1).getText == "constraint").map(_.term())
     !constraints.isEmpty && constraints.forall(constraint => SygusFileTask.isExample(constraint,functionName))
   }
+
   var examples: List[Example] = {
     val constraints = parsed.cmd().asScala.filter(cmd => cmd.getChild(1) != null && cmd.getChild(1).getText == "constraint").map(_.term())
     if(isPBE) constraints.map(constraint => SygusFileTask.exampleFromConstraint(content, constraint, functionName,functionReturnType,functionParameters)).toList.distinct
@@ -71,7 +72,7 @@ class SygusFileTask(content: String) extends Cloneable{
     val expectedResults = examples.map(_.output)
     val k = program.values.zip(expectedResults).count(pair => pair._1 == pair._2)
     val n = expectedResults.length
-    (k, n) // expectedResults are the outputs!
+    (k, n)
   }
 
   def fitExs(program: ASTNode): Set[Any] = {
