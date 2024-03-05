@@ -47,6 +47,9 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   var fitsMap = mutable.Map[(Class[_], Option[Any]), Double]()
   ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
   ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
+  //ProbUpdate.probMap = RunMain.processElementByKey("completions/larger-string-grammar-completions.json", filename)._1
+  //ProbUpdate.priors = RunMain.processElementByKey("completions/larger-string-grammar-completions.json", filename)._2
+
   val round = priors.head._2
   var timeout = 3 * ProbUpdate.priors.head._2
   var costLevel = 0
@@ -110,7 +113,6 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
 
   def changeLevel(): Boolean = {
     currIter = totalLeaves.sortBy(_.rootCost).toIterator //todo: more efficient
-    //if (currLevelProgs.length > 0) Console.withOut(fos) { println("Number of Programs at level", costLevel, currLevelProgs.length) }
     costLevel += 1
     phaseCounter += 1
 
@@ -167,9 +169,7 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
         val solverOut = SMTProcess.invokeCVC(query.stripMargin, SMTProcess.cvc4_Smt)
         if (solverOut.head == "sat") { // counterexample added!
           val cex = SMTProcess.getCEx(task, funcArgs, solverOut, solution)
-          //Console.withOut(fos) { println("CEGIS counterexample", cex, "\n") }
           task = task.updateContext(cex)
-          //Console.withOut(fos) { println(res.get.code) }
           resetEnumeration() //restart synthesis
           if (reset) resetCache()
           else {
@@ -192,7 +192,6 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
             ProbUpdate.readjustCosts(task)
             ProbUpdate.priors = ProbUpdate.updatePriors(ProbUpdate.probMap, round)
             //println("After:", ProbUpdate.cache)
-
           }
         } else if (solverOut.head == "unsat") {
           res.get.unsat = true
@@ -201,7 +200,6 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
     } else if (!res.isEmpty && task.isPBE && cegis && (res.get.nodeType == task.functionReturnType)) {
       if (task.examples.isEmpty || (!task.examples.isEmpty &&
         task.examples.zip(res.get.values).map(pair => pair._1.output == pair._2).forall(identity))) { // satisfies all examples so far
-        //println(res.get.code, task.examples)
         val exampleOut = SMTProcess.getEx(task, cExamples, res.get)
         if (exampleOut._1 == true) {
           res.get.unsat = true
