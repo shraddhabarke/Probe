@@ -47,8 +47,8 @@ class ProbEnumerator(val filename: String, val vocab: VocabFactory, val oeManage
   var fitsMap = mutable.Map[(Class[_], Option[Any]), Double]()
   ProbUpdate.probMap = ProbUpdate.createProbMap(task.vocab)
   ProbUpdate.priors = ProbUpdate.createPrior(task.vocab)
-  //ProbUpdate.probMap = RunMain.processElementByKey("completions/larger-string-grammar-completions.json", filename)._1
-  //ProbUpdate.priors = RunMain.processElementByKey("completions/larger-string-grammar-completions.json", filename)._2
+  //ProbUpdate.probMap = PCFGCompute.processElementByKey("completions/larger-string-grammar-completions.json", filename)._1
+  //ProbUpdate.priors = PCFGCompute.processElementByKey("completions/larger-string-grammar-completions.json", filename)._2
 
   val round = priors.head._2
   var timeout = 3 * ProbUpdate.priors.head._2
