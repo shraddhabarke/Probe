@@ -166,7 +166,7 @@ def run_main(resultfile, filename, cmd):
         pass
 
 def run_probe(filename):
-    cmd = ['java', '-cp', 'target/scala-3.2.2/probe-assembly-0.1.jar', 'sygus/ProbeMain', f"src/test/benchmarks/larger-grammar/{filename}"]
+    cmd = ['java', '-cp', 'target/scala-3.2.2/probe-assembly-0.1.jar', 'sygus/ProbeMain', f"src/test/benchmarks/string/{filename}"]
     run_main('results/probe.csv', filename, cmd)
 
 def run_probe_bitvec(filename):
